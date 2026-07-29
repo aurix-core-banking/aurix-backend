@@ -1,0 +1,54 @@
+package com.aurix.platform.payments.pix.service;
+
+import com.aurix.platform.payments.pix.entity.OutboxEvent;
+import com.aurix.platform.payments.pix.repository.OutboxEventRepository;
+import com.aurix.platform.shared.event.BaseEvent;
+import com.aurix.platform.shared.event.EventPublisher;
+import com.aurix.platform.shared.event.Topics;
+import com.aurix.platform.shared.event.TransacaoEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Primary;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+/**
+ * Publicador de eventos do módulo PIX que usa o padrão Outbox (ADR-0001):
+ * grava o evento na mesma transação do banco em vez de enviar direto ao
+ * Kafka, eliminando o risco de dual-write (transação comita mas o evento
+ * se perde se o Kafka estiver indisponível).
+ */
+@Primary
+@Service
+public class OutboxEventPublisher extends EventPublisher {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OutboxEventPublisher.class);
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
+
+    public OutboxEventPublisher(final KafkaTemplate<String, Object> kafkaTemplate, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper) {
+        super(kafkaTemplate);
+        this.outboxEventRepository = outboxEventRepository;
+        this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public void publicarTransacaoRealizada(final TransacaoEvent event) {
+        saveToOutbox("TRANSACAO", event.getEventId(), Topics.TRANSACAO_REALIZADA, event);
+    }
+
+    private void saveToOutbox(final String aggregateType, final String aggregateId, final String eventType, final BaseEvent event) {
+        try {
+            OutboxEvent outboxEvent = new OutboxEvent();
+            outboxEvent.setAggregateType(aggregateType);
+            outboxEvent.setAggregateId(aggregateId);
+            outboxEvent.setEventType(eventType);
+            outboxEvent.setPayload(objectMapper.writeValueAsString(event));
+            outboxEventRepository.save(outboxEvent);
+            log.info("Evento salvo no Outbox: {} - {}", eventType, aggregateId);
+        } catch (JsonProcessingException e) {
+            log.error("Erro ao serializar evento para o Outbox", e);
+            throw new RuntimeException("Erro ao serializar evento", e);
+        }
+    }
+}

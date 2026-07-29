@@ -1,0 +1,67 @@
+package com.aurix.platform.customer.onboarding.service;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.client.RestTemplate;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@WireMockTest(httpPort = 9999)
+class ClearSaleProviderTest {
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    @Test
+    void deveRetornarAprovado() {
+        stubFor(post(urlEqualTo("/fraud/clearsale"))
+            .withRequestBody(containing("52998224725"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""
+                    {"recomendacao": "APROVADO", "codigo": "CS_OK", "mensagem": "OK", "risco": 0}
+                    """)));
+
+        ClearSaleProvider provider = new ClearSaleProvider(restTemplate,
+            "http://localhost:9999/fraud/clearsale", "test-key");
+
+        FraudService.ResultadoFraude result = provider.analisar("52998224725", "Maria", "maria@teste.com", "11999999999");
+
+        assertThat(result.aprovado()).isTrue();
+        assertThat(result.codigo()).isEqualTo("CS_OK");
+    }
+
+    @Test
+    void deveRetornarReprovado() {
+        stubFor(post(urlEqualTo("/fraud/clearsale"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""
+                    {"recomendacao": "REPROVADO", "codigo": "CS_REJECT", "mensagem": "Alto risco", "risco": 85}
+                    """)));
+
+        ClearSaleProvider provider = new ClearSaleProvider(restTemplate,
+            "http://localhost:9999/fraud/clearsale", "test-key");
+
+        FraudService.ResultadoFraude result = provider.analisar("52998224725", "Maria", "maria@teste.com", "11999999999");
+
+        assertThat(result.aprovado()).isFalse();
+        assertThat(result.risco()).isEqualTo(85);
+    }
+
+    @Test
+    void deveAssumirAprovadoQuandoApiFalha() {
+        stubFor(post(urlEqualTo("/fraud/clearsale"))
+            .willReturn(aResponse().withStatus(500)));
+
+        ClearSaleProvider provider = new ClearSaleProvider(restTemplate,
+            "http://localhost:9999/fraud/clearsale", "test-key");
+
+        FraudService.ResultadoFraude result = provider.analisar("52998224725", "Maria", "maria@teste.com", "11999999999");
+
+        assertThat(result.aprovado()).isTrue();
+        assertThat(result.codigo()).isEqualTo("FALHA_PROVEDOR");
+    }
+}

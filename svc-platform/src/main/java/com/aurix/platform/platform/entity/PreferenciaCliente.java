@@ -1,0 +1,51 @@
+package com.aurix.platform.platform.entity;
+
+import com.aurix.platform.shared.entity.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "preferencias_cliente", schema = "aurix")
+public class PreferenciaCliente extends BaseEntity {
+    @Column(name = "cliente_id", nullable = false, unique = true)
+    private Long clienteId;
+
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo = true;
+
+    @Column(name = "email_ativo", nullable = false)
+    private Boolean emailAtivo = true;
+
+    @Column(name = "sms_ativo", nullable = false)
+    private Boolean smsAtivo = true;
+
+    @Column(name = "push_ativo", nullable = false)
+    private Boolean pushAtivo = true;
+
+    @Column(name = "whatsapp_ativo", nullable = false)
+    private Boolean whatsappAtivo = false;
+
+    @Column(name = "horario_inicio", length = 5)
+    private String horarioInicio;
+
+    @Column(name = "horario_fim", length = 5)
+    private String horarioFim;
+
+    public Long getClienteId() { return clienteId; }
+    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+    public Boolean getEmailAtivo() { return emailAtivo; }
+    public void setEmailAtivo(Boolean emailAtivo) { this.emailAtivo = emailAtivo; }
+    public Boolean getSmsAtivo() { return smsAtivo; }
+    public void setSmsAtivo(Boolean smsAtivo) { this.smsAtivo = smsAtivo; }
+    public Boolean getPushAtivo() { return pushAtivo; }
+    public void setPushAtivo(Boolean pushAtivo) { this.pushAtivo = pushAtivo; }
+    public Boolean getWhatsappAtivo() { return whatsappAtivo; }
+    public void setWhatsappAtivo(Boolean whatsappAtivo) { this.whatsappAtivo = whatsappAtivo; }
+    public String getHorarioInicio() { return horarioInicio; }
+    public void setHorarioInicio(String horarioInicio) { this.horarioInicio = horarioInicio; }
+    public String getHorarioFim() { return horarioFim; }
+    public void setHorarioFim(String horarioFim) { this.horarioFim = horarioFim; }
+}

@@ -1,0 +1,250 @@
+package com.aurix.platform.platform.service;
+
+import com.aurix.platform.platform.entity.DispositivoMobile;
+import com.aurix.platform.platform.entity.SessaoMobile;
+import com.aurix.platform.platform.entity.NotificacaoMobile;
+import com.aurix.platform.platform.repository.DispositivoMobileRepository;
+import com.aurix.platform.platform.repository.SessaoMobileRepository;
+import com.aurix.platform.platform.repository.NotificacaoMobileRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * Service principal para o Mobile Banking
+ * 
+ * Gerencia funcionalidades do app mobile para clientes
+ */
+@Service
+@Transactional
+public class MobileBankingService {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MobileBankingService.class);
+    private final DispositivoMobileRepository dispositivoRepository;
+    private final SessaoMobileRepository sessaoRepository;
+    private final NotificacaoMobileRepository notificacaoRepository;
+
+    // ========== GESTÃO DE DISPOSITIVOS ==========
+    /**
+     * Registra novo dispositivo mobile
+     */
+    public DispositivoMobile registrarDispositivo(String clienteId, String dispositivoId, String nomeDispositivo, String marca, String modelo, String sistemaOperacional, String versaoSO, String deviceToken, String deviceFingerprint, String imei, String numeroTelefone) {
+        log.info("Registrando dispositivo mobile: Cliente={}, Dispositivo={}, Modelo={}", clienteId, dispositivoId, modelo);
+        try {
+            DispositivoMobile dispositivo = DispositivoMobile.builder().dispositivoId(dispositivoId).clienteId(clienteId).nomeDispositivo(nomeDispositivo).marca(marca).modelo(modelo).sistemaOperacional(sistemaOperacional).versaoSO(versaoSO).deviceToken(deviceToken).deviceFingerprint(deviceFingerprint).imei(imei).numeroTelefone(numeroTelefone).tipoDispositivo(determinarTipoDispositivo(modelo)).status(DispositivoMobile.StatusDispositivo.ATIVO).dataRegistro(LocalDateTime.now()).biometricoHabilitado(false).faceIdHabilitado(false).touchIdHabilitado(false).voiceIdHabilitado(false).irisIdHabilitado(false).pinHabilitado(true).nfcHabilitado(false).gpsHabilitado(false).cameraHabilitada(false).notificacoesPushHabilitadas(true).tentativasFalha(0).bloqueado(false).build();
+            DispositivoMobile dispositivoSalvo = dispositivoRepository.save(dispositivo);
+            log.info("Dispositivo registrado com sucesso: {}", dispositivoId);
+            return dispositivoSalvo;
+        } catch (Exception e) {
+            log.error("Erro ao registrar dispositivo mobile: {}", e.getMessage());
+            throw new RuntimeException("Erro ao registrar dispositivo", e);
+        }
+    }
+
+    /**
+     * Habilita autenticação biométrica
+     */
+    public void habilitarBiometrico(String dispositivoId, String tipoBiometrico) {
+        log.info("Habilitando autenticação biométrica: Dispositivo={}, Tipo={}", dispositivoId, tipoBiometrico);
+        try {
+            Optional<DispositivoMobile> dispositivoOpt = dispositivoRepository.findByDispositivoId(dispositivoId);
+            if (dispositivoOpt.isPresent()) {
+                DispositivoMobile dispositivo = dispositivoOpt.get();
+                switch (tipoBiometrico.toUpperCase()) {
+                case "FACE_ID": 
+                    dispositivo.setFaceIdHabilitado(true);
+                    dispositivo.setBiometricoHabilitado(true);
+                    break;
+                case "TOUCH_ID": 
+                    dispositivo.setTouchIdHabilitado(true);
+                    dispositivo.setBiometricoHabilitado(true);
+                    break;
+                case "VOICE_ID": 
+                    dispositivo.setVoiceIdHabilitado(true);
+                    dispositivo.setBiometricoHabilitado(true);
+                    break;
+                case "IRIS_ID": 
+                    dispositivo.setIrisIdHabilitado(true);
+                    dispositivo.setBiometricoHabilitado(true);
+                    break;
+                }
+                dispositivoRepository.save(dispositivo);
+                log.info("Autenticação biométrica habilitada: {}", tipoBiometrico);
+            }
+        } catch (Exception e) {
+            log.error("Erro ao habilitar autenticação biométrica: {}", e.getMessage());
+            throw new RuntimeException("Erro ao habilitar autenticação biométrica", e);
+        }
+    }
+
+    // ========== GESTÃO DE SESSÕES ==========
+    /**
+     * Cria nova sessão mobile
+     */
+    public SessaoMobile criarSessaoMobile(String dispositivoId, String clienteId, String usuarioId, String deviceToken, String ipAddress, String userAgent, String appVersion, String osVersion, String deviceModel, String deviceManufacturer, Double latitude, Double longitude) {
+        log.info("Criando nova sessão mobile: Cliente={}, Dispositivo={}, App={}", clienteId, dispositivoId, appVersion);
+        try {
+            String sessaoId = UUID.randomUUID().toString();
+            LocalDateTime agora = LocalDateTime.now();
+            SessaoMobile sessao =  // Mobile tem sessão mais longa
+            SessaoMobile.builder().sessaoId(sessaoId).dispositivoId(dispositivoId).clienteId(clienteId).usuarioId(usuarioId).deviceToken(deviceToken).ipAddress(ipAddress).userAgent(userAgent).appVersion(appVersion).osVersion(osVersion).deviceModel(deviceModel).deviceManufacturer(deviceManufacturer).status(SessaoMobile.StatusSessao.ATIVA).dataLogin(agora).dataExpiracao(agora.plusMinutes(60)).ultimaAtividade(agora).timeoutMinutos(60).mfaVerificado(false).biometricoVerificado(false).faceIdVerificado(false).touchIdVerificado(false).pinVerificado(false).localizacaoVerificada(latitude != null && longitude != null).latitude(latitude).longitude(longitude).precisaoGps(calcularPrecisaoGps(latitude, longitude)).tentativasFalha(0).bloqueado(false).pushNotificationsAtivas(true).backgroundRefreshHabilitado(false).bateriaNivel(100).armazenamentoDisponivel(0L).ramDisponivel(0L).build();
+            SessaoMobile sessaoSalva = sessaoRepository.save(sessao);
+            // Atualizar último acesso do dispositivo
+            atualizarUltimoAcessoDispositivo(dispositivoId, latitude, longitude);
+            log.info("Sessão mobile criada com sucesso: {}", sessaoId);
+            return sessaoSalva;
+        } catch (Exception e) {
+            log.error("Erro ao criar sessão mobile: {}", e.getMessage());
+            throw new RuntimeException("Erro ao criar sessão mobile", e);
+        }
+    }
+
+    /**
+     * Valida sessão mobile
+     */
+    public boolean validarSessaoMobile(String sessaoId) {
+        log.debug("Validando sessão mobile: {}", sessaoId);
+        try {
+            Optional<SessaoMobile> sessaoOpt = sessaoRepository.findBySessaoId(sessaoId);
+            if (sessaoOpt.isEmpty()) {
+                log.warn("Sessão mobile não encontrada: {}", sessaoId);
+                return false;
+            }
+            SessaoMobile sessao = sessaoOpt.get();
+            // Verificar se sessão está ativa
+            if (sessao.getStatus() != SessaoMobile.StatusSessao.ATIVA) {
+                log.warn("Sessão mobile não está ativa: {} - Status: {}", sessaoId, sessao.getStatus());
+                return false;
+            }
+            // Verificar se não expirou
+            if (sessao.getDataExpiracao().isBefore(LocalDateTime.now())) {
+                log.warn("Sessão mobile expirada: {}", sessaoId);
+                sessao.setStatus(SessaoMobile.StatusSessao.EXPIRADA);
+                sessaoRepository.save(sessao);
+                return false;
+            }
+            // Atualizar última atividade
+            sessao.setUltimaAtividade(LocalDateTime.now());
+            sessao.setDataExpiracao(LocalDateTime.now().plusMinutes(sessao.getTimeoutMinutos()));
+            sessaoRepository.save(sessao);
+            return true;
+        } catch (Exception e) {
+            log.error("Erro ao validar sessão mobile {}: {}", sessaoId, e.getMessage());
+            return false;
+        }
+    }
+
+    // ========== GESTÃO DE NOTIFICAÇÕES ==========
+    /**
+     * Envia notificação push
+     */
+    public NotificacaoMobile enviarNotificacaoPush(String dispositivoId, String clienteId, NotificacaoMobile.TipoNotificacao tipoNotificacao, NotificacaoMobile.CategoriaNotificacao categoria, String titulo, String mensagem, String corpo) {
+        log.info("Enviando notificação push: Dispositivo={}, Tipo={}, Titulo={}", dispositivoId, tipoNotificacao, titulo);
+        try {
+            // Buscar dispositivo
+            Optional<DispositivoMobile> dispositivoOpt = dispositivoRepository.findByDispositivoId(dispositivoId);
+            if (dispositivoOpt.isEmpty()) {
+                throw new RuntimeException("Dispositivo não encontrado");
+            }
+            DispositivoMobile dispositivo = dispositivoOpt.get();
+            // Verificar se notificações estão habilitadas
+            if (!dispositivo.getNotificacoesPushHabilitadas()) {
+                log.warn("Notificações push desabilitadas para dispositivo: {}", dispositivoId);
+                return null;
+            }
+            String notificacaoId = UUID.randomUUID().toString();
+            NotificacaoMobile notificacao = NotificacaoMobile.builder().notificacaoId(notificacaoId).dispositivoId(dispositivoId).clienteId(clienteId).deviceToken(dispositivo.getDeviceToken()).tipoNotificacao(tipoNotificacao).categoria(categoria).titulo(titulo).mensagem(mensagem).corpo(corpo).vibracao(true).prioridade(determinarPrioridade(tipoNotificacao)).status(NotificacaoMobile.StatusNotificacao.PENDENTE).dataAgendamento(LocalDateTime.now()).tentativasEnvio(0).maxTentativas(3).build();
+            NotificacaoMobile notificacaoSalva = notificacaoRepository.save(notificacao);
+            // Aqui seria feita a integração com Firebase/APNs
+            // enviarNotificacaoFirebase(notificacao);
+            log.info("Notificação push criada com sucesso: {}", notificacaoId);
+            return notificacaoSalva;
+        } catch (Exception e) {
+            log.error("Erro ao enviar notificação push: {}", e.getMessage());
+            throw new RuntimeException("Erro ao enviar notificação push", e);
+        }
+    }
+
+    // ========== MÉTODOS AUXILIARES ==========
+    /**
+     * Determina tipo de dispositivo
+     */
+    private DispositivoMobile.TipoDispositivo determinarTipoDispositivo(String modelo) {
+        if (modelo == null) return DispositivoMobile.TipoDispositivo.OUTROS;
+        modelo = modelo.toLowerCase();
+        if (modelo.contains("phone") || modelo.contains("smartphone")) {
+            return DispositivoMobile.TipoDispositivo.SMARTPHONE;
+        } else if (modelo.contains("tablet") || modelo.contains("pad")) {
+            return DispositivoMobile.TipoDispositivo.TABLET;
+        } else if (modelo.contains("watch") || modelo.contains("band")) {
+            return DispositivoMobile.TipoDispositivo.WEARABLE;
+        } else if (modelo.contains("tv")) {
+            return DispositivoMobile.TipoDispositivo.SMART_TV;
+        } else {
+            return DispositivoMobile.TipoDispositivo.SMARTPHONE; // Default
+        }
+    }
+
+    /**
+     * Calcula precisão do GPS
+     */
+    private Double calcularPrecisaoGps(Double latitude, Double longitude) {
+        if (latitude == null || longitude == null) return null;
+        // Simulação de cálculo de precisão baseado na localização
+        // Em um cenário real, seria calculado baseado no sinal GPS
+        return 5.0; // 5 metros de precisão
+    }
+
+    /**
+     * Determina prioridade da notificação
+     */
+    private NotificacaoMobile.PrioridadeNotificacao determinarPrioridade(NotificacaoMobile.TipoNotificacao tipo) {
+        switch (tipo) {
+        case URGENTE: 
+        case SEGURANCA: 
+        case BLOQUEIO: 
+            return NotificacaoMobile.PrioridadeNotificacao.CRITICA;
+        case TRANSACAO: 
+        case PIX: 
+        case LIMITE: 
+            return NotificacaoMobile.PrioridadeNotificacao.ALTA;
+        case CARTAO: 
+        case INVESTIMENTO: 
+        case EMPRESTIMO: 
+            return NotificacaoMobile.PrioridadeNotificacao.NORMAL;
+        case PROMOCIONAL: 
+        case INFORMATIVA: 
+            return NotificacaoMobile.PrioridadeNotificacao.BAIXA;
+        default: 
+            return NotificacaoMobile.PrioridadeNotificacao.NORMAL;
+        }
+    }
+
+    /**
+     * Atualiza último acesso do dispositivo
+     */
+    private void atualizarUltimoAcessoDispositivo(String dispositivoId, Double latitude, Double longitude) {
+        try {
+            Optional<DispositivoMobile> dispositivoOpt = dispositivoRepository.findByDispositivoId(dispositivoId);
+            if (dispositivoOpt.isPresent()) {
+                DispositivoMobile dispositivo = dispositivoOpt.get();
+                dispositivo.setDataUltimoAcesso(LocalDateTime.now());
+                dispositivo.setLocalizacaoAtual(latitude + "," + longitude);
+                dispositivo.setLatitude(latitude);
+                dispositivo.setLongitude(longitude);
+                dispositivoRepository.save(dispositivo);
+            }
+        } catch (Exception e) {
+            log.error("Erro ao atualizar último acesso do dispositivo: {}", e.getMessage());
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public MobileBankingService(final DispositivoMobileRepository dispositivoRepository, final SessaoMobileRepository sessaoRepository, final NotificacaoMobileRepository notificacaoRepository) {
+        this.dispositivoRepository = dispositivoRepository;
+        this.sessaoRepository = sessaoRepository;
+        this.notificacaoRepository = notificacaoRepository;
+    }
+}

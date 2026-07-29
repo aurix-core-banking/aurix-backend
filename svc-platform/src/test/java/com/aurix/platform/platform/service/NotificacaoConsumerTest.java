@@ -1,0 +1,142 @@
+package com.aurix.platform.platform.service;
+
+import com.aurix.platform.platform.entity.FilaNotificacao;
+import com.aurix.platform.platform.entity.TemplateNotificacao;
+import com.aurix.platform.platform.repository.ConfirmacaoRecebimentoRepository;
+import com.aurix.platform.platform.repository.FilaNotificacaoRepository;
+import com.aurix.platform.platform.repository.PreferenciaClienteRepository;
+import com.aurix.platform.platform.repository.TemplateNotificacaoRepository;
+import com.aurix.platform.platform.service.channel.LogChannel;
+import com.aurix.platform.shared.event.ClienteCriadoEvent;
+import com.aurix.platform.shared.event.KycAprovadoEvent;
+import com.aurix.platform.shared.event.KycRejeitadoEvent;
+import com.aurix.platform.shared.event.TransacaoBloqueadaEvent;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class NotificacaoConsumerTest {
+    @Mock private TemplateNotificacaoRepository templateRepository;
+    @Mock private FilaNotificacaoRepository filaRepository;
+    @Mock private ConfirmacaoRecebimentoRepository confirmacaoRepository;
+    @Mock private PreferenciaClienteRepository preferenciaRepository;
+    @Mock private NotificacaoProducer producer;
+    @Mock private LogChannel logChannel;
+    @InjectMocks private NotificacaoService notificacaoService;
+    private NotificacaoConsumer consumer;
+
+    @BeforeEach
+    void setUp() {
+        consumer = new NotificacaoConsumer(notificacaoService);
+    }
+
+    @Test
+    void deveProcessarEventoClienteCriado() {
+        when(templateRepository.findByCodigoAndAtivoTrue("cliente_criado")).thenReturn(Optional.of(
+                buildTemplate("cliente_criado", "EMAIL", "Bem-vindo ao Aurix, {{nome}}!")));
+        when(preferenciaRepository.findByClienteId(1L)).thenReturn(Optional.empty());
+        when(filaRepository.save(any())).thenAnswer(inv -> {
+            FilaNotificacao saved = inv.getArgument(0);
+            saved.setId(1L);
+            return saved;
+        });
+
+        ClienteCriadoEvent event = ClienteCriadoEvent.criado(1L, "12345678901", "Joao", "FISICA", "PF");
+        consumer.onClienteCriado(event);
+
+        verify(templateRepository).findByCodigoAndAtivoTrue("cliente_criado");
+        verify(filaRepository, atLeast(1)).save(any());
+        verify(producer).notificacaoEnviada(any());
+    }
+
+    @Test
+    void deveProcessarEventoKycAprovado() {
+        when(templateRepository.findByCodigoAndAtivoTrue("kyc_aprovado")).thenReturn(Optional.of(
+                buildTemplate("kyc_aprovado", "PUSH", "Seu KYC foi aprovado!")));
+        when(preferenciaRepository.findByClienteId(2L)).thenReturn(Optional.empty());
+        when(filaRepository.save(any())).thenAnswer(inv -> {
+            FilaNotificacao saved = inv.getArgument(0);
+            saved.setId(2L);
+            return saved;
+        });
+
+        KycAprovadoEvent event = KycAprovadoEvent.aprovado(2L, 100L, 85);
+        consumer.onKycAprovado(event);
+
+        verify(filaRepository, atLeast(1)).save(any());
+        verify(producer).notificacaoEnviada(any());
+    }
+
+    @Test
+    void deveProcessarEventoKycRejeitadoComMotivo() {
+        when(templateRepository.findByCodigoAndAtivoTrue("kyc_rejeitado")).thenReturn(Optional.of(
+                buildTemplate("kyc_rejeitado", "EMAIL", "Seu KYC foi rejeitado. Motivo: {{motivo}}.")));
+        when(preferenciaRepository.findByClienteId(3L)).thenReturn(Optional.empty());
+        when(filaRepository.save(any())).thenAnswer(inv -> {
+            FilaNotificacao saved = inv.getArgument(0);
+            saved.setId(3L);
+            return saved;
+        });
+
+        KycRejeitadoEvent event = KycRejeitadoEvent.rejeitado(3L, 101L, "Documento ilegivel");
+        consumer.onKycRejeitado(event);
+
+        verify(filaRepository, atLeast(1)).save(argThat(
+                n -> n.getCorpoRenderizado() != null && n.getCorpoRenderizado().contains("Documento ilegivel")));
+    }
+
+    @Test
+    void deveProcessarEventoFraudeTransacaoBloqueada() {
+        when(templateRepository.findByCodigoAndAtivoTrue("fraude_transacao_bloqueada")).thenReturn(Optional.of(
+                buildTemplate("fraude_transacao_bloqueada", "SMS",
+                        "Alerta: Transacao {{transacaoRef}} bloqueada.")));
+        when(preferenciaRepository.findByClienteId(4L)).thenReturn(Optional.empty());
+        when(filaRepository.save(any())).thenAnswer(inv -> {
+            FilaNotificacao saved = inv.getArgument(0);
+            saved.setId(4L);
+            return saved;
+        });
+
+        TransacaoBloqueadaEvent event = TransacaoBloqueadaEvent.bloqueada(4L, "TXN-999", 95, "ALTO", 200L);
+        consumer.onFraudeTransacaoBloqueada(event);
+
+        verify(filaRepository, atLeast(1)).save(argThat(
+                n -> n.getCorpoRenderizado() != null && n.getCorpoRenderizado().contains("TXN-999")));
+    }
+
+    @Test
+    void deveProcessarEventoClienteCriadoSemNome() {
+        when(templateRepository.findByCodigoAndAtivoTrue("cliente_criado")).thenReturn(Optional.of(
+                buildTemplate("cliente_criado", "EMAIL", "Bem-vindo!")));
+        when(preferenciaRepository.findByClienteId(5L)).thenReturn(Optional.empty());
+        when(filaRepository.save(any())).thenAnswer(inv -> {
+            FilaNotificacao saved = inv.getArgument(0);
+            saved.setId(5L);
+            return saved;
+        });
+
+        ClienteCriadoEvent event = ClienteCriadoEvent.criado(5L, "99999999999", null, "FISICA", "PF");
+        consumer.onClienteCriado(event);
+
+        verify(filaRepository, atLeast(1)).save(any());
+    }
+
+    private TemplateNotificacao buildTemplate(String codigo, String canal, String corpo) {
+        TemplateNotificacao template = new TemplateNotificacao();
+        template.setCodigo(codigo);
+        template.setCanal(canal);
+        template.setCorpo(corpo);
+        template.setAssunto("Notificacao");
+        template.setAtivo(true);
+        return template;
+    }
+}

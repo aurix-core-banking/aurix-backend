@@ -1,0 +1,805 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa um fornecedor
+ * 
+ * Gerencia dados dos fornecedores do banco
+ */
+@Entity
+@Table(name = "fornecedores", schema = "aurix")
+public class Fornecedor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "codigo_fornecedor", unique = true, nullable = false, length = 20)
+    private String codigoFornecedor;
+    @Column(name = "nome_razao_social", nullable = false, length = 200)
+    private String nomeRazaoSocial;
+    @Column(name = "nome_fantasia", length = 200)
+    private String nomeFantasia;
+    @Column(name = "cnpj", length = 18, unique = true)
+    private String cnpj;
+    @Column(name = "cpf", length = 14, unique = true)
+    private String cpf;
+    @Column(name = "inscricao_estadual", length = 20)
+    private String inscricaoEstadual;
+    @Column(name = "inscricao_municipal", length = 20)
+    private String inscricaoMunicipal;
+    @Column(name = "endereco", length = 500)
+    private String endereco;
+    @Column(name = "cidade", length = 100)
+    private String cidade;
+    @Column(name = "estado", length = 2)
+    private String estado;
+    @Column(name = "cep", length = 10)
+    private String cep;
+    @Column(name = "telefone", length = 20)
+    private String telefone;
+    @Column(name = "email", length = 100)
+    private String email;
+    @Column(name = "contato", length = 100)
+    private String contato;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_pessoa", nullable = false)
+    private TipoPessoa tipoPessoa;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusFornecedor status;
+    @Column(name = "limite_credito", precision = 15, scale = 2)
+    private java.math.BigDecimal limiteCredito;
+    @Column(name = "prazo_pagamento")
+    private Integer prazoPagamento;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de pessoa
+     */
+    public enum TipoPessoa {
+        FISICA,  // Pessoa física
+        JURIDICA // Pessoa jurídica
+        ;
+    }
+
+
+    /**
+     * Status do fornecedor
+     */
+    public enum StatusFornecedor {
+        ATIVO,  // Ativo
+        INATIVO,  // Inativo
+        BLOQUEADO,  // Bloqueado
+        SUSPENSO // Suspenso
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class FornecedorBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String codigoFornecedor;
+        @java.lang.SuppressWarnings("all")
+        private String nomeRazaoSocial;
+        @java.lang.SuppressWarnings("all")
+        private String nomeFantasia;
+        @java.lang.SuppressWarnings("all")
+        private String cnpj;
+        @java.lang.SuppressWarnings("all")
+        private String cpf;
+        @java.lang.SuppressWarnings("all")
+        private String inscricaoEstadual;
+        @java.lang.SuppressWarnings("all")
+        private String inscricaoMunicipal;
+        @java.lang.SuppressWarnings("all")
+        private String endereco;
+        @java.lang.SuppressWarnings("all")
+        private String cidade;
+        @java.lang.SuppressWarnings("all")
+        private String estado;
+        @java.lang.SuppressWarnings("all")
+        private String cep;
+        @java.lang.SuppressWarnings("all")
+        private String telefone;
+        @java.lang.SuppressWarnings("all")
+        private String email;
+        @java.lang.SuppressWarnings("all")
+        private String contato;
+        @java.lang.SuppressWarnings("all")
+        private TipoPessoa tipoPessoa;
+        @java.lang.SuppressWarnings("all")
+        private StatusFornecedor status;
+        @java.lang.SuppressWarnings("all")
+        private java.math.BigDecimal limiteCredito;
+        @java.lang.SuppressWarnings("all")
+        private Integer prazoPagamento;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        FornecedorBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder codigoFornecedor(final String codigoFornecedor) {
+            this.codigoFornecedor = codigoFornecedor;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder nomeRazaoSocial(final String nomeRazaoSocial) {
+            this.nomeRazaoSocial = nomeRazaoSocial;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder nomeFantasia(final String nomeFantasia) {
+            this.nomeFantasia = nomeFantasia;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder cnpj(final String cnpj) {
+            this.cnpj = cnpj;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder cpf(final String cpf) {
+            this.cpf = cpf;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder inscricaoEstadual(final String inscricaoEstadual) {
+            this.inscricaoEstadual = inscricaoEstadual;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder inscricaoMunicipal(final String inscricaoMunicipal) {
+            this.inscricaoMunicipal = inscricaoMunicipal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder endereco(final String endereco) {
+            this.endereco = endereco;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder cidade(final String cidade) {
+            this.cidade = cidade;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder estado(final String estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder cep(final String cep) {
+            this.cep = cep;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder telefone(final String telefone) {
+            this.telefone = telefone;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder email(final String email) {
+            this.email = email;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder contato(final String contato) {
+            this.contato = contato;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder tipoPessoa(final TipoPessoa tipoPessoa) {
+            this.tipoPessoa = tipoPessoa;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder status(final StatusFornecedor status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder limiteCredito(final java.math.BigDecimal limiteCredito) {
+            this.limiteCredito = limiteCredito;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder prazoPagamento(final Integer prazoPagamento) {
+            this.prazoPagamento = prazoPagamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor.FornecedorBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Fornecedor build() {
+            return new Fornecedor(this.id, this.codigoFornecedor, this.nomeRazaoSocial, this.nomeFantasia, this.cnpj, this.cpf, this.inscricaoEstadual, this.inscricaoMunicipal, this.endereco, this.cidade, this.estado, this.cep, this.telefone, this.email, this.contato, this.tipoPessoa, this.status, this.limiteCredito, this.prazoPagamento, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "Fornecedor.FornecedorBuilder(id=" + this.id + ", codigoFornecedor=" + this.codigoFornecedor + ", nomeRazaoSocial=" + this.nomeRazaoSocial + ", nomeFantasia=" + this.nomeFantasia + ", cnpj=" + this.cnpj + ", cpf=" + this.cpf + ", inscricaoEstadual=" + this.inscricaoEstadual + ", inscricaoMunicipal=" + this.inscricaoMunicipal + ", endereco=" + this.endereco + ", cidade=" + this.cidade + ", estado=" + this.estado + ", cep=" + this.cep + ", telefone=" + this.telefone + ", email=" + this.email + ", contato=" + this.contato + ", tipoPessoa=" + this.tipoPessoa + ", status=" + this.status + ", limiteCredito=" + this.limiteCredito + ", prazoPagamento=" + this.prazoPagamento + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static Fornecedor.FornecedorBuilder builder() {
+        return new Fornecedor.FornecedorBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoFornecedor() {
+        return this.codigoFornecedor;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNomeRazaoSocial() {
+        return this.nomeRazaoSocial;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNomeFantasia() {
+        return this.nomeFantasia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCnpj() {
+        return this.cnpj;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCpf() {
+        return this.cpf;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getInscricaoEstadual() {
+        return this.inscricaoEstadual;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getInscricaoMunicipal() {
+        return this.inscricaoMunicipal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getEndereco() {
+        return this.endereco;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCidade() {
+        return this.cidade;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getEstado() {
+        return this.estado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCep() {
+        return this.cep;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getTelefone() {
+        return this.telefone;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getEmail() {
+        return this.email;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getContato() {
+        return this.contato;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoPessoa getTipoPessoa() {
+        return this.tipoPessoa;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusFornecedor getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public java.math.BigDecimal getLimiteCredito() {
+        return this.limiteCredito;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Integer getPrazoPagamento() {
+        return this.prazoPagamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoFornecedor(final String codigoFornecedor) {
+        this.codigoFornecedor = codigoFornecedor;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNomeRazaoSocial(final String nomeRazaoSocial) {
+        this.nomeRazaoSocial = nomeRazaoSocial;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNomeFantasia(final String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCnpj(final String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCpf(final String cpf) {
+        this.cpf = cpf;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setInscricaoEstadual(final String inscricaoEstadual) {
+        this.inscricaoEstadual = inscricaoEstadual;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setInscricaoMunicipal(final String inscricaoMunicipal) {
+        this.inscricaoMunicipal = inscricaoMunicipal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setEndereco(final String endereco) {
+        this.endereco = endereco;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCidade(final String cidade) {
+        this.cidade = cidade;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setEstado(final String estado) {
+        this.estado = estado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCep(final String cep) {
+        this.cep = cep;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTelefone(final String telefone) {
+        this.telefone = telefone;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setContato(final String contato) {
+        this.contato = contato;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoPessoa(final TipoPessoa tipoPessoa) {
+        this.tipoPessoa = tipoPessoa;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusFornecedor status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setLimiteCredito(final java.math.BigDecimal limiteCredito) {
+        this.limiteCredito = limiteCredito;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPrazoPagamento(final Integer prazoPagamento) {
+        this.prazoPagamento = prazoPagamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Fornecedor)) return false;
+        final Fornecedor other = (Fornecedor) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$prazoPagamento = this.getPrazoPagamento();
+        final java.lang.Object other$prazoPagamento = other.getPrazoPagamento();
+        if (this$prazoPagamento == null ? other$prazoPagamento != null : !this$prazoPagamento.equals(other$prazoPagamento)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoFornecedor = this.getCodigoFornecedor();
+        final java.lang.Object other$codigoFornecedor = other.getCodigoFornecedor();
+        if (this$codigoFornecedor == null ? other$codigoFornecedor != null : !this$codigoFornecedor.equals(other$codigoFornecedor)) return false;
+        final java.lang.Object this$nomeRazaoSocial = this.getNomeRazaoSocial();
+        final java.lang.Object other$nomeRazaoSocial = other.getNomeRazaoSocial();
+        if (this$nomeRazaoSocial == null ? other$nomeRazaoSocial != null : !this$nomeRazaoSocial.equals(other$nomeRazaoSocial)) return false;
+        final java.lang.Object this$nomeFantasia = this.getNomeFantasia();
+        final java.lang.Object other$nomeFantasia = other.getNomeFantasia();
+        if (this$nomeFantasia == null ? other$nomeFantasia != null : !this$nomeFantasia.equals(other$nomeFantasia)) return false;
+        final java.lang.Object this$cnpj = this.getCnpj();
+        final java.lang.Object other$cnpj = other.getCnpj();
+        if (this$cnpj == null ? other$cnpj != null : !this$cnpj.equals(other$cnpj)) return false;
+        final java.lang.Object this$cpf = this.getCpf();
+        final java.lang.Object other$cpf = other.getCpf();
+        if (this$cpf == null ? other$cpf != null : !this$cpf.equals(other$cpf)) return false;
+        final java.lang.Object this$inscricaoEstadual = this.getInscricaoEstadual();
+        final java.lang.Object other$inscricaoEstadual = other.getInscricaoEstadual();
+        if (this$inscricaoEstadual == null ? other$inscricaoEstadual != null : !this$inscricaoEstadual.equals(other$inscricaoEstadual)) return false;
+        final java.lang.Object this$inscricaoMunicipal = this.getInscricaoMunicipal();
+        final java.lang.Object other$inscricaoMunicipal = other.getInscricaoMunicipal();
+        if (this$inscricaoMunicipal == null ? other$inscricaoMunicipal != null : !this$inscricaoMunicipal.equals(other$inscricaoMunicipal)) return false;
+        final java.lang.Object this$endereco = this.getEndereco();
+        final java.lang.Object other$endereco = other.getEndereco();
+        if (this$endereco == null ? other$endereco != null : !this$endereco.equals(other$endereco)) return false;
+        final java.lang.Object this$cidade = this.getCidade();
+        final java.lang.Object other$cidade = other.getCidade();
+        if (this$cidade == null ? other$cidade != null : !this$cidade.equals(other$cidade)) return false;
+        final java.lang.Object this$estado = this.getEstado();
+        final java.lang.Object other$estado = other.getEstado();
+        if (this$estado == null ? other$estado != null : !this$estado.equals(other$estado)) return false;
+        final java.lang.Object this$cep = this.getCep();
+        final java.lang.Object other$cep = other.getCep();
+        if (this$cep == null ? other$cep != null : !this$cep.equals(other$cep)) return false;
+        final java.lang.Object this$telefone = this.getTelefone();
+        final java.lang.Object other$telefone = other.getTelefone();
+        if (this$telefone == null ? other$telefone != null : !this$telefone.equals(other$telefone)) return false;
+        final java.lang.Object this$email = this.getEmail();
+        final java.lang.Object other$email = other.getEmail();
+        if (this$email == null ? other$email != null : !this$email.equals(other$email)) return false;
+        final java.lang.Object this$contato = this.getContato();
+        final java.lang.Object other$contato = other.getContato();
+        if (this$contato == null ? other$contato != null : !this$contato.equals(other$contato)) return false;
+        final java.lang.Object this$tipoPessoa = this.getTipoPessoa();
+        final java.lang.Object other$tipoPessoa = other.getTipoPessoa();
+        if (this$tipoPessoa == null ? other$tipoPessoa != null : !this$tipoPessoa.equals(other$tipoPessoa)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$limiteCredito = this.getLimiteCredito();
+        final java.lang.Object other$limiteCredito = other.getLimiteCredito();
+        if (this$limiteCredito == null ? other$limiteCredito != null : !this$limiteCredito.equals(other$limiteCredito)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof Fornecedor;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $prazoPagamento = this.getPrazoPagamento();
+        result = result * PRIME + ($prazoPagamento == null ? 43 : $prazoPagamento.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoFornecedor = this.getCodigoFornecedor();
+        result = result * PRIME + ($codigoFornecedor == null ? 43 : $codigoFornecedor.hashCode());
+        final java.lang.Object $nomeRazaoSocial = this.getNomeRazaoSocial();
+        result = result * PRIME + ($nomeRazaoSocial == null ? 43 : $nomeRazaoSocial.hashCode());
+        final java.lang.Object $nomeFantasia = this.getNomeFantasia();
+        result = result * PRIME + ($nomeFantasia == null ? 43 : $nomeFantasia.hashCode());
+        final java.lang.Object $cnpj = this.getCnpj();
+        result = result * PRIME + ($cnpj == null ? 43 : $cnpj.hashCode());
+        final java.lang.Object $cpf = this.getCpf();
+        result = result * PRIME + ($cpf == null ? 43 : $cpf.hashCode());
+        final java.lang.Object $inscricaoEstadual = this.getInscricaoEstadual();
+        result = result * PRIME + ($inscricaoEstadual == null ? 43 : $inscricaoEstadual.hashCode());
+        final java.lang.Object $inscricaoMunicipal = this.getInscricaoMunicipal();
+        result = result * PRIME + ($inscricaoMunicipal == null ? 43 : $inscricaoMunicipal.hashCode());
+        final java.lang.Object $endereco = this.getEndereco();
+        result = result * PRIME + ($endereco == null ? 43 : $endereco.hashCode());
+        final java.lang.Object $cidade = this.getCidade();
+        result = result * PRIME + ($cidade == null ? 43 : $cidade.hashCode());
+        final java.lang.Object $estado = this.getEstado();
+        result = result * PRIME + ($estado == null ? 43 : $estado.hashCode());
+        final java.lang.Object $cep = this.getCep();
+        result = result * PRIME + ($cep == null ? 43 : $cep.hashCode());
+        final java.lang.Object $telefone = this.getTelefone();
+        result = result * PRIME + ($telefone == null ? 43 : $telefone.hashCode());
+        final java.lang.Object $email = this.getEmail();
+        result = result * PRIME + ($email == null ? 43 : $email.hashCode());
+        final java.lang.Object $contato = this.getContato();
+        result = result * PRIME + ($contato == null ? 43 : $contato.hashCode());
+        final java.lang.Object $tipoPessoa = this.getTipoPessoa();
+        result = result * PRIME + ($tipoPessoa == null ? 43 : $tipoPessoa.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $limiteCredito = this.getLimiteCredito();
+        result = result * PRIME + ($limiteCredito == null ? 43 : $limiteCredito.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "Fornecedor(id=" + this.getId() + ", codigoFornecedor=" + this.getCodigoFornecedor() + ", nomeRazaoSocial=" + this.getNomeRazaoSocial() + ", nomeFantasia=" + this.getNomeFantasia() + ", cnpj=" + this.getCnpj() + ", cpf=" + this.getCpf() + ", inscricaoEstadual=" + this.getInscricaoEstadual() + ", inscricaoMunicipal=" + this.getInscricaoMunicipal() + ", endereco=" + this.getEndereco() + ", cidade=" + this.getCidade() + ", estado=" + this.getEstado() + ", cep=" + this.getCep() + ", telefone=" + this.getTelefone() + ", email=" + this.getEmail() + ", contato=" + this.getContato() + ", tipoPessoa=" + this.getTipoPessoa() + ", status=" + this.getStatus() + ", limiteCredito=" + this.getLimiteCredito() + ", prazoPagamento=" + this.getPrazoPagamento() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Fornecedor() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Fornecedor(final Long id, final String codigoFornecedor, final String nomeRazaoSocial, final String nomeFantasia, final String cnpj, final String cpf, final String inscricaoEstadual, final String inscricaoMunicipal, final String endereco, final String cidade, final String estado, final String cep, final String telefone, final String email, final String contato, final TipoPessoa tipoPessoa, final StatusFornecedor status, final java.math.BigDecimal limiteCredito, final Integer prazoPagamento, final String observacoes, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.codigoFornecedor = codigoFornecedor;
+        this.nomeRazaoSocial = nomeRazaoSocial;
+        this.nomeFantasia = nomeFantasia;
+        this.cnpj = cnpj;
+        this.cpf = cpf;
+        this.inscricaoEstadual = inscricaoEstadual;
+        this.inscricaoMunicipal = inscricaoMunicipal;
+        this.endereco = endereco;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.telefone = telefone;
+        this.email = email;
+        this.contato = contato;
+        this.tipoPessoa = tipoPessoa;
+        this.status = status;
+        this.limiteCredito = limiteCredito;
+        this.prazoPagamento = prazoPagamento;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

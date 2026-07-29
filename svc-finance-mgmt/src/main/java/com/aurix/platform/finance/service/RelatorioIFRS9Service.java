@@ -1,0 +1,247 @@
+package com.aurix.platform.finance.service;
+
+import com.aurix.platform.finance.entity.InstrumentoFinanceiro;
+import com.aurix.platform.finance.entity.ExpectedCreditLoss;
+import com.aurix.platform.finance.entity.RelatorioIFRS9;
+import com.aurix.platform.finance.repository.InstrumentoFinanceiroRepository;
+import com.aurix.platform.finance.repository.ExpectedCreditLossRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Service para geração de relatórios IFRS 9
+ */
+@Service
+@Transactional
+@SuppressWarnings({"PMD.UnusedLocalVariable"})
+public class RelatorioIFRS9Service {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RelatorioIFRS9Service.class);
+    private final InstrumentoFinanceiroRepository instrumentoRepository;
+    private final ExpectedCreditLossRepository eclRepository;
+
+
+    /**
+     * Classe para relatório consolidado
+     */
+    public static class RelatorioConsolidado {
+        private Map<String, CategoriaInfo> categorias = new HashMap<>();
+        private Map<String, EstagioInfo> estagios = new HashMap<>();
+        private BigDecimal provisionamentoTotal = BigDecimal.ZERO;
+
+        public void adicionarCategoria(String categoria, Long quantidade, BigDecimal valor) {
+            categorias.put(categoria, new CategoriaInfo(quantidade, valor));
+        }
+
+        public void adicionarEstagio(String estagio, Long quantidade, BigDecimal valor, BigDecimal provisao) {
+            estagios.put(estagio, new EstagioInfo(quantidade, valor, provisao));
+        }
+
+        // Getters e setters
+        public Map<String, CategoriaInfo> getCategorias() {
+            return categorias;
+        }
+
+        public Map<String, EstagioInfo> getEstagios() {
+            return estagios;
+        }
+
+        public BigDecimal getProvisionamentoTotal() {
+            return provisionamentoTotal;
+        }
+
+        public void setProvisionamentoTotal(BigDecimal provisionamentoTotal) {
+            this.provisionamentoTotal = provisionamentoTotal;
+        }
+    }
+
+
+    public static class CategoriaInfo {
+        private Long quantidade;
+        private BigDecimal valor;
+
+        public CategoriaInfo(Long quantidade, BigDecimal valor) {
+            this.quantidade = quantidade;
+            this.valor = valor;
+        }
+
+        // Getters
+        public Long getQuantidade() {
+            return quantidade;
+        }
+
+        public BigDecimal getValor() {
+            return valor;
+        }
+    }
+
+
+    public static class EstagioInfo {
+        private Long quantidade;
+        private BigDecimal valor;
+        private BigDecimal provisao;
+
+        public EstagioInfo(Long quantidade, BigDecimal valor, BigDecimal provisao) {
+            this.quantidade = quantidade;
+            this.valor = valor;
+            this.provisao = provisao;
+        }
+
+        // Getters
+        public Long getQuantidade() {
+            return quantidade;
+        }
+
+        public BigDecimal getValor() {
+            return valor;
+        }
+
+        public BigDecimal getProvisao() {
+            return provisao;
+        }
+    }
+
+    /**
+     * Gera relatório de classificação e mensuração
+     */
+    public RelatorioIFRS9 gerarRelatorioClassificacao(LocalDate periodoInicio, LocalDate periodoFim) {
+        log.info("Gerando relatório de classificação IFRS 9: {} - {}", periodoInicio, periodoFim);
+        RelatorioIFRS9 relatorio = RelatorioIFRS9.builder().codigoRelatorio("CLASS-" + System.currentTimeMillis()).nome("Relatório de Classificação e Mensuração IFRS 9").descricao("Relatório de classificação de instrumentos financeiros conforme IFRS 9").tipoRelatorio(RelatorioIFRS9.TipoRelatorioIFRS9.CLASSIFICACAO_MENSURACAO).periodoInicio(periodoInicio).periodoFim(periodoFim).formato(RelatorioIFRS9.FormatoRelatorio.PDF).status(RelatorioIFRS9.StatusRelatorio.GERANDO).dataGeracao(LocalDateTime.now()).usuarioGeracao("SISTEMA").build();
+        // Calcular estatísticas
+        calcularEstatisticasClassificacao(relatorio);
+        relatorio.setStatus(RelatorioIFRS9.StatusRelatorio.CONCLUIDO);
+        relatorio.setDataConclusao(LocalDateTime.now());
+        log.info("Relatório de classificação gerado: {}", relatorio.getCodigoRelatorio());
+        return relatorio;
+    }
+
+    /**
+     * Gera relatório de ECL detalhado
+     */
+    public RelatorioIFRS9 gerarRelatorioECLDetalhado(LocalDate dataCalculo) {
+        log.info("Gerando relatório ECL detalhado para: {}", dataCalculo);
+        RelatorioIFRS9 relatorio = RelatorioIFRS9.builder().codigoRelatorio("ECL-DET-" + System.currentTimeMillis()).nome("Relatório ECL Detalhado IFRS 9").descricao("Relatório detalhado de Expected Credit Loss conforme IFRS 9").tipoRelatorio(RelatorioIFRS9.TipoRelatorioIFRS9.ECL_DETALHADO).periodoInicio(dataCalculo).periodoFim(dataCalculo).formato(RelatorioIFRS9.FormatoRelatorio.EXCEL).status(RelatorioIFRS9.StatusRelatorio.GERANDO).dataGeracao(LocalDateTime.now()).usuarioGeracao("SISTEMA").build();
+        // Calcular estatísticas ECL
+        calcularEstatisticasECL(relatorio, dataCalculo);
+        relatorio.setStatus(RelatorioIFRS9.StatusRelatorio.CONCLUIDO);
+        relatorio.setDataConclusao(LocalDateTime.now());
+        log.info("Relatório ECL detalhado gerado: {}", relatorio.getCodigoRelatorio());
+        return relatorio;
+    }
+
+    /**
+     * Gera relatório de hedge accounting
+     */
+    public RelatorioIFRS9 gerarRelatorioHedgeAccounting(LocalDate periodoInicio, LocalDate periodoFim) {
+        log.info("Gerando relatório hedge accounting: {} - {}", periodoInicio, periodoFim);
+        RelatorioIFRS9 relatorio = RelatorioIFRS9.builder().codigoRelatorio("HEDGE-" + System.currentTimeMillis()).nome("Relatório Hedge Accounting IFRS 9").descricao("Relatório de hedge accounting conforme IFRS 9").tipoRelatorio(RelatorioIFRS9.TipoRelatorioIFRS9.HEDGE_ACCOUNTING).periodoInicio(periodoInicio).periodoFim(periodoFim).formato(RelatorioIFRS9.FormatoRelatorio.PDF).status(RelatorioIFRS9.StatusRelatorio.GERANDO).dataGeracao(LocalDateTime.now()).usuarioGeracao("SISTEMA").build();
+        // Calcular estatísticas hedge
+        calcularEstatisticasHedge(relatorio);
+        relatorio.setStatus(RelatorioIFRS9.StatusRelatorio.CONCLUIDO);
+        relatorio.setDataConclusao(LocalDateTime.now());
+        log.info("Relatório hedge accounting gerado: {}", relatorio.getCodigoRelatorio());
+        return relatorio;
+    }
+
+    /**
+     * Calcula estatísticas de classificação
+     */
+    private void calcularEstatisticasClassificacao(RelatorioIFRS9 relatorio) {
+        // Total de instrumentos
+        long totalInstrumentos = instrumentoRepository.count();
+        relatorio.setTotalInstrumentos(totalInstrumentos);
+        // Valor total de exposição
+        BigDecimal valorTotal = BigDecimal.ZERO;
+        for (InstrumentoFinanceiro.CategoriaIFRS9 categoria : InstrumentoFinanceiro.CategoriaIFRS9.values()) {
+            BigDecimal valor = instrumentoRepository.somaValorPorCategoria(categoria);
+            if (valor != null) {
+                valorTotal = valorTotal.add(valor);
+            }
+        }
+        relatorio.setValorTotalExposicao(valorTotal);
+        // Instrumentos por categoria
+        for (InstrumentoFinanceiro.CategoriaIFRS9 categoria : InstrumentoFinanceiro.CategoriaIFRS9.values()) {
+            long quantidade = instrumentoRepository.countByCategoriaIFRS9(categoria);
+            BigDecimal valor = instrumentoRepository.somaValorPorCategoria(categoria);
+            switch (categoria) {
+            case AC: 
+                relatorio.setInstrumentosEstagio1(quantidade);
+                relatorio.setValorECLEstagio1(valor);
+                break;
+            case FVOCI: 
+                relatorio.setInstrumentosEstagio2(quantidade);
+                relatorio.setValorECLEstagio2(valor);
+                break;
+            case FVTPL: 
+                relatorio.setInstrumentosEstagio3(quantidade);
+                relatorio.setValorECLEstagio3(valor);
+                break;
+            case HEDGE: 
+            case DERIVATIVOS: 
+                // Considerados no estágio 1 por padrão para o relatório, se não houver
+                // deterioração
+                if (relatorio.getValorECLEstagio1() == null) {
+                    relatorio.setValorECLEstagio1(valor);
+                    relatorio.setInstrumentosEstagio1(quantidade);
+                } else {
+                    relatorio.setValorECLEstagio1(relatorio.getValorECLEstagio1().add(valor != null ? valor : BigDecimal.ZERO));
+                    relatorio.setInstrumentosEstagio1(relatorio.getInstrumentosEstagio1() + quantidade);
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * Calcula estatísticas de ECL
+     */
+    private void calcularEstatisticasECL(RelatorioIFRS9 relatorio, LocalDate dataCalculo) {
+        // ECL total
+        BigDecimal eclTotal = eclRepository.somaECLPorData(dataCalculo);
+        relatorio.setValorTotalECL(eclTotal);
+        // Provisão total
+        BigDecimal provisaoTotal = eclRepository.somaProvisaoPorData(dataCalculo);
+        relatorio.setValorTotalProvisao(provisaoTotal);
+        // ECL por estágio
+        for (ExpectedCreditLoss.EstagioDeterioracao estagio : ExpectedCreditLoss.EstagioDeterioracao.values()) {
+            BigDecimal ecl = eclRepository.somaECLPorEstagio(estagio);
+            BigDecimal provisao = eclRepository.somaProvisaoPorEstagio(estagio);
+            long quantidade = eclRepository.countByEstagio(estagio);
+            switch (estagio) {
+            case ESTAGIO_1: 
+                relatorio.setValorECLEstagio1(ecl);
+                relatorio.setInstrumentosEstagio1(quantidade);
+                break;
+            case ESTAGIO_2: 
+                relatorio.setValorECLEstagio2(ecl);
+                relatorio.setInstrumentosEstagio2(quantidade);
+                break;
+            case ESTAGIO_3: 
+                relatorio.setValorECLEstagio3(ecl);
+                relatorio.setInstrumentosEstagio3(quantidade);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Calcula estatísticas de hedge
+     */
+    private void calcularEstatisticasHedge(RelatorioIFRS9 relatorio) {
+        // Implementar cálculo de estatísticas de hedge
+        relatorio.setHedgesAtivos(0L);
+        relatorio.setValorHedgeTotal(BigDecimal.ZERO);
+        relatorio.setEfetividadeMedia(BigDecimal.valueOf(0.95));
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RelatorioIFRS9Service(final InstrumentoFinanceiroRepository instrumentoRepository, final ExpectedCreditLossRepository eclRepository) {
+        this.instrumentoRepository = instrumentoRepository;
+        this.eclRepository = eclRepository;
+    }
+}

@@ -1,0 +1,131 @@
+package com.aurix.platform.finance.controller;
+
+import com.aurix.platform.finance.entity.Custo;
+import com.aurix.platform.finance.service.CustoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Controller para APIs de custos
+ * 
+ * Gerencia todas as operações relacionadas a custos e rateios
+ */
+@RestController
+@RequestMapping("/api/finance/custos")
+@Tag(name = "Custos", description = "APIs para gestão de custos e rateios")
+public class CustoController {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CustoController.class);
+    private final CustoService custoService;
+
+    /**
+     * Cria um novo custo
+     */
+    @PostMapping
+    @Operation(summary = "Criar custo", description = "Cria um novo custo ou despesa")
+    public ResponseEntity<Custo> criarCusto(@RequestBody Custo custo) {
+        log.info("Criando custo: {}", custo.getDescricao());
+        Custo custoCriado = custoService.criarCusto(custo);
+        return ResponseEntity.ok(custoCriado);
+    }
+
+    /**
+     * Apura um custo
+     */
+    @PostMapping("/{id}/apurar")
+    @Operation(summary = "Apurar custo", description = "Apura um custo calculado")
+    public ResponseEntity<Custo> apurarCusto(@Parameter(description = "ID do custo") @PathVariable Long id) {
+        log.info("Apurando custo: {}", id);
+        Custo custoApurado = custoService.apurarCusto(id);
+        return ResponseEntity.ok(custoApurado);
+    }
+
+    /**
+     * Rateia um custo
+     */
+    @PostMapping("/{id}/ratear")
+    @Operation(summary = "Ratear custo", description = "Rateia um custo apurado")
+    public ResponseEntity<Custo> ratearCusto(@Parameter(description = "ID do custo") @PathVariable Long id, @Parameter(description = "Percentual de rateio (ex: 0.25 para 25%)") @RequestParam BigDecimal percentualRateio) {
+        log.info("Rateando custo: {} - Percentual: {}%", id, percentualRateio.multiply(BigDecimal.valueOf(100)));
+        Custo custoRateado = custoService.ratearCusto(id, percentualRateio);
+        return ResponseEntity.ok(custoRateado);
+    }
+
+    /**
+     * Busca custos por produto
+     */
+    @GetMapping("/produto/{produtoId}")
+    @Operation(summary = "Buscar custos por produto", description = "Busca todos os custos de um produto específico")
+    public ResponseEntity<List<Custo>> buscarCustosPorProduto(@Parameter(description = "ID do produto") @PathVariable Long produtoId) {
+        log.info("Buscando custos do produto: {}", produtoId);
+        List<Custo> custos = custoService.buscarCustosPorProduto(produtoId);
+        return ResponseEntity.ok(custos);
+    }
+
+    /**
+     * Busca custos por cliente
+     */
+    @GetMapping("/cliente/{clienteId}")
+    @Operation(summary = "Buscar custos por cliente", description = "Busca todos os custos de um cliente específico")
+    public ResponseEntity<List<Custo>> buscarCustosPorCliente(@Parameter(description = "ID do cliente") @PathVariable Long clienteId) {
+        log.info("Buscando custos do cliente: {}", clienteId);
+        List<Custo> custos = custoService.buscarCustosPorCliente(clienteId);
+        return ResponseEntity.ok(custos);
+    }
+
+    /**
+     * Busca custos não rateados
+     */
+    @GetMapping("/nao-rateados")
+    @Operation(summary = "Buscar custos não rateados", description = "Busca custos que ainda não foram rateados")
+    public ResponseEntity<List<Custo>> buscarCustosNaoRateados() {
+        log.info("Buscando custos não rateados");
+        List<Custo> custos = custoService.buscarCustosNaoRateados();
+        return ResponseEntity.ok(custos);
+    }
+
+    /**
+     * Calcula resumo por produto
+     */
+    @GetMapping("/resumo-produto/{produtoId}")
+    @Operation(summary = "Calcular resumo por produto", description = "Calcula o resumo dos custos por produto")
+    public ResponseEntity<CustoService.ResumoProduto> calcularResumoProduto(@Parameter(description = "ID do produto") @PathVariable Long produtoId) {
+        log.info("Calculando resumo do produto: {}", produtoId);
+        CustoService.ResumoProduto resumo = custoService.calcularResumoProduto(produtoId);
+        return ResponseEntity.ok(resumo);
+    }
+
+    /**
+     * Calcula resumo por cliente
+     */
+    @GetMapping("/resumo-cliente/{clienteId}")
+    @Operation(summary = "Calcular resumo por cliente", description = "Calcula o resumo dos custos por cliente")
+    public ResponseEntity<CustoService.ResumoCliente> calcularResumoCliente(@Parameter(description = "ID do cliente") @PathVariable Long clienteId) {
+        log.info("Calculando resumo do cliente: {}", clienteId);
+        CustoService.ResumoCliente resumo = custoService.calcularResumoCliente(clienteId);
+        return ResponseEntity.ok(resumo);
+    }
+
+    /**
+     * Calcula resumo por período
+     */
+    @GetMapping("/resumo-periodo")
+    @Operation(summary = "Calcular resumo por período", description = "Calcula o resumo dos custos por período")
+    public ResponseEntity<CustoService.ResumoPeriodo> calcularResumoPeriodo(@Parameter(description = "Data início do período") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio, @Parameter(description = "Data fim do período") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        log.info("Calculando resumo do período: {} - {}", dataInicio, dataFim);
+        CustoService.ResumoPeriodo resumo = custoService.calcularResumoPeriodo(dataInicio, dataFim);
+        return ResponseEntity.ok(resumo);
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CustoController(final CustoService custoService) {
+        this.custoService = custoService;
+    }
+}

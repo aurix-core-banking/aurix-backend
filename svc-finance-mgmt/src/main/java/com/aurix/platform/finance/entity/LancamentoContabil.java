@@ -1,0 +1,723 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa um lançamento contábil
+ * 
+ * Registra todas as movimentações financeiras no razão geral,
+ * seguindo o princípio da partida dobrada.
+ */
+@Entity
+@Table(name = "lancamentos_contabeis", schema = "aurix")
+public class LancamentoContabil {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "numero_lancamento", unique = true, nullable = false)
+    private String numeroLancamento;
+    @Column(name = "data_lancamento", nullable = false)
+    private LocalDateTime dataLancamento;
+    @Column(name = "data_contabil", nullable = false)
+    private LocalDateTime dataContabil;
+    @Column(name = "historico", nullable = false, length = 500)
+    private String historico;
+    @Column(name = "valor_total", precision = 15, scale = 2, nullable = false)
+    private BigDecimal valorTotal;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_lancamento", nullable = false)
+    private TipoLancamento tipoLancamento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "origem", nullable = false)
+    private OrigemLancamento origem;
+    @Column(name = "documento_origem", length = 100)
+    private String documentoOrigem;
+    @Column(name = "referencia_origem", length = 100)
+    private String referenciaOrigem;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusLancamento status;
+    @Column(name = "usuario_lancamento", length = 100)
+    private String usuarioLancamento;
+    @Column(name = "usuario_aprovacao", length = 100)
+    private String usuarioAprovacao;
+    @Column(name = "data_aprovacao")
+    private LocalDateTime dataAprovacao;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @OneToMany(mappedBy = "lancamento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ItemLancamentoContabil> itens;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de lançamento contábil
+     */
+    public enum TipoLancamento {
+        MANUAL,  // Lançamento manual
+        AUTOMATICO,  // Lançamento automático
+        AJUSTE,  // Ajuste contábil
+        REVERSAL,  // Reversão de lançamento
+        TRANSFERENCIA,  // Transferência entre contas
+        FECHAMENTO,  // Lançamento de fechamento
+        ABERTURA // Lançamento de abertura
+        ;
+    }
+
+
+    /**
+     * Origem do lançamento
+     */
+    public enum OrigemLancamento {
+        PIX,  // Sistema PIX
+        TED,  // TED
+        DOC,  // DOC
+        TRANSFERENCIA,  // Transferência interna
+        EMPRESTIMO,  // Empréstimo
+        INVESTIMENTO,  // Investimento
+        TARIFA,  // Cobrança de tarifa
+        JUROS,  // Juros
+        IOF,  // IOF
+        IR,  // Imposto de Renda
+        MANUAL,  // Lançamento manual
+        SISTEMA,  // Sistema
+        CONCILIACAO,  // Conciliação
+        FECHAMENTO // Fechamento
+        ;
+    }
+
+
+    /**
+     * Status do lançamento
+     */
+    public enum StatusLancamento {
+        RASCUNHO,  // Rascunho
+        PENDENTE,  // Pendente de aprovação
+        APROVADO,  // Aprovado
+        REJEITADO,  // Rejeitado
+        PROCESSADO,  // Processado
+        CANCELADO,  // Cancelado
+        REVERSADO // Reversado
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class LancamentoContabilBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String numeroLancamento;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataLancamento;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataContabil;
+        @java.lang.SuppressWarnings("all")
+        private String historico;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorTotal;
+        @java.lang.SuppressWarnings("all")
+        private TipoLancamento tipoLancamento;
+        @java.lang.SuppressWarnings("all")
+        private OrigemLancamento origem;
+        @java.lang.SuppressWarnings("all")
+        private String documentoOrigem;
+        @java.lang.SuppressWarnings("all")
+        private String referenciaOrigem;
+        @java.lang.SuppressWarnings("all")
+        private StatusLancamento status;
+        @java.lang.SuppressWarnings("all")
+        private String usuarioLancamento;
+        @java.lang.SuppressWarnings("all")
+        private String usuarioAprovacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAprovacao;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private List<ItemLancamentoContabil> itens;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        LancamentoContabilBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder numeroLancamento(final String numeroLancamento) {
+            this.numeroLancamento = numeroLancamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder dataLancamento(final LocalDateTime dataLancamento) {
+            this.dataLancamento = dataLancamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder dataContabil(final LocalDateTime dataContabil) {
+            this.dataContabil = dataContabil;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder historico(final String historico) {
+            this.historico = historico;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder valorTotal(final BigDecimal valorTotal) {
+            this.valorTotal = valorTotal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder tipoLancamento(final TipoLancamento tipoLancamento) {
+            this.tipoLancamento = tipoLancamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder origem(final OrigemLancamento origem) {
+            this.origem = origem;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder documentoOrigem(final String documentoOrigem) {
+            this.documentoOrigem = documentoOrigem;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder referenciaOrigem(final String referenciaOrigem) {
+            this.referenciaOrigem = referenciaOrigem;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder status(final StatusLancamento status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder usuarioLancamento(final String usuarioLancamento) {
+            this.usuarioLancamento = usuarioLancamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder usuarioAprovacao(final String usuarioAprovacao) {
+            this.usuarioAprovacao = usuarioAprovacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder dataAprovacao(final LocalDateTime dataAprovacao) {
+            this.dataAprovacao = dataAprovacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder itens(final List<ItemLancamentoContabil> itens) {
+            this.itens = itens;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil.LancamentoContabilBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public LancamentoContabil build() {
+            return new LancamentoContabil(this.id, this.numeroLancamento, this.dataLancamento, this.dataContabil, this.historico, this.valorTotal, this.tipoLancamento, this.origem, this.documentoOrigem, this.referenciaOrigem, this.status, this.usuarioLancamento, this.usuarioAprovacao, this.dataAprovacao, this.observacoes, this.metadata, this.itens, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "LancamentoContabil.LancamentoContabilBuilder(id=" + this.id + ", numeroLancamento=" + this.numeroLancamento + ", dataLancamento=" + this.dataLancamento + ", dataContabil=" + this.dataContabil + ", historico=" + this.historico + ", valorTotal=" + this.valorTotal + ", tipoLancamento=" + this.tipoLancamento + ", origem=" + this.origem + ", documentoOrigem=" + this.documentoOrigem + ", referenciaOrigem=" + this.referenciaOrigem + ", status=" + this.status + ", usuarioLancamento=" + this.usuarioLancamento + ", usuarioAprovacao=" + this.usuarioAprovacao + ", dataAprovacao=" + this.dataAprovacao + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", itens=" + this.itens + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static LancamentoContabil.LancamentoContabilBuilder builder() {
+        return new LancamentoContabil.LancamentoContabilBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNumeroLancamento() {
+        return this.numeroLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataLancamento() {
+        return this.dataLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataContabil() {
+        return this.dataContabil;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getHistorico() {
+        return this.historico;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorTotal() {
+        return this.valorTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoLancamento getTipoLancamento() {
+        return this.tipoLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public OrigemLancamento getOrigem() {
+        return this.origem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDocumentoOrigem() {
+        return this.documentoOrigem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getReferenciaOrigem() {
+        return this.referenciaOrigem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusLancamento getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUsuarioLancamento() {
+        return this.usuarioLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUsuarioAprovacao() {
+        return this.usuarioAprovacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAprovacao() {
+        return this.dataAprovacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public List<ItemLancamentoContabil> getItens() {
+        return this.itens;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNumeroLancamento(final String numeroLancamento) {
+        this.numeroLancamento = numeroLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataLancamento(final LocalDateTime dataLancamento) {
+        this.dataLancamento = dataLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataContabil(final LocalDateTime dataContabil) {
+        this.dataContabil = dataContabil;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setHistorico(final String historico) {
+        this.historico = historico;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorTotal(final BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoLancamento(final TipoLancamento tipoLancamento) {
+        this.tipoLancamento = tipoLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setOrigem(final OrigemLancamento origem) {
+        this.origem = origem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDocumentoOrigem(final String documentoOrigem) {
+        this.documentoOrigem = documentoOrigem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setReferenciaOrigem(final String referenciaOrigem) {
+        this.referenciaOrigem = referenciaOrigem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusLancamento status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUsuarioLancamento(final String usuarioLancamento) {
+        this.usuarioLancamento = usuarioLancamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUsuarioAprovacao(final String usuarioAprovacao) {
+        this.usuarioAprovacao = usuarioAprovacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAprovacao(final LocalDateTime dataAprovacao) {
+        this.dataAprovacao = dataAprovacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setItens(final List<ItemLancamentoContabil> itens) {
+        this.itens = itens;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof LancamentoContabil)) return false;
+        final LancamentoContabil other = (LancamentoContabil) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$numeroLancamento = this.getNumeroLancamento();
+        final java.lang.Object other$numeroLancamento = other.getNumeroLancamento();
+        if (this$numeroLancamento == null ? other$numeroLancamento != null : !this$numeroLancamento.equals(other$numeroLancamento)) return false;
+        final java.lang.Object this$dataLancamento = this.getDataLancamento();
+        final java.lang.Object other$dataLancamento = other.getDataLancamento();
+        if (this$dataLancamento == null ? other$dataLancamento != null : !this$dataLancamento.equals(other$dataLancamento)) return false;
+        final java.lang.Object this$dataContabil = this.getDataContabil();
+        final java.lang.Object other$dataContabil = other.getDataContabil();
+        if (this$dataContabil == null ? other$dataContabil != null : !this$dataContabil.equals(other$dataContabil)) return false;
+        final java.lang.Object this$historico = this.getHistorico();
+        final java.lang.Object other$historico = other.getHistorico();
+        if (this$historico == null ? other$historico != null : !this$historico.equals(other$historico)) return false;
+        final java.lang.Object this$valorTotal = this.getValorTotal();
+        final java.lang.Object other$valorTotal = other.getValorTotal();
+        if (this$valorTotal == null ? other$valorTotal != null : !this$valorTotal.equals(other$valorTotal)) return false;
+        final java.lang.Object this$tipoLancamento = this.getTipoLancamento();
+        final java.lang.Object other$tipoLancamento = other.getTipoLancamento();
+        if (this$tipoLancamento == null ? other$tipoLancamento != null : !this$tipoLancamento.equals(other$tipoLancamento)) return false;
+        final java.lang.Object this$origem = this.getOrigem();
+        final java.lang.Object other$origem = other.getOrigem();
+        if (this$origem == null ? other$origem != null : !this$origem.equals(other$origem)) return false;
+        final java.lang.Object this$documentoOrigem = this.getDocumentoOrigem();
+        final java.lang.Object other$documentoOrigem = other.getDocumentoOrigem();
+        if (this$documentoOrigem == null ? other$documentoOrigem != null : !this$documentoOrigem.equals(other$documentoOrigem)) return false;
+        final java.lang.Object this$referenciaOrigem = this.getReferenciaOrigem();
+        final java.lang.Object other$referenciaOrigem = other.getReferenciaOrigem();
+        if (this$referenciaOrigem == null ? other$referenciaOrigem != null : !this$referenciaOrigem.equals(other$referenciaOrigem)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$usuarioLancamento = this.getUsuarioLancamento();
+        final java.lang.Object other$usuarioLancamento = other.getUsuarioLancamento();
+        if (this$usuarioLancamento == null ? other$usuarioLancamento != null : !this$usuarioLancamento.equals(other$usuarioLancamento)) return false;
+        final java.lang.Object this$usuarioAprovacao = this.getUsuarioAprovacao();
+        final java.lang.Object other$usuarioAprovacao = other.getUsuarioAprovacao();
+        if (this$usuarioAprovacao == null ? other$usuarioAprovacao != null : !this$usuarioAprovacao.equals(other$usuarioAprovacao)) return false;
+        final java.lang.Object this$dataAprovacao = this.getDataAprovacao();
+        final java.lang.Object other$dataAprovacao = other.getDataAprovacao();
+        if (this$dataAprovacao == null ? other$dataAprovacao != null : !this$dataAprovacao.equals(other$dataAprovacao)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$itens = this.getItens();
+        final java.lang.Object other$itens = other.getItens();
+        if (this$itens == null ? other$itens != null : !this$itens.equals(other$itens)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof LancamentoContabil;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $numeroLancamento = this.getNumeroLancamento();
+        result = result * PRIME + ($numeroLancamento == null ? 43 : $numeroLancamento.hashCode());
+        final java.lang.Object $dataLancamento = this.getDataLancamento();
+        result = result * PRIME + ($dataLancamento == null ? 43 : $dataLancamento.hashCode());
+        final java.lang.Object $dataContabil = this.getDataContabil();
+        result = result * PRIME + ($dataContabil == null ? 43 : $dataContabil.hashCode());
+        final java.lang.Object $historico = this.getHistorico();
+        result = result * PRIME + ($historico == null ? 43 : $historico.hashCode());
+        final java.lang.Object $valorTotal = this.getValorTotal();
+        result = result * PRIME + ($valorTotal == null ? 43 : $valorTotal.hashCode());
+        final java.lang.Object $tipoLancamento = this.getTipoLancamento();
+        result = result * PRIME + ($tipoLancamento == null ? 43 : $tipoLancamento.hashCode());
+        final java.lang.Object $origem = this.getOrigem();
+        result = result * PRIME + ($origem == null ? 43 : $origem.hashCode());
+        final java.lang.Object $documentoOrigem = this.getDocumentoOrigem();
+        result = result * PRIME + ($documentoOrigem == null ? 43 : $documentoOrigem.hashCode());
+        final java.lang.Object $referenciaOrigem = this.getReferenciaOrigem();
+        result = result * PRIME + ($referenciaOrigem == null ? 43 : $referenciaOrigem.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $usuarioLancamento = this.getUsuarioLancamento();
+        result = result * PRIME + ($usuarioLancamento == null ? 43 : $usuarioLancamento.hashCode());
+        final java.lang.Object $usuarioAprovacao = this.getUsuarioAprovacao();
+        result = result * PRIME + ($usuarioAprovacao == null ? 43 : $usuarioAprovacao.hashCode());
+        final java.lang.Object $dataAprovacao = this.getDataAprovacao();
+        result = result * PRIME + ($dataAprovacao == null ? 43 : $dataAprovacao.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $itens = this.getItens();
+        result = result * PRIME + ($itens == null ? 43 : $itens.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "LancamentoContabil(id=" + this.getId() + ", numeroLancamento=" + this.getNumeroLancamento() + ", dataLancamento=" + this.getDataLancamento() + ", dataContabil=" + this.getDataContabil() + ", historico=" + this.getHistorico() + ", valorTotal=" + this.getValorTotal() + ", tipoLancamento=" + this.getTipoLancamento() + ", origem=" + this.getOrigem() + ", documentoOrigem=" + this.getDocumentoOrigem() + ", referenciaOrigem=" + this.getReferenciaOrigem() + ", status=" + this.getStatus() + ", usuarioLancamento=" + this.getUsuarioLancamento() + ", usuarioAprovacao=" + this.getUsuarioAprovacao() + ", dataAprovacao=" + this.getDataAprovacao() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", itens=" + this.getItens() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LancamentoContabil() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LancamentoContabil(final Long id, final String numeroLancamento, final LocalDateTime dataLancamento, final LocalDateTime dataContabil, final String historico, final BigDecimal valorTotal, final TipoLancamento tipoLancamento, final OrigemLancamento origem, final String documentoOrigem, final String referenciaOrigem, final StatusLancamento status, final String usuarioLancamento, final String usuarioAprovacao, final LocalDateTime dataAprovacao, final String observacoes, final String metadata, final List<ItemLancamentoContabil> itens, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.numeroLancamento = numeroLancamento;
+        this.dataLancamento = dataLancamento;
+        this.dataContabil = dataContabil;
+        this.historico = historico;
+        this.valorTotal = valorTotal;
+        this.tipoLancamento = tipoLancamento;
+        this.origem = origem;
+        this.documentoOrigem = documentoOrigem;
+        this.referenciaOrigem = referenciaOrigem;
+        this.status = status;
+        this.usuarioLancamento = usuarioLancamento;
+        this.usuarioAprovacao = usuarioAprovacao;
+        this.dataAprovacao = dataAprovacao;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.itens = itens;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

@@ -1,0 +1,641 @@
+package com.aurix.platform.finance.service;
+
+import com.aurix.platform.shared.event.ImpostoEvent;
+import com.aurix.platform.shared.event.Topics;
+import com.aurix.platform.finance.entity.Imposto;
+import com.aurix.platform.finance.repository.ImpostoRepository;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Service para gestão de impostos
+ * 
+ * Gerencia todo o ciclo de vida dos impostos e tributos
+ */
+@Service
+@Transactional
+public class ImpostoService {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ImpostoService.class);
+    private final ImpostoRepository impostoRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    /**
+     * Cria um novo imposto
+     */
+    public Imposto criarImposto(Imposto imposto) {
+        log.info("Criando imposto: {} - Tipo: {}", imposto.getNome(), imposto.getTipoImposto());
+        // Gerar código único se não fornecido
+        if (imposto.getCodigoImposto() == null) {
+            imposto.setCodigoImposto(gerarCodigoImposto(imposto.getTipoImposto(), imposto.getCompetencia()));
+        }
+        // Calcular valores
+        calcularValoresImposto(imposto);
+        // Definir status inicial
+        imposto.setStatus(Imposto.StatusImposto.CALCULADO);
+        Imposto impostoSalvo = impostoRepository.save(imposto);
+        log.info("Imposto criado: {} - ID: {}", imposto.getCodigoImposto(), impostoSalvo.getId());
+
+        ImpostoEvent event = ImpostoEvent.impostoCalculado(
+            impostoSalvo.getId().toString(),
+            null,
+            null,
+            impostoSalvo.getValorImposto(),
+            impostoSalvo.getTipoImposto().name(),
+            impostoSalvo.getCompetencia());
+        kafkaTemplate.send(Topics.IMPOSTO_CALCULADO, event.getEventId(), event);
+
+        return impostoSalvo;
+    }
+
+    /**
+     * Apura um imposto
+     */
+    public Imposto apurarImposto(Long id) {
+        log.info("Apurando imposto: {}", id);
+        Imposto imposto = impostoRepository.findById(id).orElseThrow(() -> new RuntimeException("Imposto não encontrado: " + id));
+        if (imposto.getStatus() != Imposto.StatusImposto.CALCULADO) {
+            throw new RuntimeException("Imposto não está calculado para apuração");
+        }
+        // Recalcular valores se necessário
+        calcularValoresImposto(imposto);
+        imposto.setStatus(Imposto.StatusImposto.APURADO);
+        Imposto impostoApurado = impostoRepository.save(imposto);
+        log.info("Imposto apurado: {}", id);
+        return impostoApurado;
+    }
+
+    /**
+     * Registra pagamento de imposto
+     */
+    public Imposto pagarImposto(Long id, LocalDate dataPagamento, String numeroDarf) {
+        log.info("Registrando pagamento do imposto: {} - Data: {}", id, dataPagamento);
+        Imposto imposto = impostoRepository.findById(id).orElseThrow(() -> new RuntimeException("Imposto não encontrado: " + id));
+        if (imposto.getStatus() != Imposto.StatusImposto.APURADO) {
+            throw new RuntimeException("Imposto não está apurado para pagamento");
+        }
+        // Calcular multa e juros se houver atraso
+        if (dataPagamento.isAfter(imposto.getDataVencimento())) {
+            calcularMultaJuros(imposto, dataPagamento);
+        }
+        imposto.setDataPagamento(dataPagamento);
+        imposto.setNumeroDarf(numeroDarf);
+        imposto.setStatus(Imposto.StatusImposto.PAGO);
+        // Recalcular valor total
+        calcularValoresImposto(imposto);
+        Imposto impostoPago = impostoRepository.save(imposto);
+        log.info("Pagamento registrado para imposto: {}", id);
+        return impostoPago;
+    }
+
+    /**
+     * Busca impostos vencidos
+     */
+    public List<Imposto> buscarImpostosVencidos() {
+        log.info("Buscando impostos vencidos");
+        LocalDate hoje = LocalDate.now();
+        List<Imposto> impostosVencidos = impostoRepository.findImpostosVencidos(hoje);
+        log.info("Encontrados {} impostos vencidos", impostosVencidos.size());
+        return impostosVencidos;
+    }
+
+    /**
+     * Busca impostos próximos do vencimento
+     */
+    public List<Imposto> buscarImpostosProximosVencimento(int dias) {
+        log.info("Buscando impostos próximos do vencimento em {} dias", dias);
+        LocalDate hoje = LocalDate.now();
+        LocalDate dataLimite = hoje.plusDays(dias);
+        List<Imposto> impostosProximos = impostoRepository.findImpostosProximosVencimento(hoje, dataLimite);
+        log.info("Encontrados {} impostos próximos do vencimento", impostosProximos.size());
+        return impostosProximos;
+    }
+
+    /**
+     * Calcula resumo por competência
+     */
+    public ResumoCompetencia calcularResumoCompetencia(String competencia) {
+        log.info("Calculando resumo da competência: {}", competencia);
+        BigDecimal valorTotal = impostoRepository.somaValorPorCompetencia(competencia);
+        long totalImpostos = impostoRepository.countByCompetencia(competencia);
+        long impostosPagos = impostoRepository.countByCompetenciaAndStatus(competencia, Imposto.StatusImposto.PAGO);
+        if (valorTotal == null) valorTotal = BigDecimal.ZERO;
+        ResumoCompetencia resumo = ResumoCompetencia.builder().competencia(competencia).valorTotal(valorTotal).totalImpostos(totalImpostos).impostosPagos(impostosPagos).impostosPendentes(totalImpostos - impostosPagos).build();
+        log.info("Resumo calculado para competência {}: Total={}, Impostos={}", competencia, valorTotal, totalImpostos);
+        return resumo;
+    }
+
+    /**
+     * Calcula resumo por período
+     */
+    public ResumoPeriodo calcularResumoPeriodo(LocalDate dataInicio, LocalDate dataFim) {
+        log.info("Calculando resumo do período: {} - {}", dataInicio, dataFim);
+        BigDecimal valorTotal = impostoRepository.somaValorPorPeriodo(dataInicio, dataFim);
+        BigDecimal multas = impostoRepository.somaMultasPorPeriodo(dataInicio, dataFim);
+        BigDecimal juros = impostoRepository.somaJurosPorPeriodo(dataInicio, dataFim);
+        if (valorTotal == null) valorTotal = BigDecimal.ZERO;
+        if (multas == null) multas = BigDecimal.ZERO;
+        if (juros == null) juros = BigDecimal.ZERO;
+        ResumoPeriodo resumo = ResumoPeriodo.builder().dataInicio(dataInicio).dataFim(dataFim).valorTotalImpostos(valorTotal).valorTotalMultas(multas).valorTotalJuros(juros).valorTotalGeral(valorTotal.add(multas).add(juros)).build();
+        log.info("Resumo calculado para período: Impostos={}, Multas={}, Juros={}", valorTotal, multas, juros);
+        return resumo;
+    }
+
+    /**
+     * Gera código único para imposto
+     */
+    private String gerarCodigoImposto(Imposto.TipoImposto tipo, String competencia) {
+        return String.format("%s-%s-%d", tipo.name(), competencia, System.currentTimeMillis() % 10000);
+    }
+
+    /**
+     * Calcula valores do imposto
+     */
+    private void calcularValoresImposto(Imposto imposto) {
+        BigDecimal baseCalculo = imposto.getBaseCalculo();
+        BigDecimal aliquota = imposto.getAliquota();
+        if (baseCalculo != null && aliquota != null) {
+            BigDecimal valorImposto = baseCalculo.multiply(aliquota).setScale(2, RoundingMode.HALF_UP);
+            imposto.setValorImposto(valorImposto);
+            BigDecimal valorTotal = valorImposto;
+            // Adicionar multa se houver
+            if (imposto.getValorMulta() != null) {
+                valorTotal = valorTotal.add(imposto.getValorMulta());
+            }
+            // Adicionar juros se houver
+            if (imposto.getValorJuros() != null) {
+                valorTotal = valorTotal.add(imposto.getValorJuros());
+            }
+            imposto.setValorTotal(valorTotal);
+        }
+    }
+
+    /**
+     * Calcula multa e juros por atraso
+     */
+    private void calcularMultaJuros(Imposto imposto, LocalDate dataPagamento) {
+        long diasAtraso = java.time.temporal.ChronoUnit.DAYS.between(imposto.getDataVencimento(), dataPagamento);
+        if (diasAtraso > 0) {
+            BigDecimal valorImposto = imposto.getValorImposto();
+            // Multa de 2% sobre o valor do imposto. Arredondado para 2 casas
+            // decimais (coluna valor_multa é scale=2) — um valor de guia DARF
+            // não pode ter fração de centavo.
+            BigDecimal multa = valorImposto.multiply(BigDecimal.valueOf(0.02)).setScale(2, RoundingMode.HALF_UP);
+            imposto.setValorMulta(multa);
+            // Juros de 1% ao mês (0.033% ao dia), também arredondado para centavos.
+            BigDecimal taxaJurosDiaria = BigDecimal.valueOf(0.01).divide(BigDecimal.valueOf(30), 6, RoundingMode.HALF_UP);
+            BigDecimal juros = valorImposto.multiply(taxaJurosDiaria).multiply(BigDecimal.valueOf(diasAtraso)).setScale(2, RoundingMode.HALF_UP);
+            imposto.setValorJuros(juros);
+            log.info("Calculados multa e juros para imposto {}: Multa={}, Juros={}, Dias atraso={}", imposto.getId(), multa, juros, diasAtraso);
+        }
+    }
+
+
+    /**
+     * Classe para resumo por competência
+     */
+    public static class ResumoCompetencia {
+        private String competencia;
+        private BigDecimal valorTotal;
+        private Long totalImpostos;
+        private Long impostosPagos;
+        private Long impostosPendentes;
+
+        @java.lang.SuppressWarnings("all")
+        ResumoCompetencia(final String competencia, final BigDecimal valorTotal, final Long totalImpostos, final Long impostosPagos, final Long impostosPendentes) {
+            this.competencia = competencia;
+            this.valorTotal = valorTotal;
+            this.totalImpostos = totalImpostos;
+            this.impostosPagos = impostosPagos;
+            this.impostosPendentes = impostosPendentes;
+        }
+
+
+        @java.lang.SuppressWarnings("all")
+        public static class ResumoCompetenciaBuilder {
+            @java.lang.SuppressWarnings("all")
+            private String competencia;
+            @java.lang.SuppressWarnings("all")
+            private BigDecimal valorTotal;
+            @java.lang.SuppressWarnings("all")
+            private Long totalImpostos;
+            @java.lang.SuppressWarnings("all")
+            private Long impostosPagos;
+            @java.lang.SuppressWarnings("all")
+            private Long impostosPendentes;
+
+            @java.lang.SuppressWarnings("all")
+            ResumoCompetenciaBuilder() {
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder competencia(final String competencia) {
+                this.competencia = competencia;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder valorTotal(final BigDecimal valorTotal) {
+                this.valorTotal = valorTotal;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder totalImpostos(final Long totalImpostos) {
+                this.totalImpostos = totalImpostos;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder impostosPagos(final Long impostosPagos) {
+                this.impostosPagos = impostosPagos;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder impostosPendentes(final Long impostosPendentes) {
+                this.impostosPendentes = impostosPendentes;
+                return this;
+            }
+
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoCompetencia build() {
+                return new ImpostoService.ResumoCompetencia(this.competencia, this.valorTotal, this.totalImpostos, this.impostosPagos, this.impostosPendentes);
+            }
+
+            @java.lang.Override
+            @java.lang.SuppressWarnings("all")
+            public java.lang.String toString() {
+                return "ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder(competencia=" + this.competencia + ", valorTotal=" + this.valorTotal + ", totalImpostos=" + this.totalImpostos + ", impostosPagos=" + this.impostosPagos + ", impostosPendentes=" + this.impostosPendentes + ")";
+            }
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public static ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder builder() {
+            return new ImpostoService.ResumoCompetencia.ResumoCompetenciaBuilder();
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public String getCompetencia() {
+            return this.competencia;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public BigDecimal getValorTotal() {
+            return this.valorTotal;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Long getTotalImpostos() {
+            return this.totalImpostos;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Long getImpostosPagos() {
+            return this.impostosPagos;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Long getImpostosPendentes() {
+            return this.impostosPendentes;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setCompetencia(final String competencia) {
+            this.competencia = competencia;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setValorTotal(final BigDecimal valorTotal) {
+            this.valorTotal = valorTotal;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setTotalImpostos(final Long totalImpostos) {
+            this.totalImpostos = totalImpostos;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setImpostosPagos(final Long impostosPagos) {
+            this.impostosPagos = impostosPagos;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setImpostosPendentes(final Long impostosPendentes) {
+            this.impostosPendentes = impostosPendentes;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public boolean equals(final java.lang.Object o) {
+            if (o == this) return true;
+            if (!(o instanceof ImpostoService.ResumoCompetencia)) return false;
+            final ImpostoService.ResumoCompetencia other = (ImpostoService.ResumoCompetencia) o;
+            if (!other.canEqual((java.lang.Object) this)) return false;
+            final java.lang.Object this$totalImpostos = this.getTotalImpostos();
+            final java.lang.Object other$totalImpostos = other.getTotalImpostos();
+            if (this$totalImpostos == null ? other$totalImpostos != null : !this$totalImpostos.equals(other$totalImpostos)) return false;
+            final java.lang.Object this$impostosPagos = this.getImpostosPagos();
+            final java.lang.Object other$impostosPagos = other.getImpostosPagos();
+            if (this$impostosPagos == null ? other$impostosPagos != null : !this$impostosPagos.equals(other$impostosPagos)) return false;
+            final java.lang.Object this$impostosPendentes = this.getImpostosPendentes();
+            final java.lang.Object other$impostosPendentes = other.getImpostosPendentes();
+            if (this$impostosPendentes == null ? other$impostosPendentes != null : !this$impostosPendentes.equals(other$impostosPendentes)) return false;
+            final java.lang.Object this$competencia = this.getCompetencia();
+            final java.lang.Object other$competencia = other.getCompetencia();
+            if (this$competencia == null ? other$competencia != null : !this$competencia.equals(other$competencia)) return false;
+            final java.lang.Object this$valorTotal = this.getValorTotal();
+            final java.lang.Object other$valorTotal = other.getValorTotal();
+            if (this$valorTotal == null ? other$valorTotal != null : !this$valorTotal.equals(other$valorTotal)) return false;
+            return true;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        protected boolean canEqual(final java.lang.Object other) {
+            return other instanceof ImpostoService.ResumoCompetencia;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public int hashCode() {
+            final int PRIME = 59;
+            int result = 1;
+            final java.lang.Object $totalImpostos = this.getTotalImpostos();
+            result = result * PRIME + ($totalImpostos == null ? 43 : $totalImpostos.hashCode());
+            final java.lang.Object $impostosPagos = this.getImpostosPagos();
+            result = result * PRIME + ($impostosPagos == null ? 43 : $impostosPagos.hashCode());
+            final java.lang.Object $impostosPendentes = this.getImpostosPendentes();
+            result = result * PRIME + ($impostosPendentes == null ? 43 : $impostosPendentes.hashCode());
+            final java.lang.Object $competencia = this.getCompetencia();
+            result = result * PRIME + ($competencia == null ? 43 : $competencia.hashCode());
+            final java.lang.Object $valorTotal = this.getValorTotal();
+            result = result * PRIME + ($valorTotal == null ? 43 : $valorTotal.hashCode());
+            return result;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "ImpostoService.ResumoCompetencia(competencia=" + this.getCompetencia() + ", valorTotal=" + this.getValorTotal() + ", totalImpostos=" + this.getTotalImpostos() + ", impostosPagos=" + this.getImpostosPagos() + ", impostosPendentes=" + this.getImpostosPendentes() + ")";
+        }
+    }
+
+
+    /**
+     * Classe para resumo por período
+     */
+    public static class ResumoPeriodo {
+        private LocalDate dataInicio;
+        private LocalDate dataFim;
+        private BigDecimal valorTotalImpostos;
+        private BigDecimal valorTotalMultas;
+        private BigDecimal valorTotalJuros;
+        private BigDecimal valorTotalGeral;
+
+        @java.lang.SuppressWarnings("all")
+        ResumoPeriodo(final LocalDate dataInicio, final LocalDate dataFim, final BigDecimal valorTotalImpostos, final BigDecimal valorTotalMultas, final BigDecimal valorTotalJuros, final BigDecimal valorTotalGeral) {
+            this.dataInicio = dataInicio;
+            this.dataFim = dataFim;
+            this.valorTotalImpostos = valorTotalImpostos;
+            this.valorTotalMultas = valorTotalMultas;
+            this.valorTotalJuros = valorTotalJuros;
+            this.valorTotalGeral = valorTotalGeral;
+        }
+
+
+        @java.lang.SuppressWarnings("all")
+        public static class ResumoPeriodoBuilder {
+            @java.lang.SuppressWarnings("all")
+            private LocalDate dataInicio;
+            @java.lang.SuppressWarnings("all")
+            private LocalDate dataFim;
+            @java.lang.SuppressWarnings("all")
+            private BigDecimal valorTotalImpostos;
+            @java.lang.SuppressWarnings("all")
+            private BigDecimal valorTotalMultas;
+            @java.lang.SuppressWarnings("all")
+            private BigDecimal valorTotalJuros;
+            @java.lang.SuppressWarnings("all")
+            private BigDecimal valorTotalGeral;
+
+            @java.lang.SuppressWarnings("all")
+            ResumoPeriodoBuilder() {
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder dataInicio(final LocalDate dataInicio) {
+                this.dataInicio = dataInicio;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder dataFim(final LocalDate dataFim) {
+                this.dataFim = dataFim;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder valorTotalImpostos(final BigDecimal valorTotalImpostos) {
+                this.valorTotalImpostos = valorTotalImpostos;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder valorTotalMultas(final BigDecimal valorTotalMultas) {
+                this.valorTotalMultas = valorTotalMultas;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder valorTotalJuros(final BigDecimal valorTotalJuros) {
+                this.valorTotalJuros = valorTotalJuros;
+                return this;
+            }
+
+            /**
+             * @return {@code this}.
+             */
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder valorTotalGeral(final BigDecimal valorTotalGeral) {
+                this.valorTotalGeral = valorTotalGeral;
+                return this;
+            }
+
+            @java.lang.SuppressWarnings("all")
+            public ImpostoService.ResumoPeriodo build() {
+                return new ImpostoService.ResumoPeriodo(this.dataInicio, this.dataFim, this.valorTotalImpostos, this.valorTotalMultas, this.valorTotalJuros, this.valorTotalGeral);
+            }
+
+            @java.lang.Override
+            @java.lang.SuppressWarnings("all")
+            public java.lang.String toString() {
+                return "ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder(dataInicio=" + this.dataInicio + ", dataFim=" + this.dataFim + ", valorTotalImpostos=" + this.valorTotalImpostos + ", valorTotalMultas=" + this.valorTotalMultas + ", valorTotalJuros=" + this.valorTotalJuros + ", valorTotalGeral=" + this.valorTotalGeral + ")";
+            }
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public static ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder builder() {
+            return new ImpostoService.ResumoPeriodo.ResumoPeriodoBuilder();
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public LocalDate getDataInicio() {
+            return this.dataInicio;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public LocalDate getDataFim() {
+            return this.dataFim;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public BigDecimal getValorTotalImpostos() {
+            return this.valorTotalImpostos;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public BigDecimal getValorTotalMultas() {
+            return this.valorTotalMultas;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public BigDecimal getValorTotalJuros() {
+            return this.valorTotalJuros;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public BigDecimal getValorTotalGeral() {
+            return this.valorTotalGeral;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setDataInicio(final LocalDate dataInicio) {
+            this.dataInicio = dataInicio;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setDataFim(final LocalDate dataFim) {
+            this.dataFim = dataFim;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setValorTotalImpostos(final BigDecimal valorTotalImpostos) {
+            this.valorTotalImpostos = valorTotalImpostos;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setValorTotalMultas(final BigDecimal valorTotalMultas) {
+            this.valorTotalMultas = valorTotalMultas;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setValorTotalJuros(final BigDecimal valorTotalJuros) {
+            this.valorTotalJuros = valorTotalJuros;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public void setValorTotalGeral(final BigDecimal valorTotalGeral) {
+            this.valorTotalGeral = valorTotalGeral;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public boolean equals(final java.lang.Object o) {
+            if (o == this) return true;
+            if (!(o instanceof ImpostoService.ResumoPeriodo)) return false;
+            final ImpostoService.ResumoPeriodo other = (ImpostoService.ResumoPeriodo) o;
+            if (!other.canEqual((java.lang.Object) this)) return false;
+            final java.lang.Object this$dataInicio = this.getDataInicio();
+            final java.lang.Object other$dataInicio = other.getDataInicio();
+            if (this$dataInicio == null ? other$dataInicio != null : !this$dataInicio.equals(other$dataInicio)) return false;
+            final java.lang.Object this$dataFim = this.getDataFim();
+            final java.lang.Object other$dataFim = other.getDataFim();
+            if (this$dataFim == null ? other$dataFim != null : !this$dataFim.equals(other$dataFim)) return false;
+            final java.lang.Object this$valorTotalImpostos = this.getValorTotalImpostos();
+            final java.lang.Object other$valorTotalImpostos = other.getValorTotalImpostos();
+            if (this$valorTotalImpostos == null ? other$valorTotalImpostos != null : !this$valorTotalImpostos.equals(other$valorTotalImpostos)) return false;
+            final java.lang.Object this$valorTotalMultas = this.getValorTotalMultas();
+            final java.lang.Object other$valorTotalMultas = other.getValorTotalMultas();
+            if (this$valorTotalMultas == null ? other$valorTotalMultas != null : !this$valorTotalMultas.equals(other$valorTotalMultas)) return false;
+            final java.lang.Object this$valorTotalJuros = this.getValorTotalJuros();
+            final java.lang.Object other$valorTotalJuros = other.getValorTotalJuros();
+            if (this$valorTotalJuros == null ? other$valorTotalJuros != null : !this$valorTotalJuros.equals(other$valorTotalJuros)) return false;
+            final java.lang.Object this$valorTotalGeral = this.getValorTotalGeral();
+            final java.lang.Object other$valorTotalGeral = other.getValorTotalGeral();
+            if (this$valorTotalGeral == null ? other$valorTotalGeral != null : !this$valorTotalGeral.equals(other$valorTotalGeral)) return false;
+            return true;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        protected boolean canEqual(final java.lang.Object other) {
+            return other instanceof ImpostoService.ResumoPeriodo;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public int hashCode() {
+            final int PRIME = 59;
+            int result = 1;
+            final java.lang.Object $dataInicio = this.getDataInicio();
+            result = result * PRIME + ($dataInicio == null ? 43 : $dataInicio.hashCode());
+            final java.lang.Object $dataFim = this.getDataFim();
+            result = result * PRIME + ($dataFim == null ? 43 : $dataFim.hashCode());
+            final java.lang.Object $valorTotalImpostos = this.getValorTotalImpostos();
+            result = result * PRIME + ($valorTotalImpostos == null ? 43 : $valorTotalImpostos.hashCode());
+            final java.lang.Object $valorTotalMultas = this.getValorTotalMultas();
+            result = result * PRIME + ($valorTotalMultas == null ? 43 : $valorTotalMultas.hashCode());
+            final java.lang.Object $valorTotalJuros = this.getValorTotalJuros();
+            result = result * PRIME + ($valorTotalJuros == null ? 43 : $valorTotalJuros.hashCode());
+            final java.lang.Object $valorTotalGeral = this.getValorTotalGeral();
+            result = result * PRIME + ($valorTotalGeral == null ? 43 : $valorTotalGeral.hashCode());
+            return result;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "ImpostoService.ResumoPeriodo(dataInicio=" + this.getDataInicio() + ", dataFim=" + this.getDataFim() + ", valorTotalImpostos=" + this.getValorTotalImpostos() + ", valorTotalMultas=" + this.getValorTotalMultas() + ", valorTotalJuros=" + this.getValorTotalJuros() + ", valorTotalGeral=" + this.getValorTotalGeral() + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ImpostoService(final ImpostoRepository impostoRepository, final KafkaTemplate<String, Object> kafkaTemplate) {
+        this.impostoRepository = impostoRepository;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+}

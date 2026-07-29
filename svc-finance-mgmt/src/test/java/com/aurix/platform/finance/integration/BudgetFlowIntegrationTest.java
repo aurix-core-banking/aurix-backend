@@ -1,0 +1,167 @@
+package com.aurix.platform.finance.integration;
+
+import com.aurix.platform.finance.FinanceApplication;
+import com.aurix.platform.finance.entity.Orcamento;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.NoOpResponseErrorHandler;
+import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(classes = FinanceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class BudgetFlowIntegrationTest {
+    @LocalServerPort
+    private int port;
+
+    private final RestTemplate rest = new RestTemplate();
+
+    private String baseUrl;
+
+    @BeforeEach
+    void setUp() {
+        rest.setErrorHandler(new NoOpResponseErrorHandler());
+        baseUrl = "http://localhost:" + port + "/api/finance/orcamentos";
+    }
+
+    @Test
+    void shouldCriarOrcamento() {
+        Orcamento orcamento = new Orcamento();
+        orcamento.setNome("Orçamento Anual 2026");
+        orcamento.setDescricao("Orçamento para o exercício de 2026");
+        orcamento.setTipoOrcamento(Orcamento.TipoOrcamento.ANUAL);
+        orcamento.setAno(2026);
+        orcamento.setDataInicio(LocalDate.of(2026, 1, 1));
+        orcamento.setDataFim(LocalDate.of(2026, 12, 31));
+        orcamento.setValorTotalOrcado(BigDecimal.valueOf(5000000.00));
+        orcamento.setCentroCusto("MATRIZ");
+        orcamento.setResponsavel("Diretor Financeiro");
+        orcamento.setUnidadeNegocio("BANCO");
+        orcamento.setMetodologia(Orcamento.MetodologiaOrcamento.INCREMENTAL);
+
+        ResponseEntity<Orcamento> response = rest.postForEntity(baseUrl, orcamento, Orcamento.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody().getId());
+        assertEquals("Orçamento Anual 2026", response.getBody().getNome());
+    }
+
+    @Test
+    void shouldAprovarOrcamento() {
+        Orcamento orcamento = new Orcamento();
+        orcamento.setNome("Orçamento TI 2026");
+        orcamento.setTipoOrcamento(Orcamento.TipoOrcamento.ANUAL);
+        orcamento.setAno(2026);
+        orcamento.setDataInicio(LocalDate.of(2026, 1, 1));
+        orcamento.setDataFim(LocalDate.of(2026, 12, 31));
+        orcamento.setValorTotalOrcado(BigDecimal.valueOf(2000000.00));
+        orcamento.setCentroCusto("TI");
+        orcamento.setResponsavel("CIO");
+        orcamento.setUnidadeNegocio("BANCO");
+        orcamento.setMetodologia(Orcamento.MetodologiaOrcamento.INCREMENTAL);
+
+        ResponseEntity<Orcamento> createResp = rest.postForEntity(baseUrl, orcamento, Orcamento.class);
+        Long id = createResp.getBody().getId();
+
+        ResponseEntity<Orcamento> response = rest.postForEntity(
+            baseUrl + "/" + id + "/aprovar?aprovadoPor=Diretor", null, Orcamento.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Orcamento.StatusOrcamento.APROVADO, response.getBody().getStatus());
+    }
+
+    @Test
+    void shouldIniciarExecucao() {
+        Orcamento orcamento = new Orcamento();
+        orcamento.setNome("Orçamento Marketing 2026");
+        orcamento.setTipoOrcamento(Orcamento.TipoOrcamento.ANUAL);
+        orcamento.setAno(2026);
+        orcamento.setDataInicio(LocalDate.now().minusDays(1));
+        orcamento.setDataFim(LocalDate.of(2026, 12, 31));
+        orcamento.setValorTotalOrcado(BigDecimal.valueOf(1000000.00));
+        orcamento.setCentroCusto("MARKETING");
+        orcamento.setResponsavel("CMO");
+        orcamento.setUnidadeNegocio("BANCO");
+        orcamento.setMetodologia(Orcamento.MetodologiaOrcamento.INCREMENTAL);
+
+        ResponseEntity<Orcamento> createResp = rest.postForEntity(baseUrl, orcamento, Orcamento.class);
+        Long id = createResp.getBody().getId();
+        rest.postForEntity(baseUrl + "/" + id + "/aprovar?aprovadoPor=Diretor", null, Orcamento.class);
+
+        ResponseEntity<Orcamento> response = rest.postForEntity(
+            baseUrl + "/" + id + "/iniciar-execucao", null, Orcamento.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Orcamento.StatusOrcamento.EXECUTANDO, response.getBody().getStatus());
+    }
+
+    @Test
+    void shouldAtualizarValoresRealizados() {
+        Orcamento orcamento = new Orcamento();
+        orcamento.setNome("Orçamento RH 2026");
+        orcamento.setTipoOrcamento(Orcamento.TipoOrcamento.ANUAL);
+        orcamento.setAno(2026);
+        orcamento.setDataInicio(LocalDate.now().minusDays(1));
+        orcamento.setDataFim(LocalDate.of(2026, 12, 31));
+        orcamento.setValorTotalOrcado(BigDecimal.valueOf(3000000.00));
+        orcamento.setCentroCusto("RH");
+        orcamento.setResponsavel("CHRO");
+        orcamento.setUnidadeNegocio("BANCO");
+        orcamento.setMetodologia(Orcamento.MetodologiaOrcamento.INCREMENTAL);
+
+        ResponseEntity<Orcamento> createResp = rest.postForEntity(baseUrl, orcamento, Orcamento.class);
+        Long id = createResp.getBody().getId();
+        rest.postForEntity(baseUrl + "/" + id + "/aprovar?aprovadoPor=Diretor", null, Orcamento.class);
+        rest.postForEntity(baseUrl + "/" + id + "/iniciar-execucao", null, Orcamento.class);
+
+        ResponseEntity<Orcamento> response = rest.postForEntity(
+            baseUrl + "/" + id + "/atualizar-realizado?valorRealizado=500000.00", null, Orcamento.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0, BigDecimal.valueOf(500000.00).compareTo(response.getBody().getValorTotalRealizado()));
+    }
+
+    @Test
+    void shouldBuscarPorAno() {
+        Orcamento orcamento = new Orcamento();
+        orcamento.setNome("Orçamento 2026 Teste");
+        orcamento.setTipoOrcamento(Orcamento.TipoOrcamento.ANUAL);
+        orcamento.setAno(2026);
+        orcamento.setDataInicio(LocalDate.of(2026, 1, 1));
+        orcamento.setDataFim(LocalDate.of(2026, 12, 31));
+        orcamento.setValorTotalOrcado(BigDecimal.valueOf(100000.00));
+        orcamento.setCentroCusto("TESTE");
+        orcamento.setResponsavel("Teste");
+        orcamento.setUnidadeNegocio("BANCO");
+        orcamento.setMetodologia(Orcamento.MetodologiaOrcamento.INCREMENTAL);
+
+        rest.postForEntity(baseUrl, orcamento, Orcamento.class);
+
+        ResponseEntity<List> response = rest.getForEntity(
+            baseUrl + "/ano/2026", List.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody().size() > 0);
+    }
+
+    @Test
+    void shouldCalcularResumoAnual() {
+        ResponseEntity<Map> response = rest.getForEntity(
+            baseUrl + "/resumo-anual/2026", Map.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody().get("ano"));
+        assertNotNull(response.getBody().get("valorOrcado"));
+    }
+}

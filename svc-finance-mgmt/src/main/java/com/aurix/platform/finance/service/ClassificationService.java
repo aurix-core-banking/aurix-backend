@@ -1,0 +1,224 @@
+package com.aurix.platform.finance.service;
+
+import com.aurix.platform.finance.entity.InstrumentoFinanceiro;
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+/**
+ * Service para classificação de instrumentos financeiros conforme IFRS 9
+ * 
+ * Implementa os critérios de classificação e mensuração do IFRS 9
+ */
+@Service
+@SuppressWarnings({"PMD.CollapsibleIfStatements"})
+public class ClassificationService {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ClassificationService.class);
+    /**
+     * Backstop rebatível do IFRS 9: 30 dias de atraso (DPD) é presumido como
+     * aumento significativo de risco de crédito (Estágio 2).
+     */
+    private static final long DPD_ESTAGIO_2 = 30;
+    /**
+     * Backstop rebatível do IFRS 9: 90 dias de atraso (DPD) é presumido como
+     * inadimplência/default (Estágio 3).
+     */
+    private static final long DPD_ESTAGIO_3 = 90;
+
+    /**
+     * Determina a categoria IFRS 9 de um instrumento financeiro
+     */
+    public InstrumentoFinanceiro.CategoriaIFRS9 determinarCategoria(InstrumentoFinanceiro instrumento) {
+        log.debug("Determinando categoria IFRS 9 para instrumento: {}", instrumento.getCodigoInstrumento());
+        // Aplicar teste do modelo de negócio
+        if (isModeloNegocioColetarContratos(instrumento)) {
+            // Aplicar teste de características de fluxo de caixa
+            if (isFluxoCaixaApenasPrincipalJuros(instrumento)) {
+                // Aplicar teste de objetivo de negócio
+                if (isObjetivoNegocioManter(instrumento)) {
+                    return InstrumentoFinanceiro.CategoriaIFRS9.AC; // Amortized Cost
+                } else {
+                    return InstrumentoFinanceiro.CategoriaIFRS9.FVOCI; // Fair Value Through OCI
+                }
+            } else {
+                return InstrumentoFinanceiro.CategoriaIFRS9.FVTPL; // Fair Value Through P&L
+            }
+        } else {
+            return InstrumentoFinanceiro.CategoriaIFRS9.FVTPL; // Fair Value Through P&L
+        }
+    }
+
+    /**
+     * Determina o modelo de mensuração baseado na categoria
+     */
+    public InstrumentoFinanceiro.ModeloMensuracao determinarModeloMensuracao(InstrumentoFinanceiro instrumento) {
+        switch (instrumento.getCategoriaIFRS9()) {
+        case AC: 
+            return InstrumentoFinanceiro.ModeloMensuracao.CUSTO_AMORTIZADO;
+        case FVOCI: 
+            return InstrumentoFinanceiro.ModeloMensuracao.VALOR_JUSTO_OCI;
+        case FVTPL: 
+            return InstrumentoFinanceiro.ModeloMensuracao.VALOR_JUSTO_RESULTADO;
+        case HEDGE: 
+            return determinarModeloHedge(instrumento);
+        default: 
+            return InstrumentoFinanceiro.ModeloMensuracao.VALOR_JUSTO_RESULTADO;
+        }
+    }
+
+    /**
+     * Avalia se um instrumento deve ser reclassificado para outro estágio
+     */
+    public InstrumentoFinanceiro.EstagioDeterioracao avaliarEstagio(InstrumentoFinanceiro instrumento, LocalDate dataReferencia) {
+        log.debug("Avaliando estágio para instrumento: {}", instrumento.getCodigoInstrumento());
+        // Verificar indicadores de deterioração (Estágio 3) primeiro: o backstop de
+        // 90 dias de atraso é mais severo que o de 30 dias, então precisa ser
+        // checado antes para não ser "mascarado" pelo retorno do Estágio 2.
+        if (hasIndicadoresDeterioracao(instrumento, dataReferencia)) {
+            return InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_3;
+        }
+        // Verificar indicadores de deterioração significativa (Estágio 2)
+        if (hasIndicadoresDeterioracaoSignificativa(instrumento, dataReferencia)) {
+            return InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_2;
+        }
+        // Verificar se pode voltar ao Estágio 1
+        if (instrumento.getEstagioDeterioracao() != InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1) {
+            if (hasRecuperacao(instrumento)) {
+                return InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1;
+            }
+        }
+        // Manter estágio atual
+        return instrumento.getEstagioDeterioracao();
+    }
+
+    /**
+     * Teste do modelo de negócio - Coletar contratos de fluxo de caixa
+     */
+    private boolean isModeloNegocioColetarContratos(InstrumentoFinanceiro instrumento) {
+        // Para a maioria dos instrumentos bancários, o modelo é coletar contratos
+        switch (instrumento.getTipoInstrumento()) {
+        case EMPRESTIMO: 
+        case FINANCIAMENTO: 
+        case CDB: 
+        case LCI: 
+        case LCA: 
+        case DEBENTURE: 
+            return true;
+        case INVESTIMENTO: 
+        case TITULO_PUBLICO: 
+        case ACOES: 
+        case FUNDOS: 
+            return false;
+        default: 
+            return true;
+        }
+    }
+
+    /**
+     * Teste de características de fluxo de caixa - Apenas principal e juros
+     */
+    private boolean isFluxoCaixaApenasPrincipalJuros(InstrumentoFinanceiro instrumento) {
+        // Para instrumentos de dívida típicos, fluxo é principal + juros
+        switch (instrumento.getTipoInstrumento()) {
+        case EMPRESTIMO: 
+        case FINANCIAMENTO: 
+        case CDB: 
+        case LCI: 
+        case LCA: 
+        case DEBENTURE: 
+        case TITULO_PUBLICO: 
+            return true;
+        case ACOES: 
+        case FUNDOS: 
+            return false; // Fluxo variável
+        default: 
+            return true;
+        }
+    }
+
+    /**
+     * Teste de objetivo de negócio - Manter para coletar fluxo de caixa
+     */
+    private boolean isObjetivoNegocioManter(InstrumentoFinanceiro instrumento) {
+        // A maioria dos instrumentos bancários é mantida para coletar fluxo
+        // Exceto instrumentos de trading ou disponíveis para venda
+        if (instrumento.getMetadata() != null) {
+            if (instrumento.getMetadata().contains("trading") || instrumento.getMetadata().contains("disponivel_venda")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Determina modelo de hedge
+     */
+    private InstrumentoFinanceiro.ModeloMensuracao determinarModeloHedge(InstrumentoFinanceiro instrumento) {
+        // Implementar lógica específica para hedge accounting
+        if (instrumento.getMetadata() != null) {
+            if (instrumento.getMetadata().contains("hedge_valor_justo")) {
+                return InstrumentoFinanceiro.ModeloMensuracao.HEDGE_VALOR_JUSTO;
+            } else if (instrumento.getMetadata().contains("hedge_fluxo_caixa")) {
+                return InstrumentoFinanceiro.ModeloMensuracao.HEDGE_FLUXO_CAIXA;
+            } else if (instrumento.getMetadata().contains("hedge_investimento")) {
+                return InstrumentoFinanceiro.ModeloMensuracao.HEDGE_INVESTIMENTO;
+            }
+        }
+        return InstrumentoFinanceiro.ModeloMensuracao.HEDGE_VALOR_JUSTO;
+    }
+
+    /**
+     * Verifica indicadores de deterioração significativa (Estágio 2)
+     */
+    private boolean hasIndicadoresDeterioracaoSignificativa(InstrumentoFinanceiro instrumento, LocalDate dataReferencia) {
+        if (diasAtraso(instrumento, dataReferencia) >= DPD_ESTAGIO_2) {
+            return true;
+        }
+        if (instrumento.getMetadata() != null) {
+            return instrumento.getMetadata().contains("deterioracao_significativa") || instrumento.getMetadata().contains("atraso_pagamento") || instrumento.getMetadata().contains("garantia_deteriorada");
+        }
+        return false;
+    }
+
+    /**
+     * Verifica indicadores de deterioração (Estágio 3)
+     */
+    private boolean hasIndicadoresDeterioracao(InstrumentoFinanceiro instrumento, LocalDate dataReferencia) {
+        if (diasAtraso(instrumento, dataReferencia) >= DPD_ESTAGIO_3) {
+            return true;
+        }
+        if (instrumento.getMetadata() != null) {
+            return instrumento.getMetadata().contains("inadimplente") || instrumento.getMetadata().contains("reestruturado") || instrumento.getMetadata().contains("deteriorado");
+        }
+        return false;
+    }
+
+    /**
+     * Dias de atraso (DPD) em relação ao vencimento. Retorna 0 se ainda não
+     * venceu ou se não há data de vencimento cadastrada.
+     */
+    private long diasAtraso(InstrumentoFinanceiro instrumento, LocalDate dataReferencia) {
+        if (instrumento.getDataVencimento() == null) {
+            return 0;
+        }
+        long dias = ChronoUnit.DAYS.between(instrumento.getDataVencimento().toLocalDate(), dataReferencia);
+        return Math.max(dias, 0);
+    }
+
+    /**
+     * Verifica se há recuperação para voltar ao Estágio 1
+     */
+    private boolean hasRecuperacao(InstrumentoFinanceiro instrumento) {
+        // Implementar lógica de recuperação
+        // Exemplos: pagamentos em dia, melhoria de garantias, etc.
+        if (instrumento.getMetadata() != null) {
+            return instrumento.getMetadata().contains("recuperacao") || instrumento.getMetadata().contains("pagamento_dia") || instrumento.getMetadata().contains("garantia_melhorada");
+        }
+        return false;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ClassificationService() {
+    }
+}

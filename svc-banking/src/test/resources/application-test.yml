@@ -1,0 +1,54 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration
+      - org.springframework.boot.data.redis.autoconfigure.DataRedisReactiveAutoConfiguration
+      - org.springframework.boot.data.redis.autoconfigure.DataRedisRepositoriesAutoConfiguration
+      - org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
+  datasource:
+    url: jdbc:h2:mem:aurix;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;INIT=CREATE SCHEMA IF NOT EXISTS aurix
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        default_schema: aurix
+    show-sql: false
+  sql:
+    init:
+      mode: never
+  cache:
+    type: none
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      max.block.ms: 1000
+      default.api.timeout.ms: 1000
+    admin:
+      auto-create: false
+      fail-fast: false
+    consumer:
+      auto-offset-reset: earliest
+    producer:
+      acks: all
+  data:
+    redis:
+      repositories:
+        enabled: false
+  security:
+    enabled: false
+
+management:
+  health:
+    redis:
+      enabled: false
+    kafka:
+      enabled: false
+    db:
+      enabled: false

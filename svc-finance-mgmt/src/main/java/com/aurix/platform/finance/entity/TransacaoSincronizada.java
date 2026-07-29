@@ -1,0 +1,57 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "transacoes_sincronizadas", schema = "aurix")
+public class TransacaoSincronizada {
+
+    public enum StatusSync {
+        REGISTRADA, ESTORNADA
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "transacao_id", nullable = false, unique = true, length = 50)
+    private String transacaoId;
+
+    @Column(name = "conta_id", nullable = false, length = 50)
+    private String contaId;
+
+    @Column(name = "valor", nullable = false, precision = 18, scale = 2)
+    private BigDecimal valor;
+
+    @Column(name = "tipo", nullable = false, length = 30)
+    private String tipo;
+
+    @Column(name = "data_transacao", nullable = false)
+    private LocalDateTime dataTransacao;
+
+    @Column(name = "data_sincronizacao", nullable = false)
+    private LocalDateTime dataSincronizacao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
+    private StatusSync status;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getTransacaoId() { return transacaoId; }
+    public void setTransacaoId(String transacaoId) { this.transacaoId = transacaoId; }
+    public String getContaId() { return contaId; }
+    public void setContaId(String contaId) { this.contaId = contaId; }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+    public LocalDateTime getDataTransacao() { return dataTransacao; }
+    public void setDataTransacao(LocalDateTime dataTransacao) { this.dataTransacao = dataTransacao; }
+    public LocalDateTime getDataSincronizacao() { return dataSincronizacao; }
+    public void setDataSincronizacao(LocalDateTime dataSincronizacao) { this.dataSincronizacao = dataSincronizacao; }
+    public StatusSync getStatus() { return status; }
+    public void setStatus(StatusSync status) { this.status = status; }
+}

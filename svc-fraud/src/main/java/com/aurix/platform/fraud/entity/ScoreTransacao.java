@@ -1,0 +1,40 @@
+package com.aurix.platform.fraud.entity;
+
+import com.aurix.platform.shared.entity.BaseEntity;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "scores_transacao", schema = "aurix")
+public class ScoreTransacao extends BaseEntity {
+    @Column(name = "cliente_id", nullable = false)
+    private Long clienteId;
+
+    @Column(name = "transacao_ref", nullable = false, length = 100)
+    private String transacaoRef;
+
+    @Column(nullable = false)
+    private Integer score;
+
+    @Column(nullable = false, length = 10)
+    private String risco;
+
+    @Column(name = "data_avaliacao", nullable = false)
+    private LocalDateTime dataAvaliacao;
+
+    @Column(name = "regras_acionadas", length = 4000)
+    private String regrasAcionadas;
+
+    public Long getClienteId() { return clienteId; }
+    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+    public String getTransacaoRef() { return transacaoRef; }
+    public void setTransacaoRef(String transacaoRef) { this.transacaoRef = transacaoRef; }
+    public Integer getScore() { return score; }
+    public void setScore(Integer score) { this.score = score; }
+    public String getRisco() { return risco; }
+    public void setRisco(String risco) { this.risco = risco; }
+    public LocalDateTime getDataAvaliacao() { return dataAvaliacao; }
+    public void setDataAvaliacao(LocalDateTime dataAvaliacao) { this.dataAvaliacao = dataAvaliacao; }
+    public String getRegrasAcionadas() { return regrasAcionadas; }
+    public void setRegrasAcionadas(String regrasAcionadas) { this.regrasAcionadas = regrasAcionadas; }
+}

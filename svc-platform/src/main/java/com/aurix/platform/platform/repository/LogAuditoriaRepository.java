@@ -1,0 +1,129 @@
+package com.aurix.platform.platform.repository;
+
+import com.aurix.platform.shared.entity.LogAuditoria;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * Repositório para LogAuditoria
+ */
+@Repository
+public interface LogAuditoriaRepository extends JpaRepository<LogAuditoria, Long> {
+    
+    /**
+     * Busca logs por usuário
+     */
+    List<LogAuditoria> findByUsuarioId(Long usuarioId);
+    
+    /**
+     * Busca logs por entidade
+     */
+    List<LogAuditoria> findByEntidade(String entidade);
+    
+    /**
+     * Busca logs por tipo de ação
+     */
+    List<LogAuditoria> findByTipoAcao(LogAuditoria.TipoAcao tipoAcao);
+    
+    /**
+     * Busca logs por categoria
+     */
+    List<LogAuditoria> findByCategoria(LogAuditoria.CategoriaAuditoria categoria);
+    
+    /**
+     * Busca logs por nível
+     */
+    List<LogAuditoria> findByNivel(LogAuditoria.NivelAuditoria nivel);
+    
+    /**
+     * Busca logs por resultado
+     */
+    List<LogAuditoria> findByResultado(String resultado);
+    
+    /**
+     * Busca logs por período
+     */
+    @Query("SELECT l FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim")
+    List<LogAuditoria> findByPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
+    
+    /**
+     * Busca logs críticos
+     */
+    @Query("SELECT l FROM LogAuditoria l WHERE l.nivel = 'CRITICO'")
+    List<LogAuditoria> findLogsCriticos();
+    
+    /**
+     * Busca logs de falha
+     */
+    @Query("SELECT l FROM LogAuditoria l WHERE l.resultado IN ('FALHA', 'ERRO')")
+    List<LogAuditoria> findLogsFalha();
+    
+    /**
+     * Busca logs de sucesso
+     */
+    @Query("SELECT l FROM LogAuditoria l WHERE l.resultado = 'SUCESSO'")
+    List<LogAuditoria> findLogsSucesso();
+    
+    /**
+     * Busca logs por IP
+     */
+    List<LogAuditoria> findByIpOrigem(String ipOrigem);
+    
+    /**
+     * Busca logs por ação
+     */
+    List<LogAuditoria> findByAcaoContainingIgnoreCase(String acao);
+    
+    /**
+     * Conta logs por usuário
+     */
+    long countByUsuarioId(Long usuarioId);
+    
+    /**
+     * Conta logs por entidade
+     */
+    long countByEntidade(String entidade);
+    
+    /**
+     * Conta logs por tipo de ação
+     */
+    long countByTipoAcao(LogAuditoria.TipoAcao tipoAcao);
+    
+    /**
+     * Conta logs por categoria
+     */
+    long countByCategoria(LogAuditoria.CategoriaAuditoria categoria);
+    
+    /**
+     * Conta logs por nível
+     */
+    long countByNivel(LogAuditoria.NivelAuditoria nivel);
+    
+    /**
+     * Conta logs por resultado
+     */
+    long countByResultado(String resultado);
+
+    @Query("SELECT COUNT(l) FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim")
+    long countByPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
+
+    @Query("SELECT COUNT(l) FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim AND l.tipoAcao = :tipo")
+    long countByPeriodoAndTipoAcao(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim, @Param("tipo") LogAuditoria.TipoAcao tipo);
+
+    @Query("SELECT COUNT(l) FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim AND l.categoria = :cat")
+    long countByPeriodoAndCategoria(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim, @Param("cat") LogAuditoria.CategoriaAuditoria cat);
+
+    @Query("SELECT COUNT(l) FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim AND l.resultado = :resultado")
+    long countByPeriodoAndResultado(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim, @Param("resultado") String resultado);
+
+    @Query("SELECT COUNT(l) FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim AND l.nivel = 'CRITICO'")
+    long countByPeriodoAndNivelCritico(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
+
+    @Query("SELECT COUNT(l) FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim AND l.resultado IN ('FALHA', 'ERRO')")
+    long countByPeriodoAndFalha(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
+}

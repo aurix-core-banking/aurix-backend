@@ -1,0 +1,213 @@
+package com.aurix.platform.platform.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "parceiros_custodia", schema = "aurix", uniqueConstraints = {@UniqueConstraint(columnNames = {"tenant_id", "client_id"})})
+public class ParceiroCustodia {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "tenant_id", nullable = false, length = 64)
+    private String tenantId;
+    @Column(name = "client_id", nullable = false, length = 128)
+    private String clientId;
+    @Column(name = "nome", nullable = false, length = 255)
+    private String nome;
+    @Column(name = "api_key_hash", length = 256)
+    private String apiKeyHash;
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class ParceiroCustodiaBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String tenantId;
+        @java.lang.SuppressWarnings("all")
+        private String clientId;
+        @java.lang.SuppressWarnings("all")
+        private String nome;
+        @java.lang.SuppressWarnings("all")
+        private String apiKeyHash;
+        @java.lang.SuppressWarnings("all")
+        private Boolean ativo;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+
+        @java.lang.SuppressWarnings("all")
+        ParceiroCustodiaBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder tenantId(final String tenantId) {
+            this.tenantId = tenantId;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder clientId(final String clientId) {
+            this.clientId = clientId;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder nome(final String nome) {
+            this.nome = nome;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder apiKeyHash(final String apiKeyHash) {
+            this.apiKeyHash = apiKeyHash;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder ativo(final Boolean ativo) {
+            this.ativo = ativo;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia.ParceiroCustodiaBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public ParceiroCustodia build() {
+            return new ParceiroCustodia(this.id, this.tenantId, this.clientId, this.nome, this.apiKeyHash, this.ativo, this.dataCriacao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "ParceiroCustodia.ParceiroCustodiaBuilder(id=" + this.id + ", tenantId=" + this.tenantId + ", clientId=" + this.clientId + ", nome=" + this.nome + ", apiKeyHash=" + this.apiKeyHash + ", ativo=" + this.ativo + ", dataCriacao=" + this.dataCriacao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static ParceiroCustodia.ParceiroCustodiaBuilder builder() {
+        return new ParceiroCustodia.ParceiroCustodiaBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getTenantId() {
+        return this.tenantId;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getClientId() {
+        return this.clientId;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNome() {
+        return this.nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getApiKeyHash() {
+        return this.apiKeyHash;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Boolean getAtivo() {
+        return this.ativo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTenantId(final String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setClientId(final String clientId) {
+        this.clientId = clientId;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNome(final String nome) {
+        this.nome = nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setApiKeyHash(final String apiKeyHash) {
+        this.apiKeyHash = apiKeyHash;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAtivo(final Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ParceiroCustodia() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ParceiroCustodia(final Long id, final String tenantId, final String clientId, final String nome, final String apiKeyHash, final Boolean ativo, final LocalDateTime dataCriacao) {
+        this.id = id;
+        this.tenantId = tenantId;
+        this.clientId = clientId;
+        this.nome = nome;
+        this.apiKeyHash = apiKeyHash;
+        this.ativo = ativo;
+        this.dataCriacao = dataCriacao;
+    }
+}

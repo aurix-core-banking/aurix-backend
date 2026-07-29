@@ -1,0 +1,903 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa uma retenção de imposto
+ * 
+ * Gerencia retenções de impostos nas fontes
+ */
+@Entity
+@Table(name = "retencoes_imposto", schema = "aurix")
+public class RetencaoImposto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "codigo_retencao", unique = true, nullable = false, length = 50)
+    private String codigoRetencao;
+    @Column(name = "descricao", nullable = false, length = 500)
+    private String descricao;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_retencao", nullable = false)
+    private TipoRetencao tipoRetencao;
+    @Column(name = "cnpj_cpf_pagador", length = 18, nullable = false)
+    private String cnpjCpfPagador;
+    @Column(name = "nome_pagador", length = 200, nullable = false)
+    private String nomePagador;
+    @Column(name = "cnpj_cpf_beneficiario", length = 18, nullable = false)
+    private String cnpjCpfBeneficiario;
+    @Column(name = "nome_beneficiario", length = 200, nullable = false)
+    private String nomeBeneficiario;
+    @Column(name = "valor_bruto", precision = 15, scale = 2, nullable = false)
+    private BigDecimal valorBruto;
+    @Column(name = "aliquota", precision = 8, scale = 6, nullable = false)
+    private BigDecimal aliquota;
+    @Column(name = "valor_retencao", precision = 15, scale = 2, nullable = false)
+    private BigDecimal valorRetencao;
+    @Column(name = "valor_liquido", precision = 15, scale = 2, nullable = false)
+    private BigDecimal valorLiquido;
+    @Column(name = "data_operacao", nullable = false)
+    private LocalDate dataOperacao;
+    @Column(name = "data_competencia", nullable = false)
+    private LocalDate dataCompetencia;
+    @Column(name = "numero_documento", length = 50)
+    private String numeroDocumento;
+    @Column(name = "numero_nota_fiscal", length = 50)
+    private String numeroNotaFiscal;
+    @Column(name = "serie_nota_fiscal", length = 10)
+    private String serieNotaFiscal;
+    @Column(name = "codigo_receita", length = 20)
+    private String codigoReceita;
+    @Column(name = "numero_darf", length = 30)
+    private String numeroDarf;
+    @Column(name = "data_vencimento")
+    private LocalDate dataVencimento;
+    @Column(name = "data_pagamento")
+    private LocalDate dataPagamento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusRetencao status;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de retenção
+     */
+    public enum TipoRetencao {
+        IR,  // Imposto de Renda
+        CSLL,  // Contribuição Social sobre o Lucro Líquido
+        PIS,  // Programa de Integração Social
+        COFINS,  // Contribuição para Financiamento da Seguridade Social
+        ISS,  // Imposto sobre Serviços
+        INSS,  // Instituto Nacional do Seguro Social
+        FGTS,  // Fundo de Garantia do Tempo de Serviço
+        IRRF,  // Imposto de Renda Retido na Fonte
+        OUTROS // Outros
+        ;
+    }
+
+
+    /**
+     * Status da retenção
+     */
+    public enum StatusRetencao {
+        CALCULADA,  // Calculada
+        APURADA,  // Apurada
+        PAGA,  // Paga
+        VENCIDA,  // Vencida
+        CANCELADA,  // Cancelada
+        RETIFICADA // Retificada
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class RetencaoImpostoBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String codigoRetencao;
+        @java.lang.SuppressWarnings("all")
+        private String descricao;
+        @java.lang.SuppressWarnings("all")
+        private TipoRetencao tipoRetencao;
+        @java.lang.SuppressWarnings("all")
+        private String cnpjCpfPagador;
+        @java.lang.SuppressWarnings("all")
+        private String nomePagador;
+        @java.lang.SuppressWarnings("all")
+        private String cnpjCpfBeneficiario;
+        @java.lang.SuppressWarnings("all")
+        private String nomeBeneficiario;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorBruto;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal aliquota;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorRetencao;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorLiquido;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataOperacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataCompetencia;
+        @java.lang.SuppressWarnings("all")
+        private String numeroDocumento;
+        @java.lang.SuppressWarnings("all")
+        private String numeroNotaFiscal;
+        @java.lang.SuppressWarnings("all")
+        private String serieNotaFiscal;
+        @java.lang.SuppressWarnings("all")
+        private String codigoReceita;
+        @java.lang.SuppressWarnings("all")
+        private String numeroDarf;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataVencimento;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataPagamento;
+        @java.lang.SuppressWarnings("all")
+        private StatusRetencao status;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        RetencaoImpostoBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder codigoRetencao(final String codigoRetencao) {
+            this.codigoRetencao = codigoRetencao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder descricao(final String descricao) {
+            this.descricao = descricao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder tipoRetencao(final TipoRetencao tipoRetencao) {
+            this.tipoRetencao = tipoRetencao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder cnpjCpfPagador(final String cnpjCpfPagador) {
+            this.cnpjCpfPagador = cnpjCpfPagador;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder nomePagador(final String nomePagador) {
+            this.nomePagador = nomePagador;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder cnpjCpfBeneficiario(final String cnpjCpfBeneficiario) {
+            this.cnpjCpfBeneficiario = cnpjCpfBeneficiario;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder nomeBeneficiario(final String nomeBeneficiario) {
+            this.nomeBeneficiario = nomeBeneficiario;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder valorBruto(final BigDecimal valorBruto) {
+            this.valorBruto = valorBruto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder aliquota(final BigDecimal aliquota) {
+            this.aliquota = aliquota;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder valorRetencao(final BigDecimal valorRetencao) {
+            this.valorRetencao = valorRetencao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder valorLiquido(final BigDecimal valorLiquido) {
+            this.valorLiquido = valorLiquido;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder dataOperacao(final LocalDate dataOperacao) {
+            this.dataOperacao = dataOperacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder dataCompetencia(final LocalDate dataCompetencia) {
+            this.dataCompetencia = dataCompetencia;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder numeroDocumento(final String numeroDocumento) {
+            this.numeroDocumento = numeroDocumento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder numeroNotaFiscal(final String numeroNotaFiscal) {
+            this.numeroNotaFiscal = numeroNotaFiscal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder serieNotaFiscal(final String serieNotaFiscal) {
+            this.serieNotaFiscal = serieNotaFiscal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder codigoReceita(final String codigoReceita) {
+            this.codigoReceita = codigoReceita;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder numeroDarf(final String numeroDarf) {
+            this.numeroDarf = numeroDarf;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder dataVencimento(final LocalDate dataVencimento) {
+            this.dataVencimento = dataVencimento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder dataPagamento(final LocalDate dataPagamento) {
+            this.dataPagamento = dataPagamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder status(final StatusRetencao status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto.RetencaoImpostoBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public RetencaoImposto build() {
+            return new RetencaoImposto(this.id, this.codigoRetencao, this.descricao, this.tipoRetencao, this.cnpjCpfPagador, this.nomePagador, this.cnpjCpfBeneficiario, this.nomeBeneficiario, this.valorBruto, this.aliquota, this.valorRetencao, this.valorLiquido, this.dataOperacao, this.dataCompetencia, this.numeroDocumento, this.numeroNotaFiscal, this.serieNotaFiscal, this.codigoReceita, this.numeroDarf, this.dataVencimento, this.dataPagamento, this.status, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "RetencaoImposto.RetencaoImpostoBuilder(id=" + this.id + ", codigoRetencao=" + this.codigoRetencao + ", descricao=" + this.descricao + ", tipoRetencao=" + this.tipoRetencao + ", cnpjCpfPagador=" + this.cnpjCpfPagador + ", nomePagador=" + this.nomePagador + ", cnpjCpfBeneficiario=" + this.cnpjCpfBeneficiario + ", nomeBeneficiario=" + this.nomeBeneficiario + ", valorBruto=" + this.valorBruto + ", aliquota=" + this.aliquota + ", valorRetencao=" + this.valorRetencao + ", valorLiquido=" + this.valorLiquido + ", dataOperacao=" + this.dataOperacao + ", dataCompetencia=" + this.dataCompetencia + ", numeroDocumento=" + this.numeroDocumento + ", numeroNotaFiscal=" + this.numeroNotaFiscal + ", serieNotaFiscal=" + this.serieNotaFiscal + ", codigoReceita=" + this.codigoReceita + ", numeroDarf=" + this.numeroDarf + ", dataVencimento=" + this.dataVencimento + ", dataPagamento=" + this.dataPagamento + ", status=" + this.status + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static RetencaoImposto.RetencaoImpostoBuilder builder() {
+        return new RetencaoImposto.RetencaoImpostoBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoRetencao() {
+        return this.codigoRetencao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoRetencao getTipoRetencao() {
+        return this.tipoRetencao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCnpjCpfPagador() {
+        return this.cnpjCpfPagador;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNomePagador() {
+        return this.nomePagador;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCnpjCpfBeneficiario() {
+        return this.cnpjCpfBeneficiario;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNomeBeneficiario() {
+        return this.nomeBeneficiario;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorBruto() {
+        return this.valorBruto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getAliquota() {
+        return this.aliquota;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorRetencao() {
+        return this.valorRetencao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorLiquido() {
+        return this.valorLiquido;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataOperacao() {
+        return this.dataOperacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataCompetencia() {
+        return this.dataCompetencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNumeroDocumento() {
+        return this.numeroDocumento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNumeroNotaFiscal() {
+        return this.numeroNotaFiscal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getSerieNotaFiscal() {
+        return this.serieNotaFiscal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoReceita() {
+        return this.codigoReceita;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNumeroDarf() {
+        return this.numeroDarf;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataVencimento() {
+        return this.dataVencimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataPagamento() {
+        return this.dataPagamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusRetencao getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoRetencao(final String codigoRetencao) {
+        this.codigoRetencao = codigoRetencao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDescricao(final String descricao) {
+        this.descricao = descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoRetencao(final TipoRetencao tipoRetencao) {
+        this.tipoRetencao = tipoRetencao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCnpjCpfPagador(final String cnpjCpfPagador) {
+        this.cnpjCpfPagador = cnpjCpfPagador;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNomePagador(final String nomePagador) {
+        this.nomePagador = nomePagador;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCnpjCpfBeneficiario(final String cnpjCpfBeneficiario) {
+        this.cnpjCpfBeneficiario = cnpjCpfBeneficiario;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNomeBeneficiario(final String nomeBeneficiario) {
+        this.nomeBeneficiario = nomeBeneficiario;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorBruto(final BigDecimal valorBruto) {
+        this.valorBruto = valorBruto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAliquota(final BigDecimal aliquota) {
+        this.aliquota = aliquota;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorRetencao(final BigDecimal valorRetencao) {
+        this.valorRetencao = valorRetencao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorLiquido(final BigDecimal valorLiquido) {
+        this.valorLiquido = valorLiquido;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataOperacao(final LocalDate dataOperacao) {
+        this.dataOperacao = dataOperacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCompetencia(final LocalDate dataCompetencia) {
+        this.dataCompetencia = dataCompetencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNumeroDocumento(final String numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNumeroNotaFiscal(final String numeroNotaFiscal) {
+        this.numeroNotaFiscal = numeroNotaFiscal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSerieNotaFiscal(final String serieNotaFiscal) {
+        this.serieNotaFiscal = serieNotaFiscal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoReceita(final String codigoReceita) {
+        this.codigoReceita = codigoReceita;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNumeroDarf(final String numeroDarf) {
+        this.numeroDarf = numeroDarf;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataVencimento(final LocalDate dataVencimento) {
+        this.dataVencimento = dataVencimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataPagamento(final LocalDate dataPagamento) {
+        this.dataPagamento = dataPagamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusRetencao status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof RetencaoImposto)) return false;
+        final RetencaoImposto other = (RetencaoImposto) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoRetencao = this.getCodigoRetencao();
+        final java.lang.Object other$codigoRetencao = other.getCodigoRetencao();
+        if (this$codigoRetencao == null ? other$codigoRetencao != null : !this$codigoRetencao.equals(other$codigoRetencao)) return false;
+        final java.lang.Object this$descricao = this.getDescricao();
+        final java.lang.Object other$descricao = other.getDescricao();
+        if (this$descricao == null ? other$descricao != null : !this$descricao.equals(other$descricao)) return false;
+        final java.lang.Object this$tipoRetencao = this.getTipoRetencao();
+        final java.lang.Object other$tipoRetencao = other.getTipoRetencao();
+        if (this$tipoRetencao == null ? other$tipoRetencao != null : !this$tipoRetencao.equals(other$tipoRetencao)) return false;
+        final java.lang.Object this$cnpjCpfPagador = this.getCnpjCpfPagador();
+        final java.lang.Object other$cnpjCpfPagador = other.getCnpjCpfPagador();
+        if (this$cnpjCpfPagador == null ? other$cnpjCpfPagador != null : !this$cnpjCpfPagador.equals(other$cnpjCpfPagador)) return false;
+        final java.lang.Object this$nomePagador = this.getNomePagador();
+        final java.lang.Object other$nomePagador = other.getNomePagador();
+        if (this$nomePagador == null ? other$nomePagador != null : !this$nomePagador.equals(other$nomePagador)) return false;
+        final java.lang.Object this$cnpjCpfBeneficiario = this.getCnpjCpfBeneficiario();
+        final java.lang.Object other$cnpjCpfBeneficiario = other.getCnpjCpfBeneficiario();
+        if (this$cnpjCpfBeneficiario == null ? other$cnpjCpfBeneficiario != null : !this$cnpjCpfBeneficiario.equals(other$cnpjCpfBeneficiario)) return false;
+        final java.lang.Object this$nomeBeneficiario = this.getNomeBeneficiario();
+        final java.lang.Object other$nomeBeneficiario = other.getNomeBeneficiario();
+        if (this$nomeBeneficiario == null ? other$nomeBeneficiario != null : !this$nomeBeneficiario.equals(other$nomeBeneficiario)) return false;
+        final java.lang.Object this$valorBruto = this.getValorBruto();
+        final java.lang.Object other$valorBruto = other.getValorBruto();
+        if (this$valorBruto == null ? other$valorBruto != null : !this$valorBruto.equals(other$valorBruto)) return false;
+        final java.lang.Object this$aliquota = this.getAliquota();
+        final java.lang.Object other$aliquota = other.getAliquota();
+        if (this$aliquota == null ? other$aliquota != null : !this$aliquota.equals(other$aliquota)) return false;
+        final java.lang.Object this$valorRetencao = this.getValorRetencao();
+        final java.lang.Object other$valorRetencao = other.getValorRetencao();
+        if (this$valorRetencao == null ? other$valorRetencao != null : !this$valorRetencao.equals(other$valorRetencao)) return false;
+        final java.lang.Object this$valorLiquido = this.getValorLiquido();
+        final java.lang.Object other$valorLiquido = other.getValorLiquido();
+        if (this$valorLiquido == null ? other$valorLiquido != null : !this$valorLiquido.equals(other$valorLiquido)) return false;
+        final java.lang.Object this$dataOperacao = this.getDataOperacao();
+        final java.lang.Object other$dataOperacao = other.getDataOperacao();
+        if (this$dataOperacao == null ? other$dataOperacao != null : !this$dataOperacao.equals(other$dataOperacao)) return false;
+        final java.lang.Object this$dataCompetencia = this.getDataCompetencia();
+        final java.lang.Object other$dataCompetencia = other.getDataCompetencia();
+        if (this$dataCompetencia == null ? other$dataCompetencia != null : !this$dataCompetencia.equals(other$dataCompetencia)) return false;
+        final java.lang.Object this$numeroDocumento = this.getNumeroDocumento();
+        final java.lang.Object other$numeroDocumento = other.getNumeroDocumento();
+        if (this$numeroDocumento == null ? other$numeroDocumento != null : !this$numeroDocumento.equals(other$numeroDocumento)) return false;
+        final java.lang.Object this$numeroNotaFiscal = this.getNumeroNotaFiscal();
+        final java.lang.Object other$numeroNotaFiscal = other.getNumeroNotaFiscal();
+        if (this$numeroNotaFiscal == null ? other$numeroNotaFiscal != null : !this$numeroNotaFiscal.equals(other$numeroNotaFiscal)) return false;
+        final java.lang.Object this$serieNotaFiscal = this.getSerieNotaFiscal();
+        final java.lang.Object other$serieNotaFiscal = other.getSerieNotaFiscal();
+        if (this$serieNotaFiscal == null ? other$serieNotaFiscal != null : !this$serieNotaFiscal.equals(other$serieNotaFiscal)) return false;
+        final java.lang.Object this$codigoReceita = this.getCodigoReceita();
+        final java.lang.Object other$codigoReceita = other.getCodigoReceita();
+        if (this$codigoReceita == null ? other$codigoReceita != null : !this$codigoReceita.equals(other$codigoReceita)) return false;
+        final java.lang.Object this$numeroDarf = this.getNumeroDarf();
+        final java.lang.Object other$numeroDarf = other.getNumeroDarf();
+        if (this$numeroDarf == null ? other$numeroDarf != null : !this$numeroDarf.equals(other$numeroDarf)) return false;
+        final java.lang.Object this$dataVencimento = this.getDataVencimento();
+        final java.lang.Object other$dataVencimento = other.getDataVencimento();
+        if (this$dataVencimento == null ? other$dataVencimento != null : !this$dataVencimento.equals(other$dataVencimento)) return false;
+        final java.lang.Object this$dataPagamento = this.getDataPagamento();
+        final java.lang.Object other$dataPagamento = other.getDataPagamento();
+        if (this$dataPagamento == null ? other$dataPagamento != null : !this$dataPagamento.equals(other$dataPagamento)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof RetencaoImposto;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoRetencao = this.getCodigoRetencao();
+        result = result * PRIME + ($codigoRetencao == null ? 43 : $codigoRetencao.hashCode());
+        final java.lang.Object $descricao = this.getDescricao();
+        result = result * PRIME + ($descricao == null ? 43 : $descricao.hashCode());
+        final java.lang.Object $tipoRetencao = this.getTipoRetencao();
+        result = result * PRIME + ($tipoRetencao == null ? 43 : $tipoRetencao.hashCode());
+        final java.lang.Object $cnpjCpfPagador = this.getCnpjCpfPagador();
+        result = result * PRIME + ($cnpjCpfPagador == null ? 43 : $cnpjCpfPagador.hashCode());
+        final java.lang.Object $nomePagador = this.getNomePagador();
+        result = result * PRIME + ($nomePagador == null ? 43 : $nomePagador.hashCode());
+        final java.lang.Object $cnpjCpfBeneficiario = this.getCnpjCpfBeneficiario();
+        result = result * PRIME + ($cnpjCpfBeneficiario == null ? 43 : $cnpjCpfBeneficiario.hashCode());
+        final java.lang.Object $nomeBeneficiario = this.getNomeBeneficiario();
+        result = result * PRIME + ($nomeBeneficiario == null ? 43 : $nomeBeneficiario.hashCode());
+        final java.lang.Object $valorBruto = this.getValorBruto();
+        result = result * PRIME + ($valorBruto == null ? 43 : $valorBruto.hashCode());
+        final java.lang.Object $aliquota = this.getAliquota();
+        result = result * PRIME + ($aliquota == null ? 43 : $aliquota.hashCode());
+        final java.lang.Object $valorRetencao = this.getValorRetencao();
+        result = result * PRIME + ($valorRetencao == null ? 43 : $valorRetencao.hashCode());
+        final java.lang.Object $valorLiquido = this.getValorLiquido();
+        result = result * PRIME + ($valorLiquido == null ? 43 : $valorLiquido.hashCode());
+        final java.lang.Object $dataOperacao = this.getDataOperacao();
+        result = result * PRIME + ($dataOperacao == null ? 43 : $dataOperacao.hashCode());
+        final java.lang.Object $dataCompetencia = this.getDataCompetencia();
+        result = result * PRIME + ($dataCompetencia == null ? 43 : $dataCompetencia.hashCode());
+        final java.lang.Object $numeroDocumento = this.getNumeroDocumento();
+        result = result * PRIME + ($numeroDocumento == null ? 43 : $numeroDocumento.hashCode());
+        final java.lang.Object $numeroNotaFiscal = this.getNumeroNotaFiscal();
+        result = result * PRIME + ($numeroNotaFiscal == null ? 43 : $numeroNotaFiscal.hashCode());
+        final java.lang.Object $serieNotaFiscal = this.getSerieNotaFiscal();
+        result = result * PRIME + ($serieNotaFiscal == null ? 43 : $serieNotaFiscal.hashCode());
+        final java.lang.Object $codigoReceita = this.getCodigoReceita();
+        result = result * PRIME + ($codigoReceita == null ? 43 : $codigoReceita.hashCode());
+        final java.lang.Object $numeroDarf = this.getNumeroDarf();
+        result = result * PRIME + ($numeroDarf == null ? 43 : $numeroDarf.hashCode());
+        final java.lang.Object $dataVencimento = this.getDataVencimento();
+        result = result * PRIME + ($dataVencimento == null ? 43 : $dataVencimento.hashCode());
+        final java.lang.Object $dataPagamento = this.getDataPagamento();
+        result = result * PRIME + ($dataPagamento == null ? 43 : $dataPagamento.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "RetencaoImposto(id=" + this.getId() + ", codigoRetencao=" + this.getCodigoRetencao() + ", descricao=" + this.getDescricao() + ", tipoRetencao=" + this.getTipoRetencao() + ", cnpjCpfPagador=" + this.getCnpjCpfPagador() + ", nomePagador=" + this.getNomePagador() + ", cnpjCpfBeneficiario=" + this.getCnpjCpfBeneficiario() + ", nomeBeneficiario=" + this.getNomeBeneficiario() + ", valorBruto=" + this.getValorBruto() + ", aliquota=" + this.getAliquota() + ", valorRetencao=" + this.getValorRetencao() + ", valorLiquido=" + this.getValorLiquido() + ", dataOperacao=" + this.getDataOperacao() + ", dataCompetencia=" + this.getDataCompetencia() + ", numeroDocumento=" + this.getNumeroDocumento() + ", numeroNotaFiscal=" + this.getNumeroNotaFiscal() + ", serieNotaFiscal=" + this.getSerieNotaFiscal() + ", codigoReceita=" + this.getCodigoReceita() + ", numeroDarf=" + this.getNumeroDarf() + ", dataVencimento=" + this.getDataVencimento() + ", dataPagamento=" + this.getDataPagamento() + ", status=" + this.getStatus() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RetencaoImposto() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RetencaoImposto(final Long id, final String codigoRetencao, final String descricao, final TipoRetencao tipoRetencao, final String cnpjCpfPagador, final String nomePagador, final String cnpjCpfBeneficiario, final String nomeBeneficiario, final BigDecimal valorBruto, final BigDecimal aliquota, final BigDecimal valorRetencao, final BigDecimal valorLiquido, final LocalDate dataOperacao, final LocalDate dataCompetencia, final String numeroDocumento, final String numeroNotaFiscal, final String serieNotaFiscal, final String codigoReceita, final String numeroDarf, final LocalDate dataVencimento, final LocalDate dataPagamento, final StatusRetencao status, final String observacoes, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.codigoRetencao = codigoRetencao;
+        this.descricao = descricao;
+        this.tipoRetencao = tipoRetencao;
+        this.cnpjCpfPagador = cnpjCpfPagador;
+        this.nomePagador = nomePagador;
+        this.cnpjCpfBeneficiario = cnpjCpfBeneficiario;
+        this.nomeBeneficiario = nomeBeneficiario;
+        this.valorBruto = valorBruto;
+        this.aliquota = aliquota;
+        this.valorRetencao = valorRetencao;
+        this.valorLiquido = valorLiquido;
+        this.dataOperacao = dataOperacao;
+        this.dataCompetencia = dataCompetencia;
+        this.numeroDocumento = numeroDocumento;
+        this.numeroNotaFiscal = numeroNotaFiscal;
+        this.serieNotaFiscal = serieNotaFiscal;
+        this.codigoReceita = codigoReceita;
+        this.numeroDarf = numeroDarf;
+        this.dataVencimento = dataVencimento;
+        this.dataPagamento = dataPagamento;
+        this.status = status;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

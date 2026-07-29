@@ -1,0 +1,236 @@
+package com.aurix.platform.customer.onboarding.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "documentos_onboarding", schema = "aurix")
+public class DocumentoOnboarding {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "solicitacao_id", nullable = false)
+    private SolicitacaoOnboarding solicitacao;
+    @Column(name = "tipo_documento", nullable = false, length = 50)
+    private String tipoDocumento;
+    @Column(name = "nome_arquivo", length = 255)
+    private String nomeArquivo;
+    @Column(name = "url_storage", length = 500)
+    private String urlStorage;
+    @Column(name = "validado")
+    private Boolean validado;
+    @Column(name = "observacao_validacao", length = 500)
+    private String observacaoValidacao;
+    @org.hibernate.annotations.CreationTimestamp
+    @Column(name = "data_upload", nullable = false, updatable = false)
+    private java.time.LocalDateTime dataUpload;
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class DocumentoOnboardingBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private SolicitacaoOnboarding solicitacao;
+        @java.lang.SuppressWarnings("all")
+        private String tipoDocumento;
+        @java.lang.SuppressWarnings("all")
+        private String nomeArquivo;
+        @java.lang.SuppressWarnings("all")
+        private String urlStorage;
+        @java.lang.SuppressWarnings("all")
+        private Boolean validado;
+        @java.lang.SuppressWarnings("all")
+        private String observacaoValidacao;
+        @java.lang.SuppressWarnings("all")
+        private java.time.LocalDateTime dataUpload;
+
+        @java.lang.SuppressWarnings("all")
+        DocumentoOnboardingBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder solicitacao(final SolicitacaoOnboarding solicitacao) {
+            this.solicitacao = solicitacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder tipoDocumento(final String tipoDocumento) {
+            this.tipoDocumento = tipoDocumento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder nomeArquivo(final String nomeArquivo) {
+            this.nomeArquivo = nomeArquivo;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder urlStorage(final String urlStorage) {
+            this.urlStorage = urlStorage;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder validado(final Boolean validado) {
+            this.validado = validado;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder observacaoValidacao(final String observacaoValidacao) {
+            this.observacaoValidacao = observacaoValidacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding.DocumentoOnboardingBuilder dataUpload(final java.time.LocalDateTime dataUpload) {
+            this.dataUpload = dataUpload;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public DocumentoOnboarding build() {
+            return new DocumentoOnboarding(this.id, this.solicitacao, this.tipoDocumento, this.nomeArquivo, this.urlStorage, this.validado, this.observacaoValidacao, this.dataUpload);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "DocumentoOnboarding.DocumentoOnboardingBuilder(id=" + this.id + ", solicitacao=" + this.solicitacao + ", tipoDocumento=" + this.tipoDocumento + ", nomeArquivo=" + this.nomeArquivo + ", urlStorage=" + this.urlStorage + ", validado=" + this.validado + ", observacaoValidacao=" + this.observacaoValidacao + ", dataUpload=" + this.dataUpload + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static DocumentoOnboarding.DocumentoOnboardingBuilder builder() {
+        return new DocumentoOnboarding.DocumentoOnboardingBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public SolicitacaoOnboarding getSolicitacao() {
+        return this.solicitacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getTipoDocumento() {
+        return this.tipoDocumento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNomeArquivo() {
+        return this.nomeArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUrlStorage() {
+        return this.urlStorage;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Boolean getValidado() {
+        return this.validado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacaoValidacao() {
+        return this.observacaoValidacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public java.time.LocalDateTime getDataUpload() {
+        return this.dataUpload;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSolicitacao(final SolicitacaoOnboarding solicitacao) {
+        this.solicitacao = solicitacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoDocumento(final String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNomeArquivo(final String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUrlStorage(final String urlStorage) {
+        this.urlStorage = urlStorage;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValidado(final Boolean validado) {
+        this.validado = validado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacaoValidacao(final String observacaoValidacao) {
+        this.observacaoValidacao = observacaoValidacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataUpload(final java.time.LocalDateTime dataUpload) {
+        this.dataUpload = dataUpload;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public DocumentoOnboarding() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public DocumentoOnboarding(final Long id, final SolicitacaoOnboarding solicitacao, final String tipoDocumento, final String nomeArquivo, final String urlStorage, final Boolean validado, final String observacaoValidacao, final java.time.LocalDateTime dataUpload) {
+        this.id = id;
+        this.solicitacao = solicitacao;
+        this.tipoDocumento = tipoDocumento;
+        this.nomeArquivo = nomeArquivo;
+        this.urlStorage = urlStorage;
+        this.validado = validado;
+        this.observacaoValidacao = observacaoValidacao;
+        this.dataUpload = dataUpload;
+    }
+}

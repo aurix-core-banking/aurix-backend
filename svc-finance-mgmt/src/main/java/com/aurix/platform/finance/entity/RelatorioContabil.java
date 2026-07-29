@@ -1,0 +1,804 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa um relatório contábil
+ * 
+ * Armazena informações sobre relatórios gerados pelo sistema,
+ * incluindo balanços, DRE, fluxo de caixa, etc.
+ */
+@Entity
+@Table(name = "relatorios_contabeis", schema = "aurix")
+public class RelatorioContabil {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "codigo_relatorio", unique = true, nullable = false, length = 50)
+    private String codigoRelatorio;
+    @Column(name = "nome", nullable = false, length = 200)
+    private String nome;
+    @Column(name = "descricao", length = 500)
+    private String descricao;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_relatorio", nullable = false)
+    private TipoRelatorio tipoRelatorio;
+    @Column(name = "data_inicio", nullable = false)
+    private LocalDate dataInicio;
+    @Column(name = "data_fim", nullable = false)
+    private LocalDate dataFim;
+    @Column(name = "periodo_referencia", length = 20)
+    private String periodoReferencia;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "formato", nullable = false)
+    private FormatoRelatorio formato;
+    @Column(name = "caminho_arquivo", length = 500)
+    private String caminhoArquivo;
+    @Column(name = "tamanho_arquivo")
+    private Long tamanhoArquivo;
+    @Column(name = "hash_arquivo", length = 64)
+    private String hashArquivo;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusRelatorio status;
+    @Column(name = "usuario_geracao", length = 100)
+    private String usuarioGeracao;
+    @Column(name = "data_geracao", nullable = false)
+    private LocalDateTime dataGeracao;
+    @Column(name = "data_conclusao")
+    private LocalDateTime dataConclusao;
+    @Column(name = "tempo_processamento")
+    private Long tempoProcessamento;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "parametros", columnDefinition = "jsonb")
+    private String parametros;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de relatório contábil
+     */
+    public enum TipoRelatorio {
+        BALANCO_PATRIMONIAL,  // Balanço Patrimonial
+        DEMONSTRACAO_RESULTADO,  // DRE
+        FLUXO_CAIXA,  // Fluxo de Caixa
+        RAZAO_GERAL,  // Razão Geral
+        DIARIO_GERAL,  // Diário Geral
+        CONCILIACAO_BANCARIA,  // Conciliação Bancária
+        ANALISE_FINANCEIRA,  // Análise Financeira
+        RELATORIO_COSIF,  // Relatório COSIF
+        RELATORIO_BACEN,  // Relatório BACEN
+        CUSTOMIZADO // Relatório Customizado
+        ;
+    }
+
+
+    /**
+     * Formato do relatório
+     */
+    public enum FormatoRelatorio {
+        PDF,  // PDF
+        EXCEL,  // Excel
+        CSV,  // CSV
+        XML,  // XML
+        JSON,  // JSON
+        HTML // HTML
+        ;
+    }
+
+
+    /**
+     * Status do relatório
+     */
+    public enum StatusRelatorio {
+        PENDENTE,  // Pendente de geração
+        GERANDO,  // Em processo de geração
+        CONCLUIDO,  // Concluído
+        ERRO,  // Erro na geração
+        CANCELADO,  // Cancelado
+        EXPIRADO // Expirado
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class RelatorioContabilBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String codigoRelatorio;
+        @java.lang.SuppressWarnings("all")
+        private String nome;
+        @java.lang.SuppressWarnings("all")
+        private String descricao;
+        @java.lang.SuppressWarnings("all")
+        private TipoRelatorio tipoRelatorio;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataInicio;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataFim;
+        @java.lang.SuppressWarnings("all")
+        private String periodoReferencia;
+        @java.lang.SuppressWarnings("all")
+        private FormatoRelatorio formato;
+        @java.lang.SuppressWarnings("all")
+        private String caminhoArquivo;
+        @java.lang.SuppressWarnings("all")
+        private Long tamanhoArquivo;
+        @java.lang.SuppressWarnings("all")
+        private String hashArquivo;
+        @java.lang.SuppressWarnings("all")
+        private StatusRelatorio status;
+        @java.lang.SuppressWarnings("all")
+        private String usuarioGeracao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataGeracao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataConclusao;
+        @java.lang.SuppressWarnings("all")
+        private Long tempoProcessamento;
+        @java.lang.SuppressWarnings("all")
+        private String parametros;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        RelatorioContabilBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder codigoRelatorio(final String codigoRelatorio) {
+            this.codigoRelatorio = codigoRelatorio;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder nome(final String nome) {
+            this.nome = nome;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder descricao(final String descricao) {
+            this.descricao = descricao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder tipoRelatorio(final TipoRelatorio tipoRelatorio) {
+            this.tipoRelatorio = tipoRelatorio;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder dataInicio(final LocalDate dataInicio) {
+            this.dataInicio = dataInicio;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder dataFim(final LocalDate dataFim) {
+            this.dataFim = dataFim;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder periodoReferencia(final String periodoReferencia) {
+            this.periodoReferencia = periodoReferencia;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder formato(final FormatoRelatorio formato) {
+            this.formato = formato;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder caminhoArquivo(final String caminhoArquivo) {
+            this.caminhoArquivo = caminhoArquivo;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder tamanhoArquivo(final Long tamanhoArquivo) {
+            this.tamanhoArquivo = tamanhoArquivo;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder hashArquivo(final String hashArquivo) {
+            this.hashArquivo = hashArquivo;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder status(final StatusRelatorio status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder usuarioGeracao(final String usuarioGeracao) {
+            this.usuarioGeracao = usuarioGeracao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder dataGeracao(final LocalDateTime dataGeracao) {
+            this.dataGeracao = dataGeracao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder dataConclusao(final LocalDateTime dataConclusao) {
+            this.dataConclusao = dataConclusao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder tempoProcessamento(final Long tempoProcessamento) {
+            this.tempoProcessamento = tempoProcessamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder parametros(final String parametros) {
+            this.parametros = parametros;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil.RelatorioContabilBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public RelatorioContabil build() {
+            return new RelatorioContabil(this.id, this.codigoRelatorio, this.nome, this.descricao, this.tipoRelatorio, this.dataInicio, this.dataFim, this.periodoReferencia, this.formato, this.caminhoArquivo, this.tamanhoArquivo, this.hashArquivo, this.status, this.usuarioGeracao, this.dataGeracao, this.dataConclusao, this.tempoProcessamento, this.parametros, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "RelatorioContabil.RelatorioContabilBuilder(id=" + this.id + ", codigoRelatorio=" + this.codigoRelatorio + ", nome=" + this.nome + ", descricao=" + this.descricao + ", tipoRelatorio=" + this.tipoRelatorio + ", dataInicio=" + this.dataInicio + ", dataFim=" + this.dataFim + ", periodoReferencia=" + this.periodoReferencia + ", formato=" + this.formato + ", caminhoArquivo=" + this.caminhoArquivo + ", tamanhoArquivo=" + this.tamanhoArquivo + ", hashArquivo=" + this.hashArquivo + ", status=" + this.status + ", usuarioGeracao=" + this.usuarioGeracao + ", dataGeracao=" + this.dataGeracao + ", dataConclusao=" + this.dataConclusao + ", tempoProcessamento=" + this.tempoProcessamento + ", parametros=" + this.parametros + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static RelatorioContabil.RelatorioContabilBuilder builder() {
+        return new RelatorioContabil.RelatorioContabilBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoRelatorio() {
+        return this.codigoRelatorio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNome() {
+        return this.nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoRelatorio getTipoRelatorio() {
+        return this.tipoRelatorio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataInicio() {
+        return this.dataInicio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataFim() {
+        return this.dataFim;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getPeriodoReferencia() {
+        return this.periodoReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public FormatoRelatorio getFormato() {
+        return this.formato;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCaminhoArquivo() {
+        return this.caminhoArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getTamanhoArquivo() {
+        return this.tamanhoArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getHashArquivo() {
+        return this.hashArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusRelatorio getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUsuarioGeracao() {
+        return this.usuarioGeracao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataGeracao() {
+        return this.dataGeracao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataConclusao() {
+        return this.dataConclusao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getTempoProcessamento() {
+        return this.tempoProcessamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getParametros() {
+        return this.parametros;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoRelatorio(final String codigoRelatorio) {
+        this.codigoRelatorio = codigoRelatorio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNome(final String nome) {
+        this.nome = nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDescricao(final String descricao) {
+        this.descricao = descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoRelatorio(final TipoRelatorio tipoRelatorio) {
+        this.tipoRelatorio = tipoRelatorio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataInicio(final LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataFim(final LocalDate dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPeriodoReferencia(final String periodoReferencia) {
+        this.periodoReferencia = periodoReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setFormato(final FormatoRelatorio formato) {
+        this.formato = formato;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCaminhoArquivo(final String caminhoArquivo) {
+        this.caminhoArquivo = caminhoArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTamanhoArquivo(final Long tamanhoArquivo) {
+        this.tamanhoArquivo = tamanhoArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setHashArquivo(final String hashArquivo) {
+        this.hashArquivo = hashArquivo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusRelatorio status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUsuarioGeracao(final String usuarioGeracao) {
+        this.usuarioGeracao = usuarioGeracao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataGeracao(final LocalDateTime dataGeracao) {
+        this.dataGeracao = dataGeracao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataConclusao(final LocalDateTime dataConclusao) {
+        this.dataConclusao = dataConclusao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTempoProcessamento(final Long tempoProcessamento) {
+        this.tempoProcessamento = tempoProcessamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setParametros(final String parametros) {
+        this.parametros = parametros;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof RelatorioContabil)) return false;
+        final RelatorioContabil other = (RelatorioContabil) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$tamanhoArquivo = this.getTamanhoArquivo();
+        final java.lang.Object other$tamanhoArquivo = other.getTamanhoArquivo();
+        if (this$tamanhoArquivo == null ? other$tamanhoArquivo != null : !this$tamanhoArquivo.equals(other$tamanhoArquivo)) return false;
+        final java.lang.Object this$tempoProcessamento = this.getTempoProcessamento();
+        final java.lang.Object other$tempoProcessamento = other.getTempoProcessamento();
+        if (this$tempoProcessamento == null ? other$tempoProcessamento != null : !this$tempoProcessamento.equals(other$tempoProcessamento)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoRelatorio = this.getCodigoRelatorio();
+        final java.lang.Object other$codigoRelatorio = other.getCodigoRelatorio();
+        if (this$codigoRelatorio == null ? other$codigoRelatorio != null : !this$codigoRelatorio.equals(other$codigoRelatorio)) return false;
+        final java.lang.Object this$nome = this.getNome();
+        final java.lang.Object other$nome = other.getNome();
+        if (this$nome == null ? other$nome != null : !this$nome.equals(other$nome)) return false;
+        final java.lang.Object this$descricao = this.getDescricao();
+        final java.lang.Object other$descricao = other.getDescricao();
+        if (this$descricao == null ? other$descricao != null : !this$descricao.equals(other$descricao)) return false;
+        final java.lang.Object this$tipoRelatorio = this.getTipoRelatorio();
+        final java.lang.Object other$tipoRelatorio = other.getTipoRelatorio();
+        if (this$tipoRelatorio == null ? other$tipoRelatorio != null : !this$tipoRelatorio.equals(other$tipoRelatorio)) return false;
+        final java.lang.Object this$dataInicio = this.getDataInicio();
+        final java.lang.Object other$dataInicio = other.getDataInicio();
+        if (this$dataInicio == null ? other$dataInicio != null : !this$dataInicio.equals(other$dataInicio)) return false;
+        final java.lang.Object this$dataFim = this.getDataFim();
+        final java.lang.Object other$dataFim = other.getDataFim();
+        if (this$dataFim == null ? other$dataFim != null : !this$dataFim.equals(other$dataFim)) return false;
+        final java.lang.Object this$periodoReferencia = this.getPeriodoReferencia();
+        final java.lang.Object other$periodoReferencia = other.getPeriodoReferencia();
+        if (this$periodoReferencia == null ? other$periodoReferencia != null : !this$periodoReferencia.equals(other$periodoReferencia)) return false;
+        final java.lang.Object this$formato = this.getFormato();
+        final java.lang.Object other$formato = other.getFormato();
+        if (this$formato == null ? other$formato != null : !this$formato.equals(other$formato)) return false;
+        final java.lang.Object this$caminhoArquivo = this.getCaminhoArquivo();
+        final java.lang.Object other$caminhoArquivo = other.getCaminhoArquivo();
+        if (this$caminhoArquivo == null ? other$caminhoArquivo != null : !this$caminhoArquivo.equals(other$caminhoArquivo)) return false;
+        final java.lang.Object this$hashArquivo = this.getHashArquivo();
+        final java.lang.Object other$hashArquivo = other.getHashArquivo();
+        if (this$hashArquivo == null ? other$hashArquivo != null : !this$hashArquivo.equals(other$hashArquivo)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$usuarioGeracao = this.getUsuarioGeracao();
+        final java.lang.Object other$usuarioGeracao = other.getUsuarioGeracao();
+        if (this$usuarioGeracao == null ? other$usuarioGeracao != null : !this$usuarioGeracao.equals(other$usuarioGeracao)) return false;
+        final java.lang.Object this$dataGeracao = this.getDataGeracao();
+        final java.lang.Object other$dataGeracao = other.getDataGeracao();
+        if (this$dataGeracao == null ? other$dataGeracao != null : !this$dataGeracao.equals(other$dataGeracao)) return false;
+        final java.lang.Object this$dataConclusao = this.getDataConclusao();
+        final java.lang.Object other$dataConclusao = other.getDataConclusao();
+        if (this$dataConclusao == null ? other$dataConclusao != null : !this$dataConclusao.equals(other$dataConclusao)) return false;
+        final java.lang.Object this$parametros = this.getParametros();
+        final java.lang.Object other$parametros = other.getParametros();
+        if (this$parametros == null ? other$parametros != null : !this$parametros.equals(other$parametros)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof RelatorioContabil;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $tamanhoArquivo = this.getTamanhoArquivo();
+        result = result * PRIME + ($tamanhoArquivo == null ? 43 : $tamanhoArquivo.hashCode());
+        final java.lang.Object $tempoProcessamento = this.getTempoProcessamento();
+        result = result * PRIME + ($tempoProcessamento == null ? 43 : $tempoProcessamento.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoRelatorio = this.getCodigoRelatorio();
+        result = result * PRIME + ($codigoRelatorio == null ? 43 : $codigoRelatorio.hashCode());
+        final java.lang.Object $nome = this.getNome();
+        result = result * PRIME + ($nome == null ? 43 : $nome.hashCode());
+        final java.lang.Object $descricao = this.getDescricao();
+        result = result * PRIME + ($descricao == null ? 43 : $descricao.hashCode());
+        final java.lang.Object $tipoRelatorio = this.getTipoRelatorio();
+        result = result * PRIME + ($tipoRelatorio == null ? 43 : $tipoRelatorio.hashCode());
+        final java.lang.Object $dataInicio = this.getDataInicio();
+        result = result * PRIME + ($dataInicio == null ? 43 : $dataInicio.hashCode());
+        final java.lang.Object $dataFim = this.getDataFim();
+        result = result * PRIME + ($dataFim == null ? 43 : $dataFim.hashCode());
+        final java.lang.Object $periodoReferencia = this.getPeriodoReferencia();
+        result = result * PRIME + ($periodoReferencia == null ? 43 : $periodoReferencia.hashCode());
+        final java.lang.Object $formato = this.getFormato();
+        result = result * PRIME + ($formato == null ? 43 : $formato.hashCode());
+        final java.lang.Object $caminhoArquivo = this.getCaminhoArquivo();
+        result = result * PRIME + ($caminhoArquivo == null ? 43 : $caminhoArquivo.hashCode());
+        final java.lang.Object $hashArquivo = this.getHashArquivo();
+        result = result * PRIME + ($hashArquivo == null ? 43 : $hashArquivo.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $usuarioGeracao = this.getUsuarioGeracao();
+        result = result * PRIME + ($usuarioGeracao == null ? 43 : $usuarioGeracao.hashCode());
+        final java.lang.Object $dataGeracao = this.getDataGeracao();
+        result = result * PRIME + ($dataGeracao == null ? 43 : $dataGeracao.hashCode());
+        final java.lang.Object $dataConclusao = this.getDataConclusao();
+        result = result * PRIME + ($dataConclusao == null ? 43 : $dataConclusao.hashCode());
+        final java.lang.Object $parametros = this.getParametros();
+        result = result * PRIME + ($parametros == null ? 43 : $parametros.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "RelatorioContabil(id=" + this.getId() + ", codigoRelatorio=" + this.getCodigoRelatorio() + ", nome=" + this.getNome() + ", descricao=" + this.getDescricao() + ", tipoRelatorio=" + this.getTipoRelatorio() + ", dataInicio=" + this.getDataInicio() + ", dataFim=" + this.getDataFim() + ", periodoReferencia=" + this.getPeriodoReferencia() + ", formato=" + this.getFormato() + ", caminhoArquivo=" + this.getCaminhoArquivo() + ", tamanhoArquivo=" + this.getTamanhoArquivo() + ", hashArquivo=" + this.getHashArquivo() + ", status=" + this.getStatus() + ", usuarioGeracao=" + this.getUsuarioGeracao() + ", dataGeracao=" + this.getDataGeracao() + ", dataConclusao=" + this.getDataConclusao() + ", tempoProcessamento=" + this.getTempoProcessamento() + ", parametros=" + this.getParametros() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RelatorioContabil() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RelatorioContabil(final Long id, final String codigoRelatorio, final String nome, final String descricao, final TipoRelatorio tipoRelatorio, final LocalDate dataInicio, final LocalDate dataFim, final String periodoReferencia, final FormatoRelatorio formato, final String caminhoArquivo, final Long tamanhoArquivo, final String hashArquivo, final StatusRelatorio status, final String usuarioGeracao, final LocalDateTime dataGeracao, final LocalDateTime dataConclusao, final Long tempoProcessamento, final String parametros, final String observacoes, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.codigoRelatorio = codigoRelatorio;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.tipoRelatorio = tipoRelatorio;
+        this.dataInicio = dataInicio;
+        this.dataFim = dataFim;
+        this.periodoReferencia = periodoReferencia;
+        this.formato = formato;
+        this.caminhoArquivo = caminhoArquivo;
+        this.tamanhoArquivo = tamanhoArquivo;
+        this.hashArquivo = hashArquivo;
+        this.status = status;
+        this.usuarioGeracao = usuarioGeracao;
+        this.dataGeracao = dataGeracao;
+        this.dataConclusao = dataConclusao;
+        this.tempoProcessamento = tempoProcessamento;
+        this.parametros = parametros;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

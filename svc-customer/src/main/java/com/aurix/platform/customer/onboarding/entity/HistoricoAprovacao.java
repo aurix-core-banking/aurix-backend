@@ -1,0 +1,188 @@
+package com.aurix.platform.customer.onboarding.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "historico_aprovacao_onboarding", schema = "aurix")
+public class HistoricoAprovacao {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "solicitacao_id", nullable = false)
+    private SolicitacaoOnboarding solicitacao;
+    @Column(name = "acao", nullable = false, length = 30)
+    private String acao;
+    @Column(name = "usuario_analista", length = 100)
+    private String usuarioAnalista;
+    @Column(name = "observacao", length = 500)
+    private String observacao;
+    @Column(name = "data_acao", nullable = false)
+    private LocalDateTime dataAcao;
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class HistoricoAprovacaoBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private SolicitacaoOnboarding solicitacao;
+        @java.lang.SuppressWarnings("all")
+        private String acao;
+        @java.lang.SuppressWarnings("all")
+        private String usuarioAnalista;
+        @java.lang.SuppressWarnings("all")
+        private String observacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAcao;
+
+        @java.lang.SuppressWarnings("all")
+        HistoricoAprovacaoBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao.HistoricoAprovacaoBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao.HistoricoAprovacaoBuilder solicitacao(final SolicitacaoOnboarding solicitacao) {
+            this.solicitacao = solicitacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao.HistoricoAprovacaoBuilder acao(final String acao) {
+            this.acao = acao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao.HistoricoAprovacaoBuilder usuarioAnalista(final String usuarioAnalista) {
+            this.usuarioAnalista = usuarioAnalista;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao.HistoricoAprovacaoBuilder observacao(final String observacao) {
+            this.observacao = observacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao.HistoricoAprovacaoBuilder dataAcao(final LocalDateTime dataAcao) {
+            this.dataAcao = dataAcao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public HistoricoAprovacao build() {
+            return new HistoricoAprovacao(this.id, this.solicitacao, this.acao, this.usuarioAnalista, this.observacao, this.dataAcao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "HistoricoAprovacao.HistoricoAprovacaoBuilder(id=" + this.id + ", solicitacao=" + this.solicitacao + ", acao=" + this.acao + ", usuarioAnalista=" + this.usuarioAnalista + ", observacao=" + this.observacao + ", dataAcao=" + this.dataAcao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static HistoricoAprovacao.HistoricoAprovacaoBuilder builder() {
+        return new HistoricoAprovacao.HistoricoAprovacaoBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public SolicitacaoOnboarding getSolicitacao() {
+        return this.solicitacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getAcao() {
+        return this.acao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUsuarioAnalista() {
+        return this.usuarioAnalista;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacao() {
+        return this.observacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAcao() {
+        return this.dataAcao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSolicitacao(final SolicitacaoOnboarding solicitacao) {
+        this.solicitacao = solicitacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAcao(final String acao) {
+        this.acao = acao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUsuarioAnalista(final String usuarioAnalista) {
+        this.usuarioAnalista = usuarioAnalista;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacao(final String observacao) {
+        this.observacao = observacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAcao(final LocalDateTime dataAcao) {
+        this.dataAcao = dataAcao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public HistoricoAprovacao() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public HistoricoAprovacao(final Long id, final SolicitacaoOnboarding solicitacao, final String acao, final String usuarioAnalista, final String observacao, final LocalDateTime dataAcao) {
+        this.id = id;
+        this.solicitacao = solicitacao;
+        this.acao = acao;
+        this.usuarioAnalista = usuarioAnalista;
+        this.observacao = observacao;
+        this.dataAcao = dataAcao;
+    }
+}

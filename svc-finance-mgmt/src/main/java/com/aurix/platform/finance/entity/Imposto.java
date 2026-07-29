@@ -1,0 +1,835 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa um imposto
+ * 
+ * Gerencia todos os impostos e tributos do banco
+ */
+@Entity
+@Table(name = "impostos", schema = "aurix")
+public class Imposto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "codigo_imposto", unique = true, nullable = false, length = 20)
+    private String codigoImposto;
+    @Column(name = "nome", nullable = false, length = 200)
+    private String nome;
+    @Column(name = "descricao", length = 500)
+    private String descricao;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_imposto", nullable = false)
+    private TipoImposto tipoImposto;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria", nullable = false)
+    private CategoriaImposto categoria;
+    @Column(name = "aliquota", precision = 8, scale = 6, nullable = false)
+    private BigDecimal aliquota;
+    @Column(name = "base_calculo", precision = 15, scale = 2)
+    private BigDecimal baseCalculo;
+    @Column(name = "valor_imposto", precision = 15, scale = 2, nullable = false)
+    private BigDecimal valorImposto;
+    @Column(name = "data_referencia", nullable = false)
+    private LocalDate dataReferencia;
+    @Column(name = "data_vencimento", nullable = false)
+    private LocalDate dataVencimento;
+    @Column(name = "data_pagamento")
+    private LocalDate dataPagamento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusImposto status;
+    @Column(name = "competencia", length = 7, nullable = false)
+    private String competencia;
+    @Column(name = "codigo_receita", length = 20)
+    private String codigoReceita;
+    @Column(name = "numero_darf", length = 30)
+    private String numeroDarf;
+    @Column(name = "valor_multa", precision = 15, scale = 2)
+    private BigDecimal valorMulta;
+    @Column(name = "valor_juros", precision = 15, scale = 2)
+    private BigDecimal valorJuros;
+    @Column(name = "valor_total", precision = 15, scale = 2, nullable = false)
+    private BigDecimal valorTotal;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de imposto
+     */
+    public enum TipoImposto {
+        IR,  // Imposto de Renda
+        CSLL,  // Contribuição Social sobre o Lucro Líquido
+        PIS,  // Programa de Integração Social
+        COFINS,  // Contribuição para Financiamento da Seguridade Social
+        IOF,  // Imposto sobre Operações Financeiras
+        IPI,  // Imposto sobre Produtos Industrializados
+        ICMS,  // Imposto sobre Circulação de Mercadorias e Serviços
+        ISS,  // Imposto sobre Serviços
+        FGTS,  // Fundo de Garantia do Tempo de Serviço
+        INSS,  // Instituto Nacional do Seguro Social
+        SIMPLES,  // Regime Especial Unificado
+        OUTROS // Outros impostos
+        ;
+    }
+
+
+    /**
+     * Categoria do imposto
+     */
+    public enum CategoriaImposto {
+        FEDERAL,  // Imposto federal
+        ESTADUAL,  // Imposto estadual
+        MUNICIPAL,  // Imposto municipal
+        CONTRIBUIÇÃO,  // Contribuição social
+        TAXA,  // Taxa
+        OUTROS // Outros
+        ;
+    }
+
+
+    /**
+     * Status do imposto
+     */
+    public enum StatusImposto {
+        CALCULADO,  // Calculado
+        APURADO,  // Apurado
+        PAGO,  // Pago
+        VENCIDO,  // Vencido
+        CANCELADO,  // Cancelado
+        PARCELADO,  // Parcelado
+        SUSPENSO // Suspenso
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class ImpostoBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String codigoImposto;
+        @java.lang.SuppressWarnings("all")
+        private String nome;
+        @java.lang.SuppressWarnings("all")
+        private String descricao;
+        @java.lang.SuppressWarnings("all")
+        private TipoImposto tipoImposto;
+        @java.lang.SuppressWarnings("all")
+        private CategoriaImposto categoria;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal aliquota;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal baseCalculo;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorImposto;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataReferencia;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataVencimento;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataPagamento;
+        @java.lang.SuppressWarnings("all")
+        private StatusImposto status;
+        @java.lang.SuppressWarnings("all")
+        private String competencia;
+        @java.lang.SuppressWarnings("all")
+        private String codigoReceita;
+        @java.lang.SuppressWarnings("all")
+        private String numeroDarf;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorMulta;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorJuros;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorTotal;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        ImpostoBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder codigoImposto(final String codigoImposto) {
+            this.codigoImposto = codigoImposto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder nome(final String nome) {
+            this.nome = nome;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder descricao(final String descricao) {
+            this.descricao = descricao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder tipoImposto(final TipoImposto tipoImposto) {
+            this.tipoImposto = tipoImposto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder categoria(final CategoriaImposto categoria) {
+            this.categoria = categoria;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder aliquota(final BigDecimal aliquota) {
+            this.aliquota = aliquota;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder baseCalculo(final BigDecimal baseCalculo) {
+            this.baseCalculo = baseCalculo;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder valorImposto(final BigDecimal valorImposto) {
+            this.valorImposto = valorImposto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder dataReferencia(final LocalDate dataReferencia) {
+            this.dataReferencia = dataReferencia;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder dataVencimento(final LocalDate dataVencimento) {
+            this.dataVencimento = dataVencimento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder dataPagamento(final LocalDate dataPagamento) {
+            this.dataPagamento = dataPagamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder status(final StatusImposto status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder competencia(final String competencia) {
+            this.competencia = competencia;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder codigoReceita(final String codigoReceita) {
+            this.codigoReceita = codigoReceita;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder numeroDarf(final String numeroDarf) {
+            this.numeroDarf = numeroDarf;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder valorMulta(final BigDecimal valorMulta) {
+            this.valorMulta = valorMulta;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder valorJuros(final BigDecimal valorJuros) {
+            this.valorJuros = valorJuros;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder valorTotal(final BigDecimal valorTotal) {
+            this.valorTotal = valorTotal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Imposto.ImpostoBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Imposto build() {
+            return new Imposto(this.id, this.codigoImposto, this.nome, this.descricao, this.tipoImposto, this.categoria, this.aliquota, this.baseCalculo, this.valorImposto, this.dataReferencia, this.dataVencimento, this.dataPagamento, this.status, this.competencia, this.codigoReceita, this.numeroDarf, this.valorMulta, this.valorJuros, this.valorTotal, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "Imposto.ImpostoBuilder(id=" + this.id + ", codigoImposto=" + this.codigoImposto + ", nome=" + this.nome + ", descricao=" + this.descricao + ", tipoImposto=" + this.tipoImposto + ", categoria=" + this.categoria + ", aliquota=" + this.aliquota + ", baseCalculo=" + this.baseCalculo + ", valorImposto=" + this.valorImposto + ", dataReferencia=" + this.dataReferencia + ", dataVencimento=" + this.dataVencimento + ", dataPagamento=" + this.dataPagamento + ", status=" + this.status + ", competencia=" + this.competencia + ", codigoReceita=" + this.codigoReceita + ", numeroDarf=" + this.numeroDarf + ", valorMulta=" + this.valorMulta + ", valorJuros=" + this.valorJuros + ", valorTotal=" + this.valorTotal + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static Imposto.ImpostoBuilder builder() {
+        return new Imposto.ImpostoBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoImposto() {
+        return this.codigoImposto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNome() {
+        return this.nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoImposto getTipoImposto() {
+        return this.tipoImposto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CategoriaImposto getCategoria() {
+        return this.categoria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getAliquota() {
+        return this.aliquota;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getBaseCalculo() {
+        return this.baseCalculo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorImposto() {
+        return this.valorImposto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataReferencia() {
+        return this.dataReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataVencimento() {
+        return this.dataVencimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataPagamento() {
+        return this.dataPagamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusImposto getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCompetencia() {
+        return this.competencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoReceita() {
+        return this.codigoReceita;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNumeroDarf() {
+        return this.numeroDarf;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorMulta() {
+        return this.valorMulta;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorJuros() {
+        return this.valorJuros;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorTotal() {
+        return this.valorTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoImposto(final String codigoImposto) {
+        this.codigoImposto = codigoImposto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNome(final String nome) {
+        this.nome = nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDescricao(final String descricao) {
+        this.descricao = descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoImposto(final TipoImposto tipoImposto) {
+        this.tipoImposto = tipoImposto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCategoria(final CategoriaImposto categoria) {
+        this.categoria = categoria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAliquota(final BigDecimal aliquota) {
+        this.aliquota = aliquota;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setBaseCalculo(final BigDecimal baseCalculo) {
+        this.baseCalculo = baseCalculo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorImposto(final BigDecimal valorImposto) {
+        this.valorImposto = valorImposto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataReferencia(final LocalDate dataReferencia) {
+        this.dataReferencia = dataReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataVencimento(final LocalDate dataVencimento) {
+        this.dataVencimento = dataVencimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataPagamento(final LocalDate dataPagamento) {
+        this.dataPagamento = dataPagamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusImposto status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCompetencia(final String competencia) {
+        this.competencia = competencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoReceita(final String codigoReceita) {
+        this.codigoReceita = codigoReceita;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNumeroDarf(final String numeroDarf) {
+        this.numeroDarf = numeroDarf;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorMulta(final BigDecimal valorMulta) {
+        this.valorMulta = valorMulta;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorJuros(final BigDecimal valorJuros) {
+        this.valorJuros = valorJuros;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorTotal(final BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Imposto)) return false;
+        final Imposto other = (Imposto) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoImposto = this.getCodigoImposto();
+        final java.lang.Object other$codigoImposto = other.getCodigoImposto();
+        if (this$codigoImposto == null ? other$codigoImposto != null : !this$codigoImposto.equals(other$codigoImposto)) return false;
+        final java.lang.Object this$nome = this.getNome();
+        final java.lang.Object other$nome = other.getNome();
+        if (this$nome == null ? other$nome != null : !this$nome.equals(other$nome)) return false;
+        final java.lang.Object this$descricao = this.getDescricao();
+        final java.lang.Object other$descricao = other.getDescricao();
+        if (this$descricao == null ? other$descricao != null : !this$descricao.equals(other$descricao)) return false;
+        final java.lang.Object this$tipoImposto = this.getTipoImposto();
+        final java.lang.Object other$tipoImposto = other.getTipoImposto();
+        if (this$tipoImposto == null ? other$tipoImposto != null : !this$tipoImposto.equals(other$tipoImposto)) return false;
+        final java.lang.Object this$categoria = this.getCategoria();
+        final java.lang.Object other$categoria = other.getCategoria();
+        if (this$categoria == null ? other$categoria != null : !this$categoria.equals(other$categoria)) return false;
+        final java.lang.Object this$aliquota = this.getAliquota();
+        final java.lang.Object other$aliquota = other.getAliquota();
+        if (this$aliquota == null ? other$aliquota != null : !this$aliquota.equals(other$aliquota)) return false;
+        final java.lang.Object this$baseCalculo = this.getBaseCalculo();
+        final java.lang.Object other$baseCalculo = other.getBaseCalculo();
+        if (this$baseCalculo == null ? other$baseCalculo != null : !this$baseCalculo.equals(other$baseCalculo)) return false;
+        final java.lang.Object this$valorImposto = this.getValorImposto();
+        final java.lang.Object other$valorImposto = other.getValorImposto();
+        if (this$valorImposto == null ? other$valorImposto != null : !this$valorImposto.equals(other$valorImposto)) return false;
+        final java.lang.Object this$dataReferencia = this.getDataReferencia();
+        final java.lang.Object other$dataReferencia = other.getDataReferencia();
+        if (this$dataReferencia == null ? other$dataReferencia != null : !this$dataReferencia.equals(other$dataReferencia)) return false;
+        final java.lang.Object this$dataVencimento = this.getDataVencimento();
+        final java.lang.Object other$dataVencimento = other.getDataVencimento();
+        if (this$dataVencimento == null ? other$dataVencimento != null : !this$dataVencimento.equals(other$dataVencimento)) return false;
+        final java.lang.Object this$dataPagamento = this.getDataPagamento();
+        final java.lang.Object other$dataPagamento = other.getDataPagamento();
+        if (this$dataPagamento == null ? other$dataPagamento != null : !this$dataPagamento.equals(other$dataPagamento)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$competencia = this.getCompetencia();
+        final java.lang.Object other$competencia = other.getCompetencia();
+        if (this$competencia == null ? other$competencia != null : !this$competencia.equals(other$competencia)) return false;
+        final java.lang.Object this$codigoReceita = this.getCodigoReceita();
+        final java.lang.Object other$codigoReceita = other.getCodigoReceita();
+        if (this$codigoReceita == null ? other$codigoReceita != null : !this$codigoReceita.equals(other$codigoReceita)) return false;
+        final java.lang.Object this$numeroDarf = this.getNumeroDarf();
+        final java.lang.Object other$numeroDarf = other.getNumeroDarf();
+        if (this$numeroDarf == null ? other$numeroDarf != null : !this$numeroDarf.equals(other$numeroDarf)) return false;
+        final java.lang.Object this$valorMulta = this.getValorMulta();
+        final java.lang.Object other$valorMulta = other.getValorMulta();
+        if (this$valorMulta == null ? other$valorMulta != null : !this$valorMulta.equals(other$valorMulta)) return false;
+        final java.lang.Object this$valorJuros = this.getValorJuros();
+        final java.lang.Object other$valorJuros = other.getValorJuros();
+        if (this$valorJuros == null ? other$valorJuros != null : !this$valorJuros.equals(other$valorJuros)) return false;
+        final java.lang.Object this$valorTotal = this.getValorTotal();
+        final java.lang.Object other$valorTotal = other.getValorTotal();
+        if (this$valorTotal == null ? other$valorTotal != null : !this$valorTotal.equals(other$valorTotal)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof Imposto;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoImposto = this.getCodigoImposto();
+        result = result * PRIME + ($codigoImposto == null ? 43 : $codigoImposto.hashCode());
+        final java.lang.Object $nome = this.getNome();
+        result = result * PRIME + ($nome == null ? 43 : $nome.hashCode());
+        final java.lang.Object $descricao = this.getDescricao();
+        result = result * PRIME + ($descricao == null ? 43 : $descricao.hashCode());
+        final java.lang.Object $tipoImposto = this.getTipoImposto();
+        result = result * PRIME + ($tipoImposto == null ? 43 : $tipoImposto.hashCode());
+        final java.lang.Object $categoria = this.getCategoria();
+        result = result * PRIME + ($categoria == null ? 43 : $categoria.hashCode());
+        final java.lang.Object $aliquota = this.getAliquota();
+        result = result * PRIME + ($aliquota == null ? 43 : $aliquota.hashCode());
+        final java.lang.Object $baseCalculo = this.getBaseCalculo();
+        result = result * PRIME + ($baseCalculo == null ? 43 : $baseCalculo.hashCode());
+        final java.lang.Object $valorImposto = this.getValorImposto();
+        result = result * PRIME + ($valorImposto == null ? 43 : $valorImposto.hashCode());
+        final java.lang.Object $dataReferencia = this.getDataReferencia();
+        result = result * PRIME + ($dataReferencia == null ? 43 : $dataReferencia.hashCode());
+        final java.lang.Object $dataVencimento = this.getDataVencimento();
+        result = result * PRIME + ($dataVencimento == null ? 43 : $dataVencimento.hashCode());
+        final java.lang.Object $dataPagamento = this.getDataPagamento();
+        result = result * PRIME + ($dataPagamento == null ? 43 : $dataPagamento.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $competencia = this.getCompetencia();
+        result = result * PRIME + ($competencia == null ? 43 : $competencia.hashCode());
+        final java.lang.Object $codigoReceita = this.getCodigoReceita();
+        result = result * PRIME + ($codigoReceita == null ? 43 : $codigoReceita.hashCode());
+        final java.lang.Object $numeroDarf = this.getNumeroDarf();
+        result = result * PRIME + ($numeroDarf == null ? 43 : $numeroDarf.hashCode());
+        final java.lang.Object $valorMulta = this.getValorMulta();
+        result = result * PRIME + ($valorMulta == null ? 43 : $valorMulta.hashCode());
+        final java.lang.Object $valorJuros = this.getValorJuros();
+        result = result * PRIME + ($valorJuros == null ? 43 : $valorJuros.hashCode());
+        final java.lang.Object $valorTotal = this.getValorTotal();
+        result = result * PRIME + ($valorTotal == null ? 43 : $valorTotal.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "Imposto(id=" + this.getId() + ", codigoImposto=" + this.getCodigoImposto() + ", nome=" + this.getNome() + ", descricao=" + this.getDescricao() + ", tipoImposto=" + this.getTipoImposto() + ", categoria=" + this.getCategoria() + ", aliquota=" + this.getAliquota() + ", baseCalculo=" + this.getBaseCalculo() + ", valorImposto=" + this.getValorImposto() + ", dataReferencia=" + this.getDataReferencia() + ", dataVencimento=" + this.getDataVencimento() + ", dataPagamento=" + this.getDataPagamento() + ", status=" + this.getStatus() + ", competencia=" + this.getCompetencia() + ", codigoReceita=" + this.getCodigoReceita() + ", numeroDarf=" + this.getNumeroDarf() + ", valorMulta=" + this.getValorMulta() + ", valorJuros=" + this.getValorJuros() + ", valorTotal=" + this.getValorTotal() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Imposto() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Imposto(final Long id, final String codigoImposto, final String nome, final String descricao, final TipoImposto tipoImposto, final CategoriaImposto categoria, final BigDecimal aliquota, final BigDecimal baseCalculo, final BigDecimal valorImposto, final LocalDate dataReferencia, final LocalDate dataVencimento, final LocalDate dataPagamento, final StatusImposto status, final String competencia, final String codigoReceita, final String numeroDarf, final BigDecimal valorMulta, final BigDecimal valorJuros, final BigDecimal valorTotal, final String observacoes, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.codigoImposto = codigoImposto;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.tipoImposto = tipoImposto;
+        this.categoria = categoria;
+        this.aliquota = aliquota;
+        this.baseCalculo = baseCalculo;
+        this.valorImposto = valorImposto;
+        this.dataReferencia = dataReferencia;
+        this.dataVencimento = dataVencimento;
+        this.dataPagamento = dataPagamento;
+        this.status = status;
+        this.competencia = competencia;
+        this.codigoReceita = codigoReceita;
+        this.numeroDarf = numeroDarf;
+        this.valorMulta = valorMulta;
+        this.valorJuros = valorJuros;
+        this.valorTotal = valorTotal;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

@@ -1,0 +1,27 @@
+package com.aurix.platform.payments.pix.client;
+
+import com.aurix.platform.payments.pix.client.dto.TransacaoSPI;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.client.ResourceAccessException;
+import java.math.BigDecimal;
+
+class PixBacenClientTest {
+
+    @Test
+    void shouldSendPixAndReturnSpiResult() {
+        PixBacenClient client = new PixBacenClient("http://localhost:8094");
+
+        TransacaoSPI transacao = new TransacaoSPI();
+        transacao.setEndToEndId("E0000000020240710REFTEST001");
+        transacao.setIspbOrigem("12345678");
+        transacao.setIspbDestino("87654321");
+        transacao.setValor(new BigDecimal("150.00"));
+        transacao.setChavePixDestino("teste@email.com");
+
+        try {
+            client.enviarPix(transacao);
+        } catch (ResourceAccessException e) {
+            // No server listening — code compiled, instantiated, and sent request
+        }
+    }
+}

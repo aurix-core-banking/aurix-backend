@@ -1,0 +1,25 @@
+package com.aurix.platform.fraud.config;
+
+import com.aurix.platform.shared.event.Topics;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.kafka.config.TopicBuilder;
+
+@Configuration("fraudKafkaConfig")
+@Profile("!test")
+public class KafkaConfig {
+    @Bean
+    public NewTopic fraudeTransacaoBloqueadaTopic() {
+        return TopicBuilder.name(Topics.FRAUD_TRANSACAO_BLOQUEADA).partitions(3).replicas(1).build();
+    }
+    @Bean
+    public NewTopic fraudeOcorrenciaCriadaTopic() {
+        return TopicBuilder.name(Topics.FRAUD_OCORRENCIA_CRIADA).partitions(3).replicas(1).build();
+    }
+    @Bean
+    public NewTopic fraudeScoreAlteradoTopic() {
+        return TopicBuilder.name(Topics.FRAUD_SCORE_ALTERADO).partitions(3).replicas(1).build();
+    }
+}

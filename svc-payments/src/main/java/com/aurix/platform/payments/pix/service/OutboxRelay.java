@@ -1,0 +1,52 @@
+package com.aurix.platform.payments.pix.service;
+
+import com.aurix.platform.payments.pix.entity.OutboxEvent;
+import com.aurix.platform.payments.pix.repository.OutboxEventRepository;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * Lê eventos pendentes da tabela de outbox do módulo PIX e os encaminha
+ * para os tópicos correspondentes no Kafka (ADR-0001).
+ */
+@Service
+public class OutboxRelay {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OutboxRelay.class);
+    private static final long DELAY_PROCESSAMENTO = 5000;
+    private final OutboxEventRepository outboxEventRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    public OutboxRelay(final OutboxEventRepository outboxEventRepository, final KafkaTemplate<String, Object> kafkaTemplate) {
+        this.outboxEventRepository = outboxEventRepository;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    @Scheduled(fixedDelay = DELAY_PROCESSAMENTO)
+    @Transactional
+    public void processOutboxEvents() {
+        List<OutboxEvent> pendingEvents = outboxEventRepository.findByStatusOrderByCreatedAtAsc(OutboxEvent.Status.PENDING);
+        if (pendingEvents.isEmpty()) {
+            return;
+        }
+        log.info("Processando {} eventos pendentes no Outbox", pendingEvents.size());
+        for (final OutboxEvent event : pendingEvents) {
+            try {
+                String topic = event.getEventType();
+                kafkaTemplate.send(topic, event.getAggregateId(), event.getPayload());
+                event.setStatus(OutboxEvent.Status.PROCESSED);
+                event.setProcessedAt(LocalDateTime.now());
+                outboxEventRepository.save(event);
+                log.info("Evento Outbox {} publicado com sucesso no tópico {}", event.getId(), topic);
+            } catch (Exception e) {
+                log.error("Erro ao processar evento Outbox {}: {}", event.getId(), e.getMessage());
+                event.setStatus(OutboxEvent.Status.FAILED);
+                outboxEventRepository.save(event);
+            }
+        }
+    }
+}

@@ -1,0 +1,784 @@
+package com.aurix.platform.platform.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa um orçamento
+ * 
+ * Gerencia orçamentos anuais, mensais e revisões
+ */
+@Entity
+@Table(name = "orcamentos", schema = "aurix")
+public class Orcamento {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "codigo_orcamento", unique = true, nullable = false, length = 50)
+    private String codigoOrcamento;
+    @Column(name = "nome", nullable = false, length = 200)
+    private String nome;
+    @Column(name = "descricao", length = 500)
+    private String descricao;
+    @Column(name = "ano", nullable = false)
+    private Integer ano;
+    @Column(name = "mes")
+    private Integer mes;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_orcamento", nullable = false)
+    private TipoOrcamento tipoOrcamento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusOrcamento status;
+    @Column(name = "data_inicio", nullable = false)
+    private LocalDate dataInicio;
+    @Column(name = "data_fim", nullable = false)
+    private LocalDate dataFim;
+    @Column(name = "valor_total_orcado", precision = 15, scale = 2)
+    private BigDecimal valorTotalOrcado;
+    @Column(name = "valor_total_realizado", precision = 15, scale = 2)
+    private BigDecimal valorTotalRealizado;
+    @Column(name = "variacao_total", precision = 15, scale = 2)
+    private BigDecimal variacaoTotal;
+    @Column(name = "percentual_variacao", precision = 8, scale = 4)
+    private BigDecimal percentualVariacao;
+    @Column(name = "centro_custo", length = 100)
+    private String centroCusto;
+    @Column(name = "responsavel", length = 100)
+    private String responsavel;
+    @Column(name = "aprovado_por", length = 100)
+    private String aprovadoPor;
+    @Column(name = "data_aprovacao")
+    private LocalDateTime dataAprovacao;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de orçamento
+     */
+    public enum TipoOrcamento {
+        ANUAL,  // Orçamento anual
+        MENSAL,  // Orçamento mensal
+        TRIMESTRAL,  // Orçamento trimestral
+        SEMESTRAL,  // Orçamento semestral
+        REVISAO,  // Revisão orçamentária
+        SUPLEMENTAR // Orçamento suplementar
+        ;
+    }
+
+
+    /**
+     * Status do orçamento
+     */
+    public enum StatusOrcamento {
+        RASCUNHO,  // Em elaboração
+        APROVACAO,  // Em aprovação
+        APROVADO,  // Aprovado
+        EXECUTANDO,  // Em execução
+        FECHADO,  // Fechado
+        CANCELADO // Cancelado
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class OrcamentoBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String codigoOrcamento;
+        @java.lang.SuppressWarnings("all")
+        private String nome;
+        @java.lang.SuppressWarnings("all")
+        private String descricao;
+        @java.lang.SuppressWarnings("all")
+        private Integer ano;
+        @java.lang.SuppressWarnings("all")
+        private Integer mes;
+        @java.lang.SuppressWarnings("all")
+        private TipoOrcamento tipoOrcamento;
+        @java.lang.SuppressWarnings("all")
+        private StatusOrcamento status;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataInicio;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataFim;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorTotalOrcado;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal valorTotalRealizado;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal variacaoTotal;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal percentualVariacao;
+        @java.lang.SuppressWarnings("all")
+        private String centroCusto;
+        @java.lang.SuppressWarnings("all")
+        private String responsavel;
+        @java.lang.SuppressWarnings("all")
+        private String aprovadoPor;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAprovacao;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        OrcamentoBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder codigoOrcamento(final String codigoOrcamento) {
+            this.codigoOrcamento = codigoOrcamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder nome(final String nome) {
+            this.nome = nome;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder descricao(final String descricao) {
+            this.descricao = descricao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder ano(final Integer ano) {
+            this.ano = ano;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder mes(final Integer mes) {
+            this.mes = mes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder tipoOrcamento(final TipoOrcamento tipoOrcamento) {
+            this.tipoOrcamento = tipoOrcamento;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder status(final StatusOrcamento status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder dataInicio(final LocalDate dataInicio) {
+            this.dataInicio = dataInicio;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder dataFim(final LocalDate dataFim) {
+            this.dataFim = dataFim;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder valorTotalOrcado(final BigDecimal valorTotalOrcado) {
+            this.valorTotalOrcado = valorTotalOrcado;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder valorTotalRealizado(final BigDecimal valorTotalRealizado) {
+            this.valorTotalRealizado = valorTotalRealizado;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder variacaoTotal(final BigDecimal variacaoTotal) {
+            this.variacaoTotal = variacaoTotal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder percentualVariacao(final BigDecimal percentualVariacao) {
+            this.percentualVariacao = percentualVariacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder centroCusto(final String centroCusto) {
+            this.centroCusto = centroCusto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder responsavel(final String responsavel) {
+            this.responsavel = responsavel;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder aprovadoPor(final String aprovadoPor) {
+            this.aprovadoPor = aprovadoPor;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder dataAprovacao(final LocalDateTime dataAprovacao) {
+            this.dataAprovacao = dataAprovacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Orcamento.OrcamentoBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Orcamento build() {
+            return new Orcamento(this.id, this.codigoOrcamento, this.nome, this.descricao, this.ano, this.mes, this.tipoOrcamento, this.status, this.dataInicio, this.dataFim, this.valorTotalOrcado, this.valorTotalRealizado, this.variacaoTotal, this.percentualVariacao, this.centroCusto, this.responsavel, this.aprovadoPor, this.dataAprovacao, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "Orcamento.OrcamentoBuilder(id=" + this.id + ", codigoOrcamento=" + this.codigoOrcamento + ", nome=" + this.nome + ", descricao=" + this.descricao + ", ano=" + this.ano + ", mes=" + this.mes + ", tipoOrcamento=" + this.tipoOrcamento + ", status=" + this.status + ", dataInicio=" + this.dataInicio + ", dataFim=" + this.dataFim + ", valorTotalOrcado=" + this.valorTotalOrcado + ", valorTotalRealizado=" + this.valorTotalRealizado + ", variacaoTotal=" + this.variacaoTotal + ", percentualVariacao=" + this.percentualVariacao + ", centroCusto=" + this.centroCusto + ", responsavel=" + this.responsavel + ", aprovadoPor=" + this.aprovadoPor + ", dataAprovacao=" + this.dataAprovacao + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static Orcamento.OrcamentoBuilder builder() {
+        return new Orcamento.OrcamentoBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoOrcamento() {
+        return this.codigoOrcamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNome() {
+        return this.nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Integer getAno() {
+        return this.ano;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Integer getMes() {
+        return this.mes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoOrcamento getTipoOrcamento() {
+        return this.tipoOrcamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusOrcamento getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataInicio() {
+        return this.dataInicio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataFim() {
+        return this.dataFim;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorTotalOrcado() {
+        return this.valorTotalOrcado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getValorTotalRealizado() {
+        return this.valorTotalRealizado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getVariacaoTotal() {
+        return this.variacaoTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getPercentualVariacao() {
+        return this.percentualVariacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCentroCusto() {
+        return this.centroCusto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getResponsavel() {
+        return this.responsavel;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getAprovadoPor() {
+        return this.aprovadoPor;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAprovacao() {
+        return this.dataAprovacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoOrcamento(final String codigoOrcamento) {
+        this.codigoOrcamento = codigoOrcamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNome(final String nome) {
+        this.nome = nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDescricao(final String descricao) {
+        this.descricao = descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAno(final Integer ano) {
+        this.ano = ano;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMes(final Integer mes) {
+        this.mes = mes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoOrcamento(final TipoOrcamento tipoOrcamento) {
+        this.tipoOrcamento = tipoOrcamento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusOrcamento status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataInicio(final LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataFim(final LocalDate dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorTotalOrcado(final BigDecimal valorTotalOrcado) {
+        this.valorTotalOrcado = valorTotalOrcado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorTotalRealizado(final BigDecimal valorTotalRealizado) {
+        this.valorTotalRealizado = valorTotalRealizado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVariacaoTotal(final BigDecimal variacaoTotal) {
+        this.variacaoTotal = variacaoTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPercentualVariacao(final BigDecimal percentualVariacao) {
+        this.percentualVariacao = percentualVariacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCentroCusto(final String centroCusto) {
+        this.centroCusto = centroCusto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setResponsavel(final String responsavel) {
+        this.responsavel = responsavel;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAprovadoPor(final String aprovadoPor) {
+        this.aprovadoPor = aprovadoPor;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAprovacao(final LocalDateTime dataAprovacao) {
+        this.dataAprovacao = dataAprovacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Orcamento)) return false;
+        final Orcamento other = (Orcamento) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$ano = this.getAno();
+        final java.lang.Object other$ano = other.getAno();
+        if (this$ano == null ? other$ano != null : !this$ano.equals(other$ano)) return false;
+        final java.lang.Object this$mes = this.getMes();
+        final java.lang.Object other$mes = other.getMes();
+        if (this$mes == null ? other$mes != null : !this$mes.equals(other$mes)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoOrcamento = this.getCodigoOrcamento();
+        final java.lang.Object other$codigoOrcamento = other.getCodigoOrcamento();
+        if (this$codigoOrcamento == null ? other$codigoOrcamento != null : !this$codigoOrcamento.equals(other$codigoOrcamento)) return false;
+        final java.lang.Object this$nome = this.getNome();
+        final java.lang.Object other$nome = other.getNome();
+        if (this$nome == null ? other$nome != null : !this$nome.equals(other$nome)) return false;
+        final java.lang.Object this$descricao = this.getDescricao();
+        final java.lang.Object other$descricao = other.getDescricao();
+        if (this$descricao == null ? other$descricao != null : !this$descricao.equals(other$descricao)) return false;
+        final java.lang.Object this$tipoOrcamento = this.getTipoOrcamento();
+        final java.lang.Object other$tipoOrcamento = other.getTipoOrcamento();
+        if (this$tipoOrcamento == null ? other$tipoOrcamento != null : !this$tipoOrcamento.equals(other$tipoOrcamento)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$dataInicio = this.getDataInicio();
+        final java.lang.Object other$dataInicio = other.getDataInicio();
+        if (this$dataInicio == null ? other$dataInicio != null : !this$dataInicio.equals(other$dataInicio)) return false;
+        final java.lang.Object this$dataFim = this.getDataFim();
+        final java.lang.Object other$dataFim = other.getDataFim();
+        if (this$dataFim == null ? other$dataFim != null : !this$dataFim.equals(other$dataFim)) return false;
+        final java.lang.Object this$valorTotalOrcado = this.getValorTotalOrcado();
+        final java.lang.Object other$valorTotalOrcado = other.getValorTotalOrcado();
+        if (this$valorTotalOrcado == null ? other$valorTotalOrcado != null : !this$valorTotalOrcado.equals(other$valorTotalOrcado)) return false;
+        final java.lang.Object this$valorTotalRealizado = this.getValorTotalRealizado();
+        final java.lang.Object other$valorTotalRealizado = other.getValorTotalRealizado();
+        if (this$valorTotalRealizado == null ? other$valorTotalRealizado != null : !this$valorTotalRealizado.equals(other$valorTotalRealizado)) return false;
+        final java.lang.Object this$variacaoTotal = this.getVariacaoTotal();
+        final java.lang.Object other$variacaoTotal = other.getVariacaoTotal();
+        if (this$variacaoTotal == null ? other$variacaoTotal != null : !this$variacaoTotal.equals(other$variacaoTotal)) return false;
+        final java.lang.Object this$percentualVariacao = this.getPercentualVariacao();
+        final java.lang.Object other$percentualVariacao = other.getPercentualVariacao();
+        if (this$percentualVariacao == null ? other$percentualVariacao != null : !this$percentualVariacao.equals(other$percentualVariacao)) return false;
+        final java.lang.Object this$centroCusto = this.getCentroCusto();
+        final java.lang.Object other$centroCusto = other.getCentroCusto();
+        if (this$centroCusto == null ? other$centroCusto != null : !this$centroCusto.equals(other$centroCusto)) return false;
+        final java.lang.Object this$responsavel = this.getResponsavel();
+        final java.lang.Object other$responsavel = other.getResponsavel();
+        if (this$responsavel == null ? other$responsavel != null : !this$responsavel.equals(other$responsavel)) return false;
+        final java.lang.Object this$aprovadoPor = this.getAprovadoPor();
+        final java.lang.Object other$aprovadoPor = other.getAprovadoPor();
+        if (this$aprovadoPor == null ? other$aprovadoPor != null : !this$aprovadoPor.equals(other$aprovadoPor)) return false;
+        final java.lang.Object this$dataAprovacao = this.getDataAprovacao();
+        final java.lang.Object other$dataAprovacao = other.getDataAprovacao();
+        if (this$dataAprovacao == null ? other$dataAprovacao != null : !this$dataAprovacao.equals(other$dataAprovacao)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof Orcamento;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $ano = this.getAno();
+        result = result * PRIME + ($ano == null ? 43 : $ano.hashCode());
+        final java.lang.Object $mes = this.getMes();
+        result = result * PRIME + ($mes == null ? 43 : $mes.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoOrcamento = this.getCodigoOrcamento();
+        result = result * PRIME + ($codigoOrcamento == null ? 43 : $codigoOrcamento.hashCode());
+        final java.lang.Object $nome = this.getNome();
+        result = result * PRIME + ($nome == null ? 43 : $nome.hashCode());
+        final java.lang.Object $descricao = this.getDescricao();
+        result = result * PRIME + ($descricao == null ? 43 : $descricao.hashCode());
+        final java.lang.Object $tipoOrcamento = this.getTipoOrcamento();
+        result = result * PRIME + ($tipoOrcamento == null ? 43 : $tipoOrcamento.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $dataInicio = this.getDataInicio();
+        result = result * PRIME + ($dataInicio == null ? 43 : $dataInicio.hashCode());
+        final java.lang.Object $dataFim = this.getDataFim();
+        result = result * PRIME + ($dataFim == null ? 43 : $dataFim.hashCode());
+        final java.lang.Object $valorTotalOrcado = this.getValorTotalOrcado();
+        result = result * PRIME + ($valorTotalOrcado == null ? 43 : $valorTotalOrcado.hashCode());
+        final java.lang.Object $valorTotalRealizado = this.getValorTotalRealizado();
+        result = result * PRIME + ($valorTotalRealizado == null ? 43 : $valorTotalRealizado.hashCode());
+        final java.lang.Object $variacaoTotal = this.getVariacaoTotal();
+        result = result * PRIME + ($variacaoTotal == null ? 43 : $variacaoTotal.hashCode());
+        final java.lang.Object $percentualVariacao = this.getPercentualVariacao();
+        result = result * PRIME + ($percentualVariacao == null ? 43 : $percentualVariacao.hashCode());
+        final java.lang.Object $centroCusto = this.getCentroCusto();
+        result = result * PRIME + ($centroCusto == null ? 43 : $centroCusto.hashCode());
+        final java.lang.Object $responsavel = this.getResponsavel();
+        result = result * PRIME + ($responsavel == null ? 43 : $responsavel.hashCode());
+        final java.lang.Object $aprovadoPor = this.getAprovadoPor();
+        result = result * PRIME + ($aprovadoPor == null ? 43 : $aprovadoPor.hashCode());
+        final java.lang.Object $dataAprovacao = this.getDataAprovacao();
+        result = result * PRIME + ($dataAprovacao == null ? 43 : $dataAprovacao.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "Orcamento(id=" + this.getId() + ", codigoOrcamento=" + this.getCodigoOrcamento() + ", nome=" + this.getNome() + ", descricao=" + this.getDescricao() + ", ano=" + this.getAno() + ", mes=" + this.getMes() + ", tipoOrcamento=" + this.getTipoOrcamento() + ", status=" + this.getStatus() + ", dataInicio=" + this.getDataInicio() + ", dataFim=" + this.getDataFim() + ", valorTotalOrcado=" + this.getValorTotalOrcado() + ", valorTotalRealizado=" + this.getValorTotalRealizado() + ", variacaoTotal=" + this.getVariacaoTotal() + ", percentualVariacao=" + this.getPercentualVariacao() + ", centroCusto=" + this.getCentroCusto() + ", responsavel=" + this.getResponsavel() + ", aprovadoPor=" + this.getAprovadoPor() + ", dataAprovacao=" + this.getDataAprovacao() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Orcamento() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Orcamento(final Long id, final String codigoOrcamento, final String nome, final String descricao, final Integer ano, final Integer mes, final TipoOrcamento tipoOrcamento, final StatusOrcamento status, final LocalDate dataInicio, final LocalDate dataFim, final BigDecimal valorTotalOrcado, final BigDecimal valorTotalRealizado, final BigDecimal variacaoTotal, final BigDecimal percentualVariacao, final String centroCusto, final String responsavel, final String aprovadoPor, final LocalDateTime dataAprovacao, final String observacoes, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.codigoOrcamento = codigoOrcamento;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.ano = ano;
+        this.mes = mes;
+        this.tipoOrcamento = tipoOrcamento;
+        this.status = status;
+        this.dataInicio = dataInicio;
+        this.dataFim = dataFim;
+        this.valorTotalOrcado = valorTotalOrcado;
+        this.valorTotalRealizado = valorTotalRealizado;
+        this.variacaoTotal = variacaoTotal;
+        this.percentualVariacao = percentualVariacao;
+        this.centroCusto = centroCusto;
+        this.responsavel = responsavel;
+        this.aprovadoPor = aprovadoPor;
+        this.dataAprovacao = dataAprovacao;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

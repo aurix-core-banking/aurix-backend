@@ -1,0 +1,96 @@
+package com.aurix.platform.customer.onboarding.entity;
+
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class ParticipanteTest {
+
+    @Test
+    void builderDeveCriarParticipanteComTodosOsCampos() {
+        Participante p = Participante.builder()
+                .id(1L)
+                .solicitacaoId(10L)
+                .tipo(TipoParticipante.SOCIO)
+                .cpf("52998224725")
+                .nome("João Silva")
+                .email("joao@empresa.com")
+                .telefone("11999999999")
+                .dataNascimento(LocalDate.of(1985, 5, 20))
+                .nacionalidade("Brasileira")
+                .qualificacao("Sócio-Administrador")
+                .percentualParticipacao(BigDecimal.valueOf(50.0))
+                .validado(true)
+                .build();
+
+        assertEquals(1L, p.getId());
+        assertEquals(10L, p.getSolicitacaoId());
+        assertEquals(TipoParticipante.SOCIO, p.getTipo());
+        assertEquals("52998224725", p.getCpf());
+        assertEquals("João Silva", p.getNome());
+        assertEquals("joao@empresa.com", p.getEmail());
+        assertEquals("11999999999", p.getTelefone());
+        assertEquals(LocalDate.of(1985, 5, 20), p.getDataNascimento());
+        assertEquals("Brasileira", p.getNacionalidade());
+        assertEquals("Sócio-Administrador", p.getQualificacao());
+        assertEquals(BigDecimal.valueOf(50.0), p.getPercentualParticipacao());
+        assertTrue(p.isValidado());
+    }
+
+    @Test
+    void builderDeveCriarParticipanteComValidadoDefaultFalse() {
+        Participante p = Participante.builder()
+                .solicitacaoId(1L)
+                .tipo(TipoParticipante.SOCIO)
+                .cpf("52998224725")
+                .nome("João")
+                .build();
+
+        assertFalse(p.isValidado());
+    }
+
+    @Test
+    void noArgConstructorDeveCriarInstanciaVazia() {
+        Participante p = new Participante();
+        assertNotNull(p);
+        assertNull(p.getId());
+        assertFalse(p.isValidado());
+    }
+
+    @Test
+    void settersEDevemAtualizarCampos() {
+        Participante p = new Participante();
+        p.setId(1L);
+        p.setCpf("52998224725");
+        p.setTipo(TipoParticipante.SOCIO);
+        p.setValidado(true);
+
+        assertEquals(1L, p.getId());
+        assertEquals("52998224725", p.getCpf());
+        assertEquals(TipoParticipante.SOCIO, p.getTipo());
+        assertTrue(p.isValidado());
+    }
+
+    @Test
+    void builderToStringDeveConterCampos() {
+        Participante.ParticipanteBuilder builder = Participante.builder()
+                .cpf("52998224725")
+                .nome("João");
+        String str = builder.toString();
+        assertTrue(str.contains("cpf"));
+        assertTrue(str.contains("nome"));
+    }
+
+    @Test
+    void dataCriacaoEDataAtualizacaoDevemSerAnotadas() throws Exception {
+        var dataCriacaoField = Participante.class.getDeclaredField("dataCriacao");
+        var dataAtualizacaoField = Participante.class.getDeclaredField("dataAtualizacao");
+
+        assertNotNull(dataCriacaoField.getAnnotation(org.hibernate.annotations.CreationTimestamp.class));
+        assertNotNull(dataAtualizacaoField.getAnnotation(org.hibernate.annotations.UpdateTimestamp.class));
+    }
+}

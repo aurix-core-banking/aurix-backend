@@ -1,0 +1,884 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa uma atividade
+ * 
+ * Gerencia atividades para análise ABC e rastreamento de custos
+ */
+@Entity
+@Table(name = "atividades", schema = "aurix")
+public class Atividade {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "codigo_atividade", unique = true, nullable = false, length = 50)
+    private String codigoAtividade;
+    @Column(name = "nome", nullable = false, length = 200)
+    private String nome;
+    @Column(name = "descricao", length = 500)
+    private String descricao;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_atividade", nullable = false)
+    private TipoAtividade tipoAtividade;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria", nullable = false)
+    private CategoriaAtividade categoria;
+    @Column(name = "centro_custo", length = 100)
+    private String centroCusto;
+    @Column(name = "unidade_medida", length = 50)
+    private String unidadeMedida;
+    @Column(name = "custo_padrao", precision = 15, scale = 2)
+    private BigDecimal custoPadrao;
+    @Column(name = "custo_real", precision = 15, scale = 2)
+    private BigDecimal custoReal;
+    @Column(name = "variacao_custo", precision = 15, scale = 2)
+    private BigDecimal variacaoCusto;
+    @Column(name = "percentual_variacao", precision = 8, scale = 4)
+    private BigDecimal percentualVariacao;
+    @Column(name = "tempo_padrao", precision = 8, scale = 2)
+    private BigDecimal tempoPadrao; // em horas
+    @Column(name = "tempo_real", precision = 8, scale = 2)
+    private BigDecimal tempoReal; // em horas
+    @Column(name = "quantidade_padrao", precision = 10, scale = 2)
+    private BigDecimal quantidadePadrao;
+    @Column(name = "quantidade_real", precision = 10, scale = 2)
+    private BigDecimal quantidadeReal;
+    @Column(name = "classificacao_abc", length = 1)
+    private String classificacaoABC;
+    @Column(name = "percentual_volume", precision = 8, scale = 4)
+    private BigDecimal percentualVolume;
+    @Column(name = "percentual_valor", precision = 8, scale = 4)
+    private BigDecimal percentualValor;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusAtividade status;
+    @Column(name = "responsavel", length = 100)
+    private String responsavel;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Tipo de atividade
+     */
+    public enum TipoAtividade {
+        OPERACIONAL,  // Atividade operacional
+        ADMINISTRATIVA,  // Atividade administrativa
+        COMERCIAL,  // Atividade comercial
+        FINANCEIRA,  // Atividade financeira
+        TECNOLOGICA,  // Atividade tecnológica
+        RH,  // Atividade de recursos humanos
+        INFRAESTRUTURA,  // Atividade de infraestrutura
+        OUTROS // Outros tipos
+        ;
+    }
+
+
+    /**
+     * Categoria da atividade
+     */
+    public enum CategoriaAtividade {
+        PRIMARIA,  // Atividade primária
+        SECUNDARIA,  // Atividade secundária
+        APOIO,  // Atividade de apoio
+        GERENCIAL,  // Atividade gerencial
+        ESTRATEGICA // Atividade estratégica
+        ;
+    }
+
+
+    /**
+     * Status da atividade
+     */
+    public enum StatusAtividade {
+        ATIVA,  // Ativa
+        INATIVA,  // Inativa
+        SUSPENSA,  // Suspensa
+        FECHADA // Fechada
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class AtividadeBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String codigoAtividade;
+        @java.lang.SuppressWarnings("all")
+        private String nome;
+        @java.lang.SuppressWarnings("all")
+        private String descricao;
+        @java.lang.SuppressWarnings("all")
+        private TipoAtividade tipoAtividade;
+        @java.lang.SuppressWarnings("all")
+        private CategoriaAtividade categoria;
+        @java.lang.SuppressWarnings("all")
+        private String centroCusto;
+        @java.lang.SuppressWarnings("all")
+        private String unidadeMedida;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal custoPadrao;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal custoReal;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal variacaoCusto;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal percentualVariacao;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal tempoPadrao;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal tempoReal;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal quantidadePadrao;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal quantidadeReal;
+        @java.lang.SuppressWarnings("all")
+        private String classificacaoABC;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal percentualVolume;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal percentualValor;
+        @java.lang.SuppressWarnings("all")
+        private StatusAtividade status;
+        @java.lang.SuppressWarnings("all")
+        private String responsavel;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        AtividadeBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder codigoAtividade(final String codigoAtividade) {
+            this.codigoAtividade = codigoAtividade;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder nome(final String nome) {
+            this.nome = nome;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder descricao(final String descricao) {
+            this.descricao = descricao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder tipoAtividade(final TipoAtividade tipoAtividade) {
+            this.tipoAtividade = tipoAtividade;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder categoria(final CategoriaAtividade categoria) {
+            this.categoria = categoria;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder centroCusto(final String centroCusto) {
+            this.centroCusto = centroCusto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder unidadeMedida(final String unidadeMedida) {
+            this.unidadeMedida = unidadeMedida;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder custoPadrao(final BigDecimal custoPadrao) {
+            this.custoPadrao = custoPadrao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder custoReal(final BigDecimal custoReal) {
+            this.custoReal = custoReal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder variacaoCusto(final BigDecimal variacaoCusto) {
+            this.variacaoCusto = variacaoCusto;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder percentualVariacao(final BigDecimal percentualVariacao) {
+            this.percentualVariacao = percentualVariacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder tempoPadrao(final BigDecimal tempoPadrao) {
+            this.tempoPadrao = tempoPadrao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder tempoReal(final BigDecimal tempoReal) {
+            this.tempoReal = tempoReal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder quantidadePadrao(final BigDecimal quantidadePadrao) {
+            this.quantidadePadrao = quantidadePadrao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder quantidadeReal(final BigDecimal quantidadeReal) {
+            this.quantidadeReal = quantidadeReal;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder classificacaoABC(final String classificacaoABC) {
+            this.classificacaoABC = classificacaoABC;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder percentualVolume(final BigDecimal percentualVolume) {
+            this.percentualVolume = percentualVolume;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder percentualValor(final BigDecimal percentualValor) {
+            this.percentualValor = percentualValor;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder status(final StatusAtividade status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder responsavel(final String responsavel) {
+            this.responsavel = responsavel;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public Atividade.AtividadeBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public Atividade build() {
+            return new Atividade(this.id, this.codigoAtividade, this.nome, this.descricao, this.tipoAtividade, this.categoria, this.centroCusto, this.unidadeMedida, this.custoPadrao, this.custoReal, this.variacaoCusto, this.percentualVariacao, this.tempoPadrao, this.tempoReal, this.quantidadePadrao, this.quantidadeReal, this.classificacaoABC, this.percentualVolume, this.percentualValor, this.status, this.responsavel, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "Atividade.AtividadeBuilder(id=" + this.id + ", codigoAtividade=" + this.codigoAtividade + ", nome=" + this.nome + ", descricao=" + this.descricao + ", tipoAtividade=" + this.tipoAtividade + ", categoria=" + this.categoria + ", centroCusto=" + this.centroCusto + ", unidadeMedida=" + this.unidadeMedida + ", custoPadrao=" + this.custoPadrao + ", custoReal=" + this.custoReal + ", variacaoCusto=" + this.variacaoCusto + ", percentualVariacao=" + this.percentualVariacao + ", tempoPadrao=" + this.tempoPadrao + ", tempoReal=" + this.tempoReal + ", quantidadePadrao=" + this.quantidadePadrao + ", quantidadeReal=" + this.quantidadeReal + ", classificacaoABC=" + this.classificacaoABC + ", percentualVolume=" + this.percentualVolume + ", percentualValor=" + this.percentualValor + ", status=" + this.status + ", responsavel=" + this.responsavel + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static Atividade.AtividadeBuilder builder() {
+        return new Atividade.AtividadeBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCodigoAtividade() {
+        return this.codigoAtividade;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getNome() {
+        return this.nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoAtividade getTipoAtividade() {
+        return this.tipoAtividade;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CategoriaAtividade getCategoria() {
+        return this.categoria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCentroCusto() {
+        return this.centroCusto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUnidadeMedida() {
+        return this.unidadeMedida;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getCustoPadrao() {
+        return this.custoPadrao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getCustoReal() {
+        return this.custoReal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getVariacaoCusto() {
+        return this.variacaoCusto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getPercentualVariacao() {
+        return this.percentualVariacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getTempoPadrao() {
+        return this.tempoPadrao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getTempoReal() {
+        return this.tempoReal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getQuantidadePadrao() {
+        return this.quantidadePadrao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getQuantidadeReal() {
+        return this.quantidadeReal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getClassificacaoABC() {
+        return this.classificacaoABC;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getPercentualVolume() {
+        return this.percentualVolume;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getPercentualValor() {
+        return this.percentualValor;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusAtividade getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getResponsavel() {
+        return this.responsavel;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoAtividade(final String codigoAtividade) {
+        this.codigoAtividade = codigoAtividade;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNome(final String nome) {
+        this.nome = nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDescricao(final String descricao) {
+        this.descricao = descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoAtividade(final TipoAtividade tipoAtividade) {
+        this.tipoAtividade = tipoAtividade;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCategoria(final CategoriaAtividade categoria) {
+        this.categoria = categoria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCentroCusto(final String centroCusto) {
+        this.centroCusto = centroCusto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUnidadeMedida(final String unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCustoPadrao(final BigDecimal custoPadrao) {
+        this.custoPadrao = custoPadrao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCustoReal(final BigDecimal custoReal) {
+        this.custoReal = custoReal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVariacaoCusto(final BigDecimal variacaoCusto) {
+        this.variacaoCusto = variacaoCusto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPercentualVariacao(final BigDecimal percentualVariacao) {
+        this.percentualVariacao = percentualVariacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTempoPadrao(final BigDecimal tempoPadrao) {
+        this.tempoPadrao = tempoPadrao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTempoReal(final BigDecimal tempoReal) {
+        this.tempoReal = tempoReal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setQuantidadePadrao(final BigDecimal quantidadePadrao) {
+        this.quantidadePadrao = quantidadePadrao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setQuantidadeReal(final BigDecimal quantidadeReal) {
+        this.quantidadeReal = quantidadeReal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setClassificacaoABC(final String classificacaoABC) {
+        this.classificacaoABC = classificacaoABC;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPercentualVolume(final BigDecimal percentualVolume) {
+        this.percentualVolume = percentualVolume;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPercentualValor(final BigDecimal percentualValor) {
+        this.percentualValor = percentualValor;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusAtividade status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setResponsavel(final String responsavel) {
+        this.responsavel = responsavel;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Atividade)) return false;
+        final Atividade other = (Atividade) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoAtividade = this.getCodigoAtividade();
+        final java.lang.Object other$codigoAtividade = other.getCodigoAtividade();
+        if (this$codigoAtividade == null ? other$codigoAtividade != null : !this$codigoAtividade.equals(other$codigoAtividade)) return false;
+        final java.lang.Object this$nome = this.getNome();
+        final java.lang.Object other$nome = other.getNome();
+        if (this$nome == null ? other$nome != null : !this$nome.equals(other$nome)) return false;
+        final java.lang.Object this$descricao = this.getDescricao();
+        final java.lang.Object other$descricao = other.getDescricao();
+        if (this$descricao == null ? other$descricao != null : !this$descricao.equals(other$descricao)) return false;
+        final java.lang.Object this$tipoAtividade = this.getTipoAtividade();
+        final java.lang.Object other$tipoAtividade = other.getTipoAtividade();
+        if (this$tipoAtividade == null ? other$tipoAtividade != null : !this$tipoAtividade.equals(other$tipoAtividade)) return false;
+        final java.lang.Object this$categoria = this.getCategoria();
+        final java.lang.Object other$categoria = other.getCategoria();
+        if (this$categoria == null ? other$categoria != null : !this$categoria.equals(other$categoria)) return false;
+        final java.lang.Object this$centroCusto = this.getCentroCusto();
+        final java.lang.Object other$centroCusto = other.getCentroCusto();
+        if (this$centroCusto == null ? other$centroCusto != null : !this$centroCusto.equals(other$centroCusto)) return false;
+        final java.lang.Object this$unidadeMedida = this.getUnidadeMedida();
+        final java.lang.Object other$unidadeMedida = other.getUnidadeMedida();
+        if (this$unidadeMedida == null ? other$unidadeMedida != null : !this$unidadeMedida.equals(other$unidadeMedida)) return false;
+        final java.lang.Object this$custoPadrao = this.getCustoPadrao();
+        final java.lang.Object other$custoPadrao = other.getCustoPadrao();
+        if (this$custoPadrao == null ? other$custoPadrao != null : !this$custoPadrao.equals(other$custoPadrao)) return false;
+        final java.lang.Object this$custoReal = this.getCustoReal();
+        final java.lang.Object other$custoReal = other.getCustoReal();
+        if (this$custoReal == null ? other$custoReal != null : !this$custoReal.equals(other$custoReal)) return false;
+        final java.lang.Object this$variacaoCusto = this.getVariacaoCusto();
+        final java.lang.Object other$variacaoCusto = other.getVariacaoCusto();
+        if (this$variacaoCusto == null ? other$variacaoCusto != null : !this$variacaoCusto.equals(other$variacaoCusto)) return false;
+        final java.lang.Object this$percentualVariacao = this.getPercentualVariacao();
+        final java.lang.Object other$percentualVariacao = other.getPercentualVariacao();
+        if (this$percentualVariacao == null ? other$percentualVariacao != null : !this$percentualVariacao.equals(other$percentualVariacao)) return false;
+        final java.lang.Object this$tempoPadrao = this.getTempoPadrao();
+        final java.lang.Object other$tempoPadrao = other.getTempoPadrao();
+        if (this$tempoPadrao == null ? other$tempoPadrao != null : !this$tempoPadrao.equals(other$tempoPadrao)) return false;
+        final java.lang.Object this$tempoReal = this.getTempoReal();
+        final java.lang.Object other$tempoReal = other.getTempoReal();
+        if (this$tempoReal == null ? other$tempoReal != null : !this$tempoReal.equals(other$tempoReal)) return false;
+        final java.lang.Object this$quantidadePadrao = this.getQuantidadePadrao();
+        final java.lang.Object other$quantidadePadrao = other.getQuantidadePadrao();
+        if (this$quantidadePadrao == null ? other$quantidadePadrao != null : !this$quantidadePadrao.equals(other$quantidadePadrao)) return false;
+        final java.lang.Object this$quantidadeReal = this.getQuantidadeReal();
+        final java.lang.Object other$quantidadeReal = other.getQuantidadeReal();
+        if (this$quantidadeReal == null ? other$quantidadeReal != null : !this$quantidadeReal.equals(other$quantidadeReal)) return false;
+        final java.lang.Object this$classificacaoABC = this.getClassificacaoABC();
+        final java.lang.Object other$classificacaoABC = other.getClassificacaoABC();
+        if (this$classificacaoABC == null ? other$classificacaoABC != null : !this$classificacaoABC.equals(other$classificacaoABC)) return false;
+        final java.lang.Object this$percentualVolume = this.getPercentualVolume();
+        final java.lang.Object other$percentualVolume = other.getPercentualVolume();
+        if (this$percentualVolume == null ? other$percentualVolume != null : !this$percentualVolume.equals(other$percentualVolume)) return false;
+        final java.lang.Object this$percentualValor = this.getPercentualValor();
+        final java.lang.Object other$percentualValor = other.getPercentualValor();
+        if (this$percentualValor == null ? other$percentualValor != null : !this$percentualValor.equals(other$percentualValor)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$responsavel = this.getResponsavel();
+        final java.lang.Object other$responsavel = other.getResponsavel();
+        if (this$responsavel == null ? other$responsavel != null : !this$responsavel.equals(other$responsavel)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof Atividade;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoAtividade = this.getCodigoAtividade();
+        result = result * PRIME + ($codigoAtividade == null ? 43 : $codigoAtividade.hashCode());
+        final java.lang.Object $nome = this.getNome();
+        result = result * PRIME + ($nome == null ? 43 : $nome.hashCode());
+        final java.lang.Object $descricao = this.getDescricao();
+        result = result * PRIME + ($descricao == null ? 43 : $descricao.hashCode());
+        final java.lang.Object $tipoAtividade = this.getTipoAtividade();
+        result = result * PRIME + ($tipoAtividade == null ? 43 : $tipoAtividade.hashCode());
+        final java.lang.Object $categoria = this.getCategoria();
+        result = result * PRIME + ($categoria == null ? 43 : $categoria.hashCode());
+        final java.lang.Object $centroCusto = this.getCentroCusto();
+        result = result * PRIME + ($centroCusto == null ? 43 : $centroCusto.hashCode());
+        final java.lang.Object $unidadeMedida = this.getUnidadeMedida();
+        result = result * PRIME + ($unidadeMedida == null ? 43 : $unidadeMedida.hashCode());
+        final java.lang.Object $custoPadrao = this.getCustoPadrao();
+        result = result * PRIME + ($custoPadrao == null ? 43 : $custoPadrao.hashCode());
+        final java.lang.Object $custoReal = this.getCustoReal();
+        result = result * PRIME + ($custoReal == null ? 43 : $custoReal.hashCode());
+        final java.lang.Object $variacaoCusto = this.getVariacaoCusto();
+        result = result * PRIME + ($variacaoCusto == null ? 43 : $variacaoCusto.hashCode());
+        final java.lang.Object $percentualVariacao = this.getPercentualVariacao();
+        result = result * PRIME + ($percentualVariacao == null ? 43 : $percentualVariacao.hashCode());
+        final java.lang.Object $tempoPadrao = this.getTempoPadrao();
+        result = result * PRIME + ($tempoPadrao == null ? 43 : $tempoPadrao.hashCode());
+        final java.lang.Object $tempoReal = this.getTempoReal();
+        result = result * PRIME + ($tempoReal == null ? 43 : $tempoReal.hashCode());
+        final java.lang.Object $quantidadePadrao = this.getQuantidadePadrao();
+        result = result * PRIME + ($quantidadePadrao == null ? 43 : $quantidadePadrao.hashCode());
+        final java.lang.Object $quantidadeReal = this.getQuantidadeReal();
+        result = result * PRIME + ($quantidadeReal == null ? 43 : $quantidadeReal.hashCode());
+        final java.lang.Object $classificacaoABC = this.getClassificacaoABC();
+        result = result * PRIME + ($classificacaoABC == null ? 43 : $classificacaoABC.hashCode());
+        final java.lang.Object $percentualVolume = this.getPercentualVolume();
+        result = result * PRIME + ($percentualVolume == null ? 43 : $percentualVolume.hashCode());
+        final java.lang.Object $percentualValor = this.getPercentualValor();
+        result = result * PRIME + ($percentualValor == null ? 43 : $percentualValor.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $responsavel = this.getResponsavel();
+        result = result * PRIME + ($responsavel == null ? 43 : $responsavel.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "Atividade(id=" + this.getId() + ", codigoAtividade=" + this.getCodigoAtividade() + ", nome=" + this.getNome() + ", descricao=" + this.getDescricao() + ", tipoAtividade=" + this.getTipoAtividade() + ", categoria=" + this.getCategoria() + ", centroCusto=" + this.getCentroCusto() + ", unidadeMedida=" + this.getUnidadeMedida() + ", custoPadrao=" + this.getCustoPadrao() + ", custoReal=" + this.getCustoReal() + ", variacaoCusto=" + this.getVariacaoCusto() + ", percentualVariacao=" + this.getPercentualVariacao() + ", tempoPadrao=" + this.getTempoPadrao() + ", tempoReal=" + this.getTempoReal() + ", quantidadePadrao=" + this.getQuantidadePadrao() + ", quantidadeReal=" + this.getQuantidadeReal() + ", classificacaoABC=" + this.getClassificacaoABC() + ", percentualVolume=" + this.getPercentualVolume() + ", percentualValor=" + this.getPercentualValor() + ", status=" + this.getStatus() + ", responsavel=" + this.getResponsavel() + ", observacoes=" + this.getObservacoes() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Atividade() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Atividade(final Long id, final String codigoAtividade, final String nome, final String descricao, final TipoAtividade tipoAtividade, final CategoriaAtividade categoria, final String centroCusto, final String unidadeMedida, final BigDecimal custoPadrao, final BigDecimal custoReal, final BigDecimal variacaoCusto, final BigDecimal percentualVariacao, final BigDecimal tempoPadrao, final BigDecimal tempoReal, final BigDecimal quantidadePadrao, final BigDecimal quantidadeReal, final String classificacaoABC, final BigDecimal percentualVolume, final BigDecimal percentualValor, final StatusAtividade status, final String responsavel, final String observacoes, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.codigoAtividade = codigoAtividade;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.tipoAtividade = tipoAtividade;
+        this.categoria = categoria;
+        this.centroCusto = centroCusto;
+        this.unidadeMedida = unidadeMedida;
+        this.custoPadrao = custoPadrao;
+        this.custoReal = custoReal;
+        this.variacaoCusto = variacaoCusto;
+        this.percentualVariacao = percentualVariacao;
+        this.tempoPadrao = tempoPadrao;
+        this.tempoReal = tempoReal;
+        this.quantidadePadrao = quantidadePadrao;
+        this.quantidadeReal = quantidadeReal;
+        this.classificacaoABC = classificacaoABC;
+        this.percentualVolume = percentualVolume;
+        this.percentualValor = percentualValor;
+        this.status = status;
+        this.responsavel = responsavel;
+        this.observacoes = observacoes;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

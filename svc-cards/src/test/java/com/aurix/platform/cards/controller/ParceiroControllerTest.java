@@ -1,0 +1,97 @@
+package com.aurix.platform.cards.controller;
+
+import com.aurix.platform.cards.CardsApplication;
+import com.aurix.platform.cards.config.CartoesTestConfig;
+import com.aurix.platform.cards.dto.ParceiroAdquirenteRequest;
+import com.aurix.platform.cards.dto.ParceiroAdquirenteResponse;
+import com.aurix.platform.cards.dto.ParceiroBandeiraRequest;
+import com.aurix.platform.cards.dto.ParceiroBandeiraResponse;
+import com.aurix.platform.cards.repository.ParceiroAdquirenteRepository;
+import com.aurix.platform.cards.repository.ParceiroBandeiraRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest(classes = CardsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Import(CartoesTestConfig.class)
+class ParceiroControllerTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private ParceiroBandeiraRepository parceiroBandeiraRepository;
+    @Autowired
+    private ParceiroAdquirenteRepository parceiroAdquirenteRepository;
+
+    private RestTemplate rest;
+
+    @BeforeEach
+    void setUp() {
+        parceiroBandeiraRepository.deleteAll();
+        parceiroAdquirenteRepository.deleteAll();
+        rest = new RestTemplate();
+    }
+
+    private String url(String path) {
+        return "http://localhost:" + port + "/api/cards" + path;
+    }
+
+    @Test
+    void deveCriarBandeira() {
+        var request = new ParceiroBandeiraRequest();
+        request.setNome("Visa");
+        request.setTipoEndpoint("REST");
+        request.setConfig("{\"url\":\"https://api.visa.com\"}");
+
+        var response = rest.postForEntity(url("/parceiros/bandeiras"), request, ParceiroBandeiraResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getId()).isPositive();
+    }
+
+    @Test
+    void deveCriarAdquirente() {
+        var request = new ParceiroAdquirenteRequest();
+        request.setNome("Rede");
+        request.setTipoEndpoint("REST");
+        request.setConfig("{\"url\":\"https://api.rede.com\"}");
+
+        var response = rest.postForEntity(url("/parceiros/adquirentes"), request, ParceiroAdquirenteResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getId()).isPositive();
+    }
+
+    @Test
+    void deveListarBandeiras() {
+        var request = new ParceiroBandeiraRequest();
+        request.setNome("Mastercard");
+        request.setTipoEndpoint("REST");
+        rest.postForEntity(url("/parceiros/bandeiras"), request, ParceiroBandeiraResponse.class);
+
+        var response = rest.getForEntity(url("/parceiros/bandeiras"), ParceiroBandeiraResponse[].class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
+    }
+
+    @Test
+    void deveListarAdquirentes() {
+        var request = new ParceiroAdquirenteRequest();
+        request.setNome("Stone");
+        request.setTipoEndpoint("REST");
+        rest.postForEntity(url("/parceiros/adquirentes"), request, ParceiroAdquirenteResponse.class);
+
+        var response = rest.getForEntity(url("/parceiros/adquirentes"), ParceiroAdquirenteResponse[].class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
+    }
+}

@@ -1,0 +1,106 @@
+package com.aurix.platform.payments.pix.controller;
+
+import com.aurix.platform.payments.pix.service.PixChaveService;
+import com.aurix.platform.shared.dto.PixChaveDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+/**
+ * Controller para gestão de chaves PIX
+ */
+@RestController
+@RequestMapping("/api/pix/chaves")
+@Tag(name = "PIX Chaves", description = "API para gestão de chaves PIX do Aurix")
+public class PixChaveController {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PixChaveController.class);
+    private final PixChaveService pixChaveService;
+
+    /**
+     * Cadastra uma nova chave PIX
+     */
+    @PostMapping
+    @Operation(summary = "Cadastrar chave PIX", description = "Cadastra uma nova chave PIX")
+    public ResponseEntity<PixChaveDTO> cadastrarChavePix(@Valid @RequestBody PixChaveDTO pixChaveDTO) {
+        log.info("Recebida solicitação para cadastrar chave PIX: {}", pixChaveDTO.getChavePix());
+        PixChaveDTO chaveCriada = pixChaveService.cadastrarChavePix(pixChaveDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(chaveCriada);
+    }
+
+    /**
+     * Busca chave PIX por ID
+     */
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar chave PIX por ID", description = "Busca uma chave PIX pelo ID")
+    public ResponseEntity<PixChaveDTO> buscarChavePixPorId(@Parameter(description = "ID da chave PIX") @PathVariable Long id) {
+        log.info("Recebida solicitação para buscar chave PIX ID: {}", id);
+        PixChaveDTO chave = pixChaveService.buscarChavePixPorId(id);
+        return ResponseEntity.ok(chave);
+    }
+
+    /**
+     * Busca chave PIX por chave
+     */
+    @GetMapping("/chave/{chavePix}")
+    @Operation(summary = "Buscar chave PIX por chave", description = "Busca uma chave PIX pela chave")
+    public ResponseEntity<PixChaveDTO> buscarChavePixPorChave(@Parameter(description = "Chave PIX") @PathVariable String chavePix) {
+        log.info("Recebida solicitação para buscar chave PIX: {}", chavePix);
+        PixChaveDTO chave = pixChaveService.buscarChavePixPorChave(chavePix);
+        return ResponseEntity.ok(chave);
+    }
+
+    /**
+     * Lista chaves por conta
+     */
+    @GetMapping("/conta/{contaId}")
+    @Operation(summary = "Listar chaves por conta", description = "Lista todas as chaves PIX de uma conta")
+    public ResponseEntity<List<PixChaveDTO>> listarChavesPorConta(@Parameter(description = "ID da conta") @PathVariable Long contaId) {
+        log.info("Recebida solicitação para listar chaves da conta ID: {}", contaId);
+        List<PixChaveDTO> chaves = pixChaveService.listarChavesPorConta(contaId);
+        return ResponseEntity.ok(chaves);
+    }
+
+    /**
+     * Lista chaves ativas por conta
+     */
+    @GetMapping("/conta/{contaId}/ativas")
+    @Operation(summary = "Listar chaves ativas por conta", description = "Lista apenas chaves PIX ativas de uma conta")
+    public ResponseEntity<List<PixChaveDTO>> listarChavesAtivasPorConta(@Parameter(description = "ID da conta") @PathVariable Long contaId) {
+        log.info("Recebida solicitação para listar chaves ativas da conta ID: {}", contaId);
+        List<PixChaveDTO> chaves = pixChaveService.listarChavesAtivasPorConta(contaId);
+        return ResponseEntity.ok(chaves);
+    }
+
+    /**
+     * Inativa chave PIX
+     */
+    @PutMapping("/{id}/inativar")
+    @Operation(summary = "Inativar chave PIX", description = "Inativa uma chave PIX")
+    public ResponseEntity<Void> inativarChavePix(@Parameter(description = "ID da chave PIX") @PathVariable Long id) {
+        log.info("Recebida solicitação para inativar chave PIX ID: {}", id);
+        pixChaveService.inativarChavePix(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Ativa chave PIX
+     */
+    @PutMapping("/{id}/ativar")
+    @Operation(summary = "Ativar chave PIX", description = "Ativa uma chave PIX")
+    public ResponseEntity<Void> ativarChavePix(@Parameter(description = "ID da chave PIX") @PathVariable Long id) {
+        log.info("Recebida solicitação para ativar chave PIX ID: {}", id);
+        pixChaveService.ativarChavePix(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public PixChaveController(final PixChaveService pixChaveService) {
+        this.pixChaveService = pixChaveService;
+    }
+}

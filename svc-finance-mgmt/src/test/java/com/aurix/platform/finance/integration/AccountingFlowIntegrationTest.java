@@ -1,0 +1,124 @@
+package com.aurix.platform.finance.integration;
+
+import com.aurix.platform.finance.FinanceApplication;
+import com.aurix.platform.finance.entity.InstrumentoFinanceiro;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = FinanceApplication.class)
+@ActiveProfiles("test")
+class AccountingFlowIntegrationTest {
+
+    @LocalServerPort
+    private int port;
+
+    private final RestTemplate rest = new RestTemplate();
+
+    private String baseUrl;
+    @BeforeEach
+    void setUp() {
+        baseUrl = "http://localhost:" + port + "/api/finance/ifrs9";
+    }
+
+    @Test
+    void shouldClassifyInstrumentoFinanceiro() {
+        InstrumentoFinanceiro inst = new InstrumentoFinanceiro();
+        inst.setCodigoInstrumento("INST-001");
+        inst.setNome("Empréstimo Teste");
+        inst.setTipoInstrumento(InstrumentoFinanceiro.TipoInstrumento.EMPRESTIMO);
+        inst.setValorNominal(BigDecimal.valueOf(100000));
+        inst.setMoeda("BRL");
+        inst.setDataEmissao(LocalDateTime.now());
+        inst.setEstagioDeterioracao(InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1);
+        inst.setStatus(InstrumentoFinanceiro.StatusInstrumento.ATIVO);
+
+        ResponseEntity<InstrumentoFinanceiro> response = rest.postForEntity(
+            baseUrl + "/instrumentos/classificar", inst, InstrumentoFinanceiro.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody().getId());
+        assertNotNull(response.getBody().getCategoriaIFRS9());
+    }
+
+    @Test
+    void shouldCalculateECL() {
+        InstrumentoFinanceiro inst = new InstrumentoFinanceiro();
+        inst.setCodigoInstrumento("INST-ECL");
+        inst.setNome("ECL Teste");
+        inst.setTipoInstrumento(InstrumentoFinanceiro.TipoInstrumento.EMPRESTIMO);
+        inst.setValorNominal(BigDecimal.valueOf(50000));
+        inst.setMoeda("BRL");
+        inst.setDataEmissao(LocalDateTime.now());
+        inst.setEstagioDeterioracao(InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1);
+        inst.setStatus(InstrumentoFinanceiro.StatusInstrumento.ATIVO);
+
+        ResponseEntity<InstrumentoFinanceiro> instResp = rest.postForEntity(
+            baseUrl + "/instrumentos/classificar", inst, InstrumentoFinanceiro.class);
+        Long instId = instResp.getBody().getId();
+
+        ResponseEntity<Map> eclResp = rest.postForEntity(
+            baseUrl + "/ecl/calcular/" + instId + "?dataCalculo=" + LocalDate.now(),
+            null, Map.class);
+        assertEquals(HttpStatus.OK, eclResp.getStatusCode());
+    }
+
+    @Test
+    void shouldReclassificarEstagio() {
+        InstrumentoFinanceiro inst = new InstrumentoFinanceiro();
+        inst.setCodigoInstrumento("INST-RECL");
+        inst.setNome("Reclass Teste");
+        inst.setTipoInstrumento(InstrumentoFinanceiro.TipoInstrumento.EMPRESTIMO);
+        inst.setValorNominal(BigDecimal.valueOf(75000));
+        inst.setMoeda("BRL");
+        inst.setDataEmissao(LocalDateTime.now());
+        inst.setEstagioDeterioracao(InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1);
+        inst.setStatus(InstrumentoFinanceiro.StatusInstrumento.ATIVO);
+
+        ResponseEntity<InstrumentoFinanceiro> instResp = rest.postForEntity(
+            baseUrl + "/instrumentos/classificar", inst, InstrumentoFinanceiro.class);
+        Long instId = instResp.getBody().getId();
+
+        ResponseEntity<InstrumentoFinanceiro> reclassResp = rest.postForEntity(
+            baseUrl + "/instrumentos/" + instId + "/reclassificar?novoEstagio=ESTAGIO_2&motivo=Teste",
+            null, InstrumentoFinanceiro.class);
+        assertEquals(HttpStatus.OK, reclassResp.getStatusCode());
+        assertEquals(InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_2,
+            reclassResp.getBody().getEstagioDeterioracao());
+    }
+
+    @Test
+    void shouldCalculateProvisionamentoPorEstagio() {
+        ResponseEntity<Double> response = rest.getForEntity(
+            baseUrl + "/provisionamento/estagio/ESTAGIO_1", Double.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void shouldCalculateProvisionamentoTotal() {
+        ResponseEntity<Double> response = rest.getForEntity(
+            baseUrl + "/provisionamento/total", Double.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void shouldProcessReclassificacao() {
+        ResponseEntity<Void> response = rest.postForEntity(
+            baseUrl + "/processar-reclassificacao?dataReclassificacao=" + LocalDate.now(),
+            null, Void.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+}

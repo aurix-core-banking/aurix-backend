@@ -1,0 +1,140 @@
+package com.aurix.platform.platform.integration;
+
+import com.aurix.platform.platform.PlatformApplication;
+import com.aurix.platform.platform.dto.ConsentimentoOpenFinanceDTO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(classes = PlatformApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class OpenFinanceFlowIntegrationTest {
+
+    @LocalServerPort
+    private int port;
+
+    private final RestTemplate rest = new RestTemplate();
+
+    private String baseUrl;
+
+    @BeforeEach
+    void setUp() {
+        baseUrl = "http://localhost:" + port + "/api/platform/openfinance";
+    }
+
+    @Test
+    void shouldCreateConsentimento() {
+        ConsentimentoOpenFinanceDTO dto = ConsentimentoOpenFinanceDTO.builder()
+            .clientId("client-001")
+            .clientName("Banco Teste")
+            .tipoConsentimento("ACCOUNTS")
+            .dataExpiracao(LocalDateTime.now().plusDays(1))
+            .permissoes(List.of("READ_ACCOUNTS", "READ_TRANSACTIONS"))
+            .build();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> response = rest.postForEntity(
+            baseUrl + "/consentimentos", dto, ConsentimentoOpenFinanceDTO.class);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody().getConsentId());
+    }
+
+    @Test
+    void shouldRetrieveConsentimento() {
+        ConsentimentoOpenFinanceDTO dto = ConsentimentoOpenFinanceDTO.builder()
+            .clientId("client-002")
+            .clientName("Banco Busca")
+            .tipoConsentimento("ACCOUNTS")
+            .dataExpiracao(LocalDateTime.now().plusDays(1))
+            .permissoes(List.of("READ_ACCOUNTS"))
+            .build();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> createResp = rest.postForEntity(
+            baseUrl + "/consentimentos", dto, ConsentimentoOpenFinanceDTO.class);
+        String consentId = createResp.getBody().getConsentId();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> getResp = rest.getForEntity(
+            baseUrl + "/consentimentos/" + consentId, ConsentimentoOpenFinanceDTO.class);
+        assertEquals(HttpStatus.OK, getResp.getStatusCode());
+        assertEquals(consentId, getResp.getBody().getConsentId());
+    }
+
+    @Test
+    void shouldListConsentimentosByUser() {
+        ConsentimentoOpenFinanceDTO dto = ConsentimentoOpenFinanceDTO.builder()
+            .clientId("client-003")
+            .clientName("Banco Lista")
+            .tipoConsentimento("ACCOUNTS")
+            .dataExpiracao(LocalDateTime.now().plusDays(1))
+            .permissoes(List.of("READ_ACCOUNTS"))
+            .build();
+        rest.postForEntity(baseUrl + "/consentimentos", dto, ConsentimentoOpenFinanceDTO.class);
+
+        ResponseEntity<List> response = rest.getForEntity(baseUrl + "/consentimentos/user/1", List.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void shouldApproveConsentimento() {
+        ConsentimentoOpenFinanceDTO dto = ConsentimentoOpenFinanceDTO.builder()
+            .clientId("client-004")
+            .clientName("Banco Approve")
+            .tipoConsentimento("ACCOUNTS")
+            .dataExpiracao(LocalDateTime.now().plusDays(1))
+            .permissoes(List.of("READ_ACCOUNTS"))
+            .build();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> createResp = rest.postForEntity(
+            baseUrl + "/consentimentos", dto, ConsentimentoOpenFinanceDTO.class);
+        String consentId = createResp.getBody().getConsentId();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> approveResp = rest.postForEntity(
+            baseUrl + "/consentimentos/" + consentId + "/approve?userId=1",
+            null, ConsentimentoOpenFinanceDTO.class);
+        assertEquals(HttpStatus.OK, approveResp.getStatusCode());
+    }
+
+    @Test
+    void shouldRejectConsentimento() {
+        ConsentimentoOpenFinanceDTO dto = ConsentimentoOpenFinanceDTO.builder()
+            .clientId("client-005")
+            .clientName("Banco Reject")
+            .tipoConsentimento("ACCOUNTS")
+            .dataExpiracao(LocalDateTime.now().plusDays(1))
+            .permissoes(List.of("READ_ACCOUNTS"))
+            .build();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> createResp = rest.postForEntity(
+            baseUrl + "/consentimentos", dto, ConsentimentoOpenFinanceDTO.class);
+        String consentId = createResp.getBody().getConsentId();
+
+        ResponseEntity<ConsentimentoOpenFinanceDTO> rejectResp = rest.postForEntity(
+            baseUrl + "/consentimentos/" + consentId + "/reject?motivo=Cliente+solicitou",
+            null, ConsentimentoOpenFinanceDTO.class);
+        assertEquals(HttpStatus.OK, rejectResp.getStatusCode());
+    }
+
+    @Test
+    void shouldCheckConsentimentoAtivo() {
+        ResponseEntity<Boolean> response = rest.getForEntity(
+            baseUrl + "/consentimentos/check?clientId=client-001&userId=1", Boolean.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void shouldProcessExpiredConsents() {
+        ResponseEntity<Void> response = rest.postForEntity(
+            baseUrl + "/consentimentos/process-expired", null, Void.class);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+}

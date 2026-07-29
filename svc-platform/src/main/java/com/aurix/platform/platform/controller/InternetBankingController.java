@@ -1,0 +1,312 @@
+package com.aurix.platform.platform.controller;
+
+import com.aurix.platform.platform.entity.SessaoInternetBanking;
+import com.aurix.platform.platform.entity.TransacaoInternetBanking;
+import com.aurix.platform.platform.service.InternetBankingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import java.math.BigDecimal;
+import java.util.Map;
+
+/**
+ * Controller principal para Internet Banking
+ * 
+ * Expõe APIs para funcionalidades do canal web
+ */
+@RestController
+@RequestMapping("/api/platform/internet-banking")
+@Tag(name = "Internet Banking", description = "APIs para Internet Banking - Canal Web")
+public class InternetBankingController {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(InternetBankingController.class);
+    private final InternetBankingService internetBankingService;
+
+    // ========== AUTENTICAÇÃO E SESSÕES ==========
+    @PostMapping("/auth/login")
+    @Operation(summary = "Login no Internet Banking", description = "Realiza login e cria sessão de Internet Banking")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Login realizado com sucesso"), @ApiResponse(responseCode = "401", description = "Credenciais inválidas"), @ApiResponse(responseCode = "403", description = "Acesso negado"), @ApiResponse(responseCode = "429", description = "Muitas tentativas de login")})
+    public ResponseEntity<Map<String, Object>> login(@Parameter(description = "Dados de login") @RequestBody @Valid LoginRequest loginRequest, HttpServletRequest request) {
+        log.info("Tentativa de login no Internet Banking: {}", loginRequest.getUsuario());
+        try {
+            String ipAddress = obterIpAddress(request);
+            String userAgent = request.getHeader("User-Agent");
+            String deviceId = gerarDeviceId(request);
+            SessaoInternetBanking sessao = internetBankingService.criarSessao(loginRequest.getClienteId(), loginRequest.getUsuario(), ipAddress, userAgent, deviceId);
+            Map<String, Object> response = Map.of("success", true, "message", "Login realizado com sucesso", "sessaoId", sessao.getSessaoId(), "dataExpiracao", sessao.getDataExpiracao(), "timeoutMinutos", sessao.getTimeoutMinutos(), "mfaRequired", !sessao.getMfaVerificado());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Erro no login do Internet Banking: {}", e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Erro interno do servidor", "error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/auth/logout")
+    @Operation(summary = "Logout do Internet Banking", description = "Encerra sessão de Internet Banking")
+    public ResponseEntity<Map<String, Object>> logout(@Parameter(description = "ID da sessão") @RequestHeader("X-Session-ID") String sessaoId) {
+        log.info("Logout do Internet Banking: {}", sessaoId);
+        try {
+            internetBankingService.encerrarSessao(sessaoId);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Logout realizado com sucesso"));
+        } catch (Exception e) {
+            log.error("Erro no logout do Internet Banking: {}", e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Erro interno do servidor", "error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/auth/validate-session")
+    @Operation(summary = "Validar sessão", description = "Valida se a sessão está ativa e válida")
+    public ResponseEntity<Map<String, Object>> validarSessao(@Parameter(description = "ID da sessão") @RequestHeader("X-Session-ID") String sessaoId) {
+        try {
+            boolean valida = internetBankingService.validarSessao(sessaoId);
+            return ResponseEntity.ok(Map.of("valid", valida, "message", valida ? "Sessão válida" : "Sessão inválida ou expirada"));
+        } catch (Exception e) {
+            log.error("Erro ao validar sessão: {}", e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("valid", false, "message", "Erro interno do servidor", "error", e.getMessage()));
+        }
+    }
+
+    // ========== TRANSAÇÕES ==========
+    @PostMapping("/transacoes/transferencia")
+    @Operation(summary = "Realizar transferência", description = "Processa transferência via Internet Banking")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Transferência processada com sucesso"), @ApiResponse(responseCode = "400", description = "Dados inválidos"), @ApiResponse(responseCode = "401", description = "Sessão inválida"), @ApiResponse(responseCode = "403", description = "Limite insuficiente")})
+    public ResponseEntity<Map<String, Object>> realizarTransferencia(@Parameter(description = "Dados da transferência") @RequestBody @Valid TransferenciaRequest request, @Parameter(description = "ID da sessão") @RequestHeader("X-Session-ID") String sessaoId) {
+        log.info("Processando transferência via Internet Banking: {}", request.getTipo());
+        try {
+            TransacaoInternetBanking transacao = internetBankingService.processarTransacao(sessaoId, request.getClienteId(), request.getContaOrigem(), request.getContaDestino(), request.getTipo(), request.getValor(), request.getDescricao());
+            Map<String, Object> response = Map.of("success", true, "message", "Transferência processada com sucesso", "transacaoId", transacao.getTransacaoId(), "status", transacao.getStatus(), "valor", transacao.getValor(), "taxa", transacao.getTaxa(), "valorTotal", transacao.getValorTotal(), "riscoScore", transacao.getRiscoScore(), "protocolo", transacao.getProtocolo());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Erro ao processar transferência: {}", e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("success", false, "message", "Erro ao processar transferência", "error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/transacoes/pagamento")
+    @Operation(summary = "Realizar pagamento", description = "Processa pagamento via Internet Banking")
+    public ResponseEntity<Map<String, Object>> realizarPagamento(@Parameter(description = "Dados do pagamento") @RequestBody @Valid PagamentoRequest request, @Parameter(description = "ID da sessão") @RequestHeader("X-Session-ID") String sessaoId) {
+        log.info("Processando pagamento via Internet Banking: {}", request.getTipo());
+        try {
+            TransacaoInternetBanking transacao = internetBankingService.processarTransacao(sessaoId, request.getClienteId(), request.getContaOrigem(), null,  // Pagamentos não têm conta destino
+            request.getTipo(), request.getValor(), request.getDescricao());
+            Map<String, Object> response = Map.of("success", true, "message", "Pagamento processado com sucesso", "transacaoId", transacao.getTransacaoId(), "status", transacao.getStatus(), "valor", transacao.getValor(), "taxa", transacao.getTaxa(), "valorTotal", transacao.getValorTotal(), "protocolo", transacao.getProtocolo());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Erro ao processar pagamento: {}", e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("success", false, "message", "Erro ao processar pagamento", "error", e.getMessage()));
+        }
+    }
+
+    // ========== CONSULTAS ==========
+    @GetMapping("/transacoes")
+    @Operation(summary = "Listar transações", description = "Lista transações do cliente via Internet Banking")
+    public ResponseEntity<Page<TransacaoInternetBanking>> listarTransacoes(@Parameter(description = "ID do cliente") @RequestParam String clienteId, @Parameter(description = "Paginação") Pageable pageable, @Parameter(description = "ID da sessão") @RequestHeader("X-Session-ID") String sessaoId) {
+        try {
+            // Validar sessão
+            if (!internetBankingService.validarSessao(sessaoId)) {
+                return ResponseEntity.status(401).build();
+            }
+            // Implementar busca de transações (seria necessário injetar o repository)
+            // Page<TransacaoInternetBanking> transacoes = transacaoRepository.findByClienteId(clienteId, pageable);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Erro ao listar transações: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    // ========== DASHBOARD ==========
+    @GetMapping("/dashboard")
+    @Operation(summary = "Dashboard do cliente", description = "Retorna dados para o dashboard do Internet Banking")
+    public ResponseEntity<Map<String, Object>> getDashboard(@Parameter(description = "ID do cliente") @RequestParam String clienteId, @Parameter(description = "ID da sessão") @RequestHeader("X-Session-ID") String sessaoId) {
+        try {
+            // Validar sessão
+            if (!internetBankingService.validarSessao(sessaoId)) {
+                return ResponseEntity.status(401).build();
+            }
+            Map<String, Object> dashboard = Map.of("clienteId", clienteId, "saldoConta", "R$ 15.750,00", "limiteDisponivel", "R$ 10.000,00", "transacoesHoje", 5, "faturasVencendo", 2, "investimentos", Map.of("totalAplicado", "R$ 50.000,00", "rendimentoMes", "R$ 450,00"), "cartoes", Map.of("limiteTotal", "R$ 15.000,00", "limiteDisponivel", "R$ 8.500,00", "faturaAtual", "R$ 2.300,00"), "ultimaAtividade", "27/09/2025 00:32");
+            return ResponseEntity.ok(dashboard);
+        } catch (Exception e) {
+            log.error("Erro ao obter dashboard: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    // ========== MÉTODOS AUXILIARES ==========
+    private String obterIpAddress(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
+
+    private String gerarDeviceId(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        String ipAddress = obterIpAddress(request);
+        return userAgent + "_" + ipAddress;
+    }
+
+    // ========== CLASSES DE REQUEST ==========
+    public static class LoginRequest {
+        private String clienteId;
+        private String usuario;
+        private String senha;
+
+        // Getters e Setters
+        public String getClienteId() {
+            return clienteId;
+        }
+
+        public void setClienteId(String clienteId) {
+            this.clienteId = clienteId;
+        }
+
+        public String getUsuario() {
+            return usuario;
+        }
+
+        public void setUsuario(String usuario) {
+            this.usuario = usuario;
+        }
+
+        public String getSenha() {
+            return senha;
+        }
+
+        public void setSenha(String senha) {
+            this.senha = senha;
+        }
+    }
+
+
+    public static class TransferenciaRequest {
+        private String clienteId;
+        private String contaOrigem;
+        private String contaDestino;
+        private TransacaoInternetBanking.TipoTransacao tipo;
+        private BigDecimal valor;
+        private String descricao;
+
+        // Getters e Setters
+        public String getClienteId() {
+            return clienteId;
+        }
+
+        public void setClienteId(String clienteId) {
+            this.clienteId = clienteId;
+        }
+
+        public String getContaOrigem() {
+            return contaOrigem;
+        }
+
+        public void setContaOrigem(String contaOrigem) {
+            this.contaOrigem = contaOrigem;
+        }
+
+        public String getContaDestino() {
+            return contaDestino;
+        }
+
+        public void setContaDestino(String contaDestino) {
+            this.contaDestino = contaDestino;
+        }
+
+        public TransacaoInternetBanking.TipoTransacao getTipo() {
+            return tipo;
+        }
+
+        public void setTipo(TransacaoInternetBanking.TipoTransacao tipo) {
+            this.tipo = tipo;
+        }
+
+        public BigDecimal getValor() {
+            return valor;
+        }
+
+        public void setValor(BigDecimal valor) {
+            this.valor = valor;
+        }
+
+        public String getDescricao() {
+            return descricao;
+        }
+
+        public void setDescricao(String descricao) {
+            this.descricao = descricao;
+        }
+    }
+
+
+    public static class PagamentoRequest {
+        private String clienteId;
+        private String contaOrigem;
+        private TransacaoInternetBanking.TipoTransacao tipo;
+        private BigDecimal valor;
+        private String descricao;
+        private String codigoBarras;
+
+        // Getters e Setters
+        public String getClienteId() {
+            return clienteId;
+        }
+
+        public void setClienteId(String clienteId) {
+            this.clienteId = clienteId;
+        }
+
+        public String getContaOrigem() {
+            return contaOrigem;
+        }
+
+        public void setContaOrigem(String contaOrigem) {
+            this.contaOrigem = contaOrigem;
+        }
+
+        public TransacaoInternetBanking.TipoTransacao getTipo() {
+            return tipo;
+        }
+
+        public void setTipo(TransacaoInternetBanking.TipoTransacao tipo) {
+            this.tipo = tipo;
+        }
+
+        public BigDecimal getValor() {
+            return valor;
+        }
+
+        public void setValor(BigDecimal valor) {
+            this.valor = valor;
+        }
+
+        public String getDescricao() {
+            return descricao;
+        }
+
+        public void setDescricao(String descricao) {
+            this.descricao = descricao;
+        }
+
+        public String getCodigoBarras() {
+            return codigoBarras;
+        }
+
+        public void setCodigoBarras(String codigoBarras) {
+            this.codigoBarras = codigoBarras;
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public InternetBankingController(final InternetBankingService internetBankingService) {
+        this.internetBankingService = internetBankingService;
+    }
+}

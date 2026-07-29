@@ -1,0 +1,681 @@
+package com.aurix.platform.finance.entity;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * Entidade que representa a conciliação bancária
+ * 
+ * Gerencia a conciliação entre movimentações bancárias e contábeis
+ */
+@Entity
+@Table(name = "conciliacao_bancaria", schema = "aurix")
+public class ConciliacaoBancaria {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "conta_bancaria", nullable = false, length = 100)
+    private String contaBancaria;
+    @Column(name = "data_referencia", nullable = false)
+    private LocalDate dataReferencia;
+    @Column(name = "saldo_extrato", precision = 15, scale = 2, nullable = false)
+    private BigDecimal saldoExtrato;
+    @Column(name = "saldo_contabil", precision = 15, scale = 2, nullable = false)
+    private BigDecimal saldoContabil;
+    @Column(name = "diferenca", precision = 15, scale = 2, nullable = false)
+    private BigDecimal diferenca;
+    @Column(name = "cheques_compensar", precision = 15, scale = 2)
+    private BigDecimal chequesCompensar;
+    @Column(name = "depositos_transito", precision = 15, scale = 2)
+    private BigDecimal depositosTransito;
+    @Column(name = "tarifas_nao_lancadas", precision = 15, scale = 2)
+    private BigDecimal tarifasNaoLancadas;
+    @Column(name = "juros_nao_lancados", precision = 15, scale = 2)
+    private BigDecimal jurosNaoLancados;
+    @Column(name = "saldo_ajustado", precision = 15, scale = 2)
+    private BigDecimal saldoAjustado;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StatusConciliacao status;
+    @Column(name = "observacoes", length = 1000)
+    private String observacoes;
+    @Column(name = "usuario_concilicacao", length = 100)
+    private String usuarioConciliacao;
+    @Column(name = "data_conciliacao")
+    private LocalDateTime dataConciliacao;
+    @Column(name = "moeda", length = 3, nullable = false)
+    private String moeda;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
+    @CreationTimestamp
+    @Column(name = "data_criacao", nullable = false, updatable = false)
+    private LocalDateTime dataCriacao;
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao", nullable = false)
+    private LocalDateTime dataAtualizacao;
+    @Column(name = "versao", nullable = false)
+    @Version
+    private Long versao;
+
+
+    /**
+     * Status da conciliação bancária
+     */
+    public enum StatusConciliacao {
+        PENDENTE,  // Pendente de conciliação
+        CONCILIADA,  // Conciliada
+        DIVERGENTE,  // Com divergências
+        AJUSTADA,  // Ajustada
+        FECHADA // Fechada
+        ;
+    }
+
+
+    @java.lang.SuppressWarnings("all")
+    public static class ConciliacaoBancariaBuilder {
+        @java.lang.SuppressWarnings("all")
+        private Long id;
+        @java.lang.SuppressWarnings("all")
+        private String contaBancaria;
+        @java.lang.SuppressWarnings("all")
+        private LocalDate dataReferencia;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal saldoExtrato;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal saldoContabil;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal diferenca;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal chequesCompensar;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal depositosTransito;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal tarifasNaoLancadas;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal jurosNaoLancados;
+        @java.lang.SuppressWarnings("all")
+        private BigDecimal saldoAjustado;
+        @java.lang.SuppressWarnings("all")
+        private StatusConciliacao status;
+        @java.lang.SuppressWarnings("all")
+        private String observacoes;
+        @java.lang.SuppressWarnings("all")
+        private String usuarioConciliacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataConciliacao;
+        @java.lang.SuppressWarnings("all")
+        private String moeda;
+        @java.lang.SuppressWarnings("all")
+        private String metadata;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataCriacao;
+        @java.lang.SuppressWarnings("all")
+        private LocalDateTime dataAtualizacao;
+        @java.lang.SuppressWarnings("all")
+        private Long versao;
+
+        @java.lang.SuppressWarnings("all")
+        ConciliacaoBancariaBuilder() {
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder contaBancaria(final String contaBancaria) {
+            this.contaBancaria = contaBancaria;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder dataReferencia(final LocalDate dataReferencia) {
+            this.dataReferencia = dataReferencia;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder saldoExtrato(final BigDecimal saldoExtrato) {
+            this.saldoExtrato = saldoExtrato;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder saldoContabil(final BigDecimal saldoContabil) {
+            this.saldoContabil = saldoContabil;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder diferenca(final BigDecimal diferenca) {
+            this.diferenca = diferenca;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder chequesCompensar(final BigDecimal chequesCompensar) {
+            this.chequesCompensar = chequesCompensar;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder depositosTransito(final BigDecimal depositosTransito) {
+            this.depositosTransito = depositosTransito;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder tarifasNaoLancadas(final BigDecimal tarifasNaoLancadas) {
+            this.tarifasNaoLancadas = tarifasNaoLancadas;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder jurosNaoLancados(final BigDecimal jurosNaoLancados) {
+            this.jurosNaoLancados = jurosNaoLancados;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder saldoAjustado(final BigDecimal saldoAjustado) {
+            this.saldoAjustado = saldoAjustado;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder status(final StatusConciliacao status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder observacoes(final String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder usuarioConciliacao(final String usuarioConciliacao) {
+            this.usuarioConciliacao = usuarioConciliacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder dataConciliacao(final LocalDateTime dataConciliacao) {
+            this.dataConciliacao = dataConciliacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder moeda(final String moeda) {
+            this.moeda = moeda;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria.ConciliacaoBancariaBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public ConciliacaoBancaria build() {
+            return new ConciliacaoBancaria(this.id, this.contaBancaria, this.dataReferencia, this.saldoExtrato, this.saldoContabil, this.diferenca, this.chequesCompensar, this.depositosTransito, this.tarifasNaoLancadas, this.jurosNaoLancados, this.saldoAjustado, this.status, this.observacoes, this.usuarioConciliacao, this.dataConciliacao, this.moeda, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "ConciliacaoBancaria.ConciliacaoBancariaBuilder(id=" + this.id + ", contaBancaria=" + this.contaBancaria + ", dataReferencia=" + this.dataReferencia + ", saldoExtrato=" + this.saldoExtrato + ", saldoContabil=" + this.saldoContabil + ", diferenca=" + this.diferenca + ", chequesCompensar=" + this.chequesCompensar + ", depositosTransito=" + this.depositosTransito + ", tarifasNaoLancadas=" + this.tarifasNaoLancadas + ", jurosNaoLancados=" + this.jurosNaoLancados + ", saldoAjustado=" + this.saldoAjustado + ", status=" + this.status + ", observacoes=" + this.observacoes + ", usuarioConciliacao=" + this.usuarioConciliacao + ", dataConciliacao=" + this.dataConciliacao + ", moeda=" + this.moeda + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static ConciliacaoBancaria.ConciliacaoBancariaBuilder builder() {
+        return new ConciliacaoBancaria.ConciliacaoBancariaBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getContaBancaria() {
+        return this.contaBancaria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataReferencia() {
+        return this.dataReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaldoExtrato() {
+        return this.saldoExtrato;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaldoContabil() {
+        return this.saldoContabil;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getDiferenca() {
+        return this.diferenca;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getChequesCompensar() {
+        return this.chequesCompensar;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getDepositosTransito() {
+        return this.depositosTransito;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getTarifasNaoLancadas() {
+        return this.tarifasNaoLancadas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getJurosNaoLancados() {
+        return this.jurosNaoLancados;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaldoAjustado() {
+        return this.saldoAjustado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusConciliacao getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getUsuarioConciliacao() {
+        return this.usuarioConciliacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataConciliacao() {
+        return this.dataConciliacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMoeda() {
+        return this.moeda;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setContaBancaria(final String contaBancaria) {
+        this.contaBancaria = contaBancaria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataReferencia(final LocalDate dataReferencia) {
+        this.dataReferencia = dataReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaldoExtrato(final BigDecimal saldoExtrato) {
+        this.saldoExtrato = saldoExtrato;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaldoContabil(final BigDecimal saldoContabil) {
+        this.saldoContabil = saldoContabil;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDiferenca(final BigDecimal diferenca) {
+        this.diferenca = diferenca;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setChequesCompensar(final BigDecimal chequesCompensar) {
+        this.chequesCompensar = chequesCompensar;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDepositosTransito(final BigDecimal depositosTransito) {
+        this.depositosTransito = depositosTransito;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTarifasNaoLancadas(final BigDecimal tarifasNaoLancadas) {
+        this.tarifasNaoLancadas = tarifasNaoLancadas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setJurosNaoLancados(final BigDecimal jurosNaoLancados) {
+        this.jurosNaoLancados = jurosNaoLancados;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaldoAjustado(final BigDecimal saldoAjustado) {
+        this.saldoAjustado = saldoAjustado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusConciliacao status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setUsuarioConciliacao(final String usuarioConciliacao) {
+        this.usuarioConciliacao = usuarioConciliacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataConciliacao(final LocalDateTime dataConciliacao) {
+        this.dataConciliacao = dataConciliacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMoeda(final String moeda) {
+        this.moeda = moeda;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof ConciliacaoBancaria)) return false;
+        final ConciliacaoBancaria other = (ConciliacaoBancaria) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$contaBancaria = this.getContaBancaria();
+        final java.lang.Object other$contaBancaria = other.getContaBancaria();
+        if (this$contaBancaria == null ? other$contaBancaria != null : !this$contaBancaria.equals(other$contaBancaria)) return false;
+        final java.lang.Object this$dataReferencia = this.getDataReferencia();
+        final java.lang.Object other$dataReferencia = other.getDataReferencia();
+        if (this$dataReferencia == null ? other$dataReferencia != null : !this$dataReferencia.equals(other$dataReferencia)) return false;
+        final java.lang.Object this$saldoExtrato = this.getSaldoExtrato();
+        final java.lang.Object other$saldoExtrato = other.getSaldoExtrato();
+        if (this$saldoExtrato == null ? other$saldoExtrato != null : !this$saldoExtrato.equals(other$saldoExtrato)) return false;
+        final java.lang.Object this$saldoContabil = this.getSaldoContabil();
+        final java.lang.Object other$saldoContabil = other.getSaldoContabil();
+        if (this$saldoContabil == null ? other$saldoContabil != null : !this$saldoContabil.equals(other$saldoContabil)) return false;
+        final java.lang.Object this$diferenca = this.getDiferenca();
+        final java.lang.Object other$diferenca = other.getDiferenca();
+        if (this$diferenca == null ? other$diferenca != null : !this$diferenca.equals(other$diferenca)) return false;
+        final java.lang.Object this$chequesCompensar = this.getChequesCompensar();
+        final java.lang.Object other$chequesCompensar = other.getChequesCompensar();
+        if (this$chequesCompensar == null ? other$chequesCompensar != null : !this$chequesCompensar.equals(other$chequesCompensar)) return false;
+        final java.lang.Object this$depositosTransito = this.getDepositosTransito();
+        final java.lang.Object other$depositosTransito = other.getDepositosTransito();
+        if (this$depositosTransito == null ? other$depositosTransito != null : !this$depositosTransito.equals(other$depositosTransito)) return false;
+        final java.lang.Object this$tarifasNaoLancadas = this.getTarifasNaoLancadas();
+        final java.lang.Object other$tarifasNaoLancadas = other.getTarifasNaoLancadas();
+        if (this$tarifasNaoLancadas == null ? other$tarifasNaoLancadas != null : !this$tarifasNaoLancadas.equals(other$tarifasNaoLancadas)) return false;
+        final java.lang.Object this$jurosNaoLancados = this.getJurosNaoLancados();
+        final java.lang.Object other$jurosNaoLancados = other.getJurosNaoLancados();
+        if (this$jurosNaoLancados == null ? other$jurosNaoLancados != null : !this$jurosNaoLancados.equals(other$jurosNaoLancados)) return false;
+        final java.lang.Object this$saldoAjustado = this.getSaldoAjustado();
+        final java.lang.Object other$saldoAjustado = other.getSaldoAjustado();
+        if (this$saldoAjustado == null ? other$saldoAjustado != null : !this$saldoAjustado.equals(other$saldoAjustado)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$usuarioConciliacao = this.getUsuarioConciliacao();
+        final java.lang.Object other$usuarioConciliacao = other.getUsuarioConciliacao();
+        if (this$usuarioConciliacao == null ? other$usuarioConciliacao != null : !this$usuarioConciliacao.equals(other$usuarioConciliacao)) return false;
+        final java.lang.Object this$dataConciliacao = this.getDataConciliacao();
+        final java.lang.Object other$dataConciliacao = other.getDataConciliacao();
+        if (this$dataConciliacao == null ? other$dataConciliacao != null : !this$dataConciliacao.equals(other$dataConciliacao)) return false;
+        final java.lang.Object this$moeda = this.getMoeda();
+        final java.lang.Object other$moeda = other.getMoeda();
+        if (this$moeda == null ? other$moeda != null : !this$moeda.equals(other$moeda)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof ConciliacaoBancaria;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $contaBancaria = this.getContaBancaria();
+        result = result * PRIME + ($contaBancaria == null ? 43 : $contaBancaria.hashCode());
+        final java.lang.Object $dataReferencia = this.getDataReferencia();
+        result = result * PRIME + ($dataReferencia == null ? 43 : $dataReferencia.hashCode());
+        final java.lang.Object $saldoExtrato = this.getSaldoExtrato();
+        result = result * PRIME + ($saldoExtrato == null ? 43 : $saldoExtrato.hashCode());
+        final java.lang.Object $saldoContabil = this.getSaldoContabil();
+        result = result * PRIME + ($saldoContabil == null ? 43 : $saldoContabil.hashCode());
+        final java.lang.Object $diferenca = this.getDiferenca();
+        result = result * PRIME + ($diferenca == null ? 43 : $diferenca.hashCode());
+        final java.lang.Object $chequesCompensar = this.getChequesCompensar();
+        result = result * PRIME + ($chequesCompensar == null ? 43 : $chequesCompensar.hashCode());
+        final java.lang.Object $depositosTransito = this.getDepositosTransito();
+        result = result * PRIME + ($depositosTransito == null ? 43 : $depositosTransito.hashCode());
+        final java.lang.Object $tarifasNaoLancadas = this.getTarifasNaoLancadas();
+        result = result * PRIME + ($tarifasNaoLancadas == null ? 43 : $tarifasNaoLancadas.hashCode());
+        final java.lang.Object $jurosNaoLancados = this.getJurosNaoLancados();
+        result = result * PRIME + ($jurosNaoLancados == null ? 43 : $jurosNaoLancados.hashCode());
+        final java.lang.Object $saldoAjustado = this.getSaldoAjustado();
+        result = result * PRIME + ($saldoAjustado == null ? 43 : $saldoAjustado.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $observacoes = this.getObservacoes();
+        result = result * PRIME + ($observacoes == null ? 43 : $observacoes.hashCode());
+        final java.lang.Object $usuarioConciliacao = this.getUsuarioConciliacao();
+        result = result * PRIME + ($usuarioConciliacao == null ? 43 : $usuarioConciliacao.hashCode());
+        final java.lang.Object $dataConciliacao = this.getDataConciliacao();
+        result = result * PRIME + ($dataConciliacao == null ? 43 : $dataConciliacao.hashCode());
+        final java.lang.Object $moeda = this.getMoeda();
+        result = result * PRIME + ($moeda == null ? 43 : $moeda.hashCode());
+        final java.lang.Object $metadata = this.getMetadata();
+        result = result * PRIME + ($metadata == null ? 43 : $metadata.hashCode());
+        final java.lang.Object $dataCriacao = this.getDataCriacao();
+        result = result * PRIME + ($dataCriacao == null ? 43 : $dataCriacao.hashCode());
+        final java.lang.Object $dataAtualizacao = this.getDataAtualizacao();
+        result = result * PRIME + ($dataAtualizacao == null ? 43 : $dataAtualizacao.hashCode());
+        return result;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public java.lang.String toString() {
+        return "ConciliacaoBancaria(id=" + this.getId() + ", contaBancaria=" + this.getContaBancaria() + ", dataReferencia=" + this.getDataReferencia() + ", saldoExtrato=" + this.getSaldoExtrato() + ", saldoContabil=" + this.getSaldoContabil() + ", diferenca=" + this.getDiferenca() + ", chequesCompensar=" + this.getChequesCompensar() + ", depositosTransito=" + this.getDepositosTransito() + ", tarifasNaoLancadas=" + this.getTarifasNaoLancadas() + ", jurosNaoLancados=" + this.getJurosNaoLancados() + ", saldoAjustado=" + this.getSaldoAjustado() + ", status=" + this.getStatus() + ", observacoes=" + this.getObservacoes() + ", usuarioConciliacao=" + this.getUsuarioConciliacao() + ", dataConciliacao=" + this.getDataConciliacao() + ", moeda=" + this.getMoeda() + ", metadata=" + this.getMetadata() + ", dataCriacao=" + this.getDataCriacao() + ", dataAtualizacao=" + this.getDataAtualizacao() + ", versao=" + this.getVersao() + ")";
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ConciliacaoBancaria() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ConciliacaoBancaria(final Long id, final String contaBancaria, final LocalDate dataReferencia, final BigDecimal saldoExtrato, final BigDecimal saldoContabil, final BigDecimal diferenca, final BigDecimal chequesCompensar, final BigDecimal depositosTransito, final BigDecimal tarifasNaoLancadas, final BigDecimal jurosNaoLancados, final BigDecimal saldoAjustado, final StatusConciliacao status, final String observacoes, final String usuarioConciliacao, final LocalDateTime dataConciliacao, final String moeda, final String metadata, final LocalDateTime dataCriacao, final LocalDateTime dataAtualizacao, final Long versao) {
+        this.id = id;
+        this.contaBancaria = contaBancaria;
+        this.dataReferencia = dataReferencia;
+        this.saldoExtrato = saldoExtrato;
+        this.saldoContabil = saldoContabil;
+        this.diferenca = diferenca;
+        this.chequesCompensar = chequesCompensar;
+        this.depositosTransito = depositosTransito;
+        this.tarifasNaoLancadas = tarifasNaoLancadas;
+        this.jurosNaoLancados = jurosNaoLancados;
+        this.saldoAjustado = saldoAjustado;
+        this.status = status;
+        this.observacoes = observacoes;
+        this.usuarioConciliacao = usuarioConciliacao;
+        this.dataConciliacao = dataConciliacao;
+        this.moeda = moeda;
+        this.metadata = metadata;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.versao = versao;
+    }
+}

@@ -1,0 +1,52 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+  datasource:
+    url: jdbc:h2:mem:aurix;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;INIT=CREATE SCHEMA IF NOT EXISTS aurix
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  sql:
+    init:
+      mode: never
+
+management:
+  health:
+    db:
+      enabled: false
+
+aurix:
+  jwt:
+    secret: questa-e-uma-chave-secreta-para-teste-com-64-bytes-para-HS512-aqui-preenchimento
+    expiration: 86400000
+  security:
+    encryption:
+      key-base64: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+  onboarding:
+    core-api-url: http://localhost:9999
+    tenant-header: X-Tenant-Id
+    bureau:
+      quod:
+        url: http://localhost:9999/quod
+        api-key: test-quod-key
+      serasa:
+        url: http://localhost:9999/serasa
+        api-key: test-serasa-key
+    fraud:
+      cleansale:
+        url: http://localhost:9999/cleansale
+        api-key: test-cleansale-key
+    kyc:
+      unico:
+        url: http://localhost:9999/unico
+        api-key: test-unico-key

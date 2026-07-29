@@ -1,0 +1,51 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:h2:mem:platformdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS AURIX
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  kafka:
+    enabled: false
+  data:
+    redis:
+      enabled: false
+
+aurix:
+  shared:
+    kafka:
+      bootstrap-servers: localhost:9092
+      enabled: false
+    redis:
+      enabled: false
+  jwt:
+    secret: test-secret-key-that-is-long-enough-for-hs512-algorithm-at-least-64-bytes
+    expiration: 3600000
+  openfinance:
+    core:
+      base-url: http://localhost:8081
+      tenant-id: ""
+  baas:
+    core-client: stub
+  security:
+    encryption:
+      key-base64: QXVyZXVzVGVzdEtleTEyMw==
+
+server:
+  port: 0
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG

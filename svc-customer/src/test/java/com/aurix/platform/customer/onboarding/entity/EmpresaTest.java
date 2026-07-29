@@ -1,0 +1,95 @@
+package com.aurix.platform.customer.onboarding.entity;
+
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class EmpresaTest {
+
+    @Test
+    void builderDeveCriarEmpresaComTodosOsCampos() {
+        Empresa empresa = Empresa.builder()
+                .id(1L)
+                .solicitacaoId(10L)
+                .cnpj("12345678000190")
+                .razaoSocial("Empresa Teste Ltda")
+                .nomeFantasia("Teste")
+                .cnaePrincipal("6201-5/01")
+                .cnaeSecundarios("[\"6202-5/00\",\"6203-5/00\"]")
+                .endereco("{\"rua\":\"Rua A\",\"cidade\":\"SP\"}")
+                .situacaoCadastral(SituacaoCNPJ.ATIVA)
+                .dataSituacao(LocalDate.of(2020, 6, 15))
+                .regimeTributario("SIMPLES_NACIONAL")
+                .dadosAbertos("{\"cnae\":\"62015\"}")
+                .build();
+
+        assertEquals(1L, empresa.getId());
+        assertEquals(10L, empresa.getSolicitacaoId());
+        assertEquals("12345678000190", empresa.getCnpj());
+        assertEquals("Empresa Teste Ltda", empresa.getRazaoSocial());
+        assertEquals("Teste", empresa.getNomeFantasia());
+        assertEquals("6201-5/01", empresa.getCnaePrincipal());
+        assertEquals("[\"6202-5/00\",\"6203-5/00\"]", empresa.getCnaeSecundarios());
+        assertEquals("{\"rua\":\"Rua A\",\"cidade\":\"SP\"}", empresa.getEndereco());
+        assertEquals(SituacaoCNPJ.ATIVA, empresa.getSituacaoCadastral());
+        assertEquals(LocalDate.of(2020, 6, 15), empresa.getDataSituacao());
+        assertEquals("SIMPLES_NACIONAL", empresa.getRegimeTributario());
+        assertEquals("{\"cnae\":\"62015\"}", empresa.getDadosAbertos());
+    }
+
+    @Test
+    void builderSemCamposOpcionaisDeveCriarEmpresa() {
+        Empresa empresa = Empresa.builder()
+                .solicitacaoId(1L)
+                .cnpj("12345678000190")
+                .razaoSocial("Empresa Ltda")
+                .build();
+
+        assertEquals(1L, empresa.getSolicitacaoId());
+        assertEquals("12345678000190", empresa.getCnpj());
+        assertEquals("Empresa Ltda", empresa.getRazaoSocial());
+        assertNull(empresa.getNomeFantasia());
+        assertNull(empresa.getSituacaoCadastral());
+    }
+
+    @Test
+    void noArgConstructorDeveCriarInstanciaVazia() {
+        Empresa empresa = new Empresa();
+        assertNotNull(empresa);
+        assertNull(empresa.getId());
+    }
+
+    @Test
+    void settersEDevemAtualizarCampos() {
+        Empresa empresa = new Empresa();
+        empresa.setId(1L);
+        empresa.setCnpj("12345678000190");
+        empresa.setSituacaoCadastral(SituacaoCNPJ.ATIVA);
+
+        assertEquals(1L, empresa.getId());
+        assertEquals("12345678000190", empresa.getCnpj());
+        assertEquals(SituacaoCNPJ.ATIVA, empresa.getSituacaoCadastral());
+    }
+
+    @Test
+    void builderToStringDeveConterCampos() {
+        Empresa.EmpresaBuilder builder = Empresa.builder()
+                .cnpj("12345678000190")
+                .razaoSocial("Teste");
+        String str = builder.toString();
+        assertTrue(str.contains("cnpj"));
+        assertTrue(str.contains("razaoSocial"));
+    }
+
+    @Test
+    void dataCriacaoEDataAtualizacaoDevemSerAnotadas() throws Exception {
+        var dataCriacaoField = Empresa.class.getDeclaredField("dataCriacao");
+        var dataAtualizacaoField = Empresa.class.getDeclaredField("dataAtualizacao");
+
+        assertNotNull(dataCriacaoField.getAnnotation(org.hibernate.annotations.CreationTimestamp.class));
+        assertNotNull(dataAtualizacaoField.getAnnotation(org.hibernate.annotations.UpdateTimestamp.class));
+    }
+}

@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: svc-platform
+  profiles:
+    active: dev
+
+server:
+  port: 8092
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  server:
+    port: 9092
+  health:
+    db:
+      enabled: false
+    redis:
+      enabled: false
+    kafka:
+      enabled: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
