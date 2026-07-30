@@ -94,7 +94,8 @@ class CoreFlowIntegrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private Long contaId;
+    private Long contaOrigemId;
+    private Long contaDestinoId;
     private Long produtoFinanceiroId;
 
     @BeforeEach
@@ -111,31 +112,43 @@ class CoreFlowIntegrationTest {
         cliente.setStatus(Cliente.StatusCliente.ATIVO);
         cliente = clienteRepository.save(cliente);
 
-        Conta conta = new Conta();
-        conta.setTenantId(TenantContext.DEFAULT_TENANT_ID);
-        conta.setNumeroConta("12345-6");
-        conta.setCliente(cliente);
-        conta.setTipoConta(Conta.TipoConta.CORRENTE);
-        conta.setSaldoAtual(BigDecimal.valueOf(1000.0));
-        conta.setStatus(Conta.StatusConta.ATIVA);
-        conta = contaRepository.save(conta);
-        contaId = conta.getId();
+        Conta contaOrigem = new Conta();
+        contaOrigem.setTenantId(TenantContext.DEFAULT_TENANT_ID);
+        contaOrigem.setNumeroConta("12345-6");
+        contaOrigem.setCliente(cliente);
+        contaOrigem.setTipoConta(Conta.TipoConta.CORRENTE);
+        contaOrigem.setSaldoAtual(BigDecimal.valueOf(1000.0));
+        contaOrigem.setStatus(Conta.StatusConta.ATIVA);
+        contaOrigem = contaRepository.save(contaOrigem);
+        contaOrigemId = contaOrigem.getId();
 
-        ControleSaldo controle = new ControleSaldo();
-        controle.setConta(conta);
-        controle.setSaldoDisponivel(conta.getSaldoAtual());
-        controle.setSaldoBloqueado(BigDecimal.ZERO);
-        controle.setSaldoPendente(BigDecimal.ZERO);
-        controle.setSaldoTotal(conta.getSaldoAtual());
-        controle.setLimiteCredito(BigDecimal.valueOf(5000.0));
-        controle.setLimiteUtilizado(BigDecimal.ZERO);
-        controle.setLimiteDisponivel(BigDecimal.valueOf(5000.0));
-        controle.setDataUltimaAtualizacao(LocalDateTime.now());
-        controle.setSaldoConsistente(true);
-        controle.setBloqueioOperacoes(false);
-        controle.setTenantId(TenantContext.DEFAULT_TENANT_ID);
-        controle.setVersaoSaldo(1);
-        controleSaldoRepository.save(controle);
+        Conta contaDestino = new Conta();
+        contaDestino.setTenantId(TenantContext.DEFAULT_TENANT_ID);
+        contaDestino.setNumeroConta("65432-1");
+        contaDestino.setCliente(cliente);
+        contaDestino.setTipoConta(Conta.TipoConta.CORRENTE);
+        contaDestino.setSaldoAtual(BigDecimal.valueOf(2000.0));
+        contaDestino.setStatus(Conta.StatusConta.ATIVA);
+        contaDestino = contaRepository.save(contaDestino);
+        contaDestinoId = contaDestino.getId();
+
+        for (Conta c : List.of(contaOrigem, contaDestino)) {
+            ControleSaldo controle = new ControleSaldo();
+            controle.setConta(c);
+            controle.setSaldoDisponivel(c.getSaldoAtual());
+            controle.setSaldoBloqueado(BigDecimal.ZERO);
+            controle.setSaldoPendente(BigDecimal.ZERO);
+            controle.setSaldoTotal(c.getSaldoAtual());
+            controle.setLimiteCredito(BigDecimal.valueOf(5000.0));
+            controle.setLimiteUtilizado(BigDecimal.ZERO);
+            controle.setLimiteDisponivel(BigDecimal.valueOf(5000.0));
+            controle.setDataUltimaAtualizacao(LocalDateTime.now());
+            controle.setSaldoConsistente(true);
+            controle.setBloqueioOperacoes(false);
+            controle.setTenantId(TenantContext.DEFAULT_TENANT_ID);
+            controle.setVersaoSaldo(1);
+            controleSaldoRepository.save(controle);
+        }
 
         ProdutoFinanceiro pf = new ProdutoFinanceiro();
         pf.setCodigoProduto("CDB_001");
@@ -188,8 +201,8 @@ class CoreFlowIntegrationTest {
     @Test
     void criarTransacao_deveRetornar201() {
         TransacaoDTO dto = new TransacaoDTO();
-        dto.setContaOrigemId(contaId);
-        dto.setContaDestinoId(contaId);
+        dto.setContaOrigemId(contaOrigemId);
+        dto.setContaDestinoId(contaDestinoId);
         dto.setTipoTransacao(Transacao.TipoTransacao.PIX);
         dto.setValor(BigDecimal.valueOf(100.0));
         dto.setDescricao("Teste PIX");
@@ -205,8 +218,8 @@ class CoreFlowIntegrationTest {
     @Test
     void buscarTransacaoPorId_deveRetornar200() {
         TransacaoDTO dto = new TransacaoDTO();
-        dto.setContaOrigemId(contaId);
-        dto.setContaDestinoId(contaId);
+        dto.setContaOrigemId(contaOrigemId);
+        dto.setContaDestinoId(contaDestinoId);
         dto.setTipoTransacao(Transacao.TipoTransacao.TED);
         dto.setValor(BigDecimal.valueOf(250.0));
         dto.setDescricao("Teste TED");
@@ -224,8 +237,8 @@ class CoreFlowIntegrationTest {
     @Test
     void buscarTransacaoPorCodigo_deveRetornar200() {
         TransacaoDTO dto = new TransacaoDTO();
-        dto.setContaOrigemId(contaId);
-        dto.setContaDestinoId(contaId);
+        dto.setContaOrigemId(contaOrigemId);
+        dto.setContaDestinoId(contaDestinoId);
         dto.setTipoTransacao(Transacao.TipoTransacao.DOC);
         dto.setValor(BigDecimal.valueOf(500.0));
         dto.setDescricao("Teste DOC");
@@ -250,7 +263,7 @@ class CoreFlowIntegrationTest {
     @Test
     void criarAplicacaoFinanceira_deveRetornar200() {
         Map<String, Object> request = Map.of(
-            "contaId", contaId,
+            "contaId", contaOrigemId,
             "produtoFinanceiroId", produtoFinanceiroId,
             "valorAplicacao", 1000.0,
             "usuarioAplicacao", "test-user"
@@ -265,7 +278,7 @@ class CoreFlowIntegrationTest {
     @Test
     void listarAplicacoesPorConta_deveRetornar200() {
         ResponseEntity<String> response = rest.getForEntity(
-            url("/api/remuneracao/aplicacoes/conta/" + contaId), String.class);
+            url("/api/remuneracao/aplicacoes/conta/" + contaOrigemId), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -287,7 +300,7 @@ class CoreFlowIntegrationTest {
     @Test
     void calcularTarifa_deveRetornar200() {
         CalculoTarifaDTO request = new CalculoTarifaDTO();
-        request.setContaId(contaId);
+        request.setContaId(contaOrigemId);
         request.setTipoTarifa("TRANSFERENCIA_PIX");
         request.setValorTransacao(BigDecimal.valueOf(1000.0));
         request.setNivelServico(2);
@@ -317,8 +330,8 @@ class CoreFlowIntegrationTest {
     @Test
     void criarLiquidacao_deveRetornar200() {
         TransacaoDTO txDto = new TransacaoDTO();
-        txDto.setContaOrigemId(contaId);
-        txDto.setContaDestinoId(contaId);
+        txDto.setContaOrigemId(contaOrigemId);
+        txDto.setContaDestinoId(contaDestinoId);
         txDto.setTipoTransacao(Transacao.TipoTransacao.PIX);
         txDto.setValor(BigDecimal.valueOf(300.0));
         txDto.setDescricao("Liquidacao test");
@@ -361,7 +374,7 @@ class CoreFlowIntegrationTest {
     @Test
     void processarMovimentoCredito_deveRetornar200() {
         MovimentoContaDTO mov = new MovimentoContaDTO();
-        mov.setContaId(contaId);
+        mov.setContaId(contaOrigemId);
         mov.setTipoMovimento("CREDITO");
         mov.setValorMovimento(BigDecimal.valueOf(500.0));
 
@@ -373,9 +386,9 @@ class CoreFlowIntegrationTest {
     @Test
     void obterControleSaldo_deveRetornar200() {
         ResponseEntity<ControleSaldoDTO> response = rest.getForEntity(
-            url("/api/controle-saldos/conta/" + contaId + "/controle"), ControleSaldoDTO.class);
+            url("/api/controle-saldos/conta/" + contaOrigemId + "/controle"), ControleSaldoDTO.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getContaId()).isEqualTo(contaId);
+        assertThat(response.getBody().getContaId()).isEqualTo(contaOrigemId);
         assertThat(response.getBody().getSaldoDisponivel()).isEqualByComparingTo(BigDecimal.valueOf(1000.0));
     }
 
@@ -390,8 +403,8 @@ class CoreFlowIntegrationTest {
     @Test
     void criarTransacao_semValor_deveRetornar400() {
         TransacaoDTO dto = new TransacaoDTO();
-        dto.setContaOrigemId(contaId);
-        dto.setContaDestinoId(contaId);
+        dto.setContaOrigemId(contaOrigemId);
+        dto.setContaDestinoId(contaDestinoId);
         dto.setTipoTransacao(Transacao.TipoTransacao.PIX);
 
         ResponseEntity<String> response = rest.postForEntity(
@@ -402,8 +415,8 @@ class CoreFlowIntegrationTest {
     @Test
     void processarLiquidacao_deveRetornar200() {
         TransacaoDTO txDto = new TransacaoDTO();
-        txDto.setContaOrigemId(contaId);
-        txDto.setContaDestinoId(contaId);
+        txDto.setContaOrigemId(contaOrigemId);
+        txDto.setContaDestinoId(contaDestinoId);
         txDto.setTipoTransacao(Transacao.TipoTransacao.PIX);
         txDto.setValor(BigDecimal.valueOf(100.0));
         txDto.setDescricao("Processamento liq");
@@ -429,8 +442,8 @@ class CoreFlowIntegrationTest {
     @Test
     void estornarLiquidacao_deveRetornar200() {
         TransacaoDTO txDto = new TransacaoDTO();
-        txDto.setContaOrigemId(contaId);
-        txDto.setContaDestinoId(contaId);
+        txDto.setContaOrigemId(contaOrigemId);
+        txDto.setContaDestinoId(contaDestinoId);
         txDto.setTipoTransacao(Transacao.TipoTransacao.PIX);
         txDto.setValor(BigDecimal.valueOf(50.0));
         txDto.setDescricao("Estorno liq");
@@ -472,13 +485,13 @@ class CoreFlowIntegrationTest {
     @Test
     void listarMovimentosPorConta_deveRetornar200() {
         MovimentoContaDTO mov = new MovimentoContaDTO();
-        mov.setContaId(contaId);
+        mov.setContaId(contaOrigemId);
         mov.setTipoMovimento("CREDITO");
         mov.setValorMovimento(BigDecimal.valueOf(200.0));
         rest.postForEntity(url("/api/controle-saldos/movimento"), mov, MovimentoContaDTO.class);
 
         ResponseEntity<String> response = rest.getForEntity(
-            url("/api/controle-saldos/conta/" + contaId + "/movimentos"), String.class);
+            url("/api/controle-saldos/conta/" + contaOrigemId + "/movimentos"), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
