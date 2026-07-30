@@ -1,6 +1,8 @@
 package com.aurix.platform.banking.settlement.integration;
 
 import com.aurix.platform.banking.BankingApplication;
+import com.aurix.platform.banking.core.dto.MovimentoContaDTO;
+import com.aurix.platform.banking.core.service.ControleSaldoService;
 import com.aurix.platform.banking.settlement.config.SettlementTestConfig;
 import com.aurix.platform.banking.settlement.controller.SettlementController;
 import com.aurix.platform.banking.settlement.entity.Liquidez;
@@ -20,12 +22,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = BankingApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -41,6 +45,9 @@ class SettlementFlowIntegrationTest {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+    @MockitoBean
+    private ControleSaldoService controleSaldoService;
+
     private RestTemplate rest;
 
     @BeforeEach
@@ -50,6 +57,8 @@ class SettlementFlowIntegrationTest {
         tt.executeWithoutResult(status -> {
             liquidezRepository.deleteAll();
         });
+        when(controleSaldoService.processarMovimento(any(MovimentoContaDTO.class)))
+            .thenAnswer(i -> i.getArgument(0));
     }
 
     private String url(String path) {
@@ -64,8 +73,8 @@ class SettlementFlowIntegrationTest {
         request.setHoraLiquidez(LocalDateTime.now());
         request.setTipoOperacao(Liquidez.TipoOperacao.PIX);
         request.setCanal(Liquidez.Canal.API);
-        request.setContaOrigem("12345-6");
-        request.setContaDestino("67890-1");
+        request.setContaOrigem("1");
+        request.setContaDestino("2");
         request.setValor(new BigDecimal("1000.00"));
         request.setStatus(Liquidez.StatusLiquidez.PENDENTE);
 
@@ -83,8 +92,8 @@ class SettlementFlowIntegrationTest {
         request.setHoraLiquidez(LocalDateTime.now());
         request.setTipoOperacao(Liquidez.TipoOperacao.TED);
         request.setCanal(Liquidez.Canal.API);
-        request.setContaOrigem("12345-6");
-        request.setContaDestino("67890-1");
+        request.setContaOrigem("1");
+        request.setContaDestino("2");
         request.setValor(new BigDecimal("500.00"));
         request.setStatus(Liquidez.StatusLiquidez.PENDENTE);
 
