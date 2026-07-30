@@ -242,7 +242,254 @@ public class FluxoCaixa {
         public FluxoCaixa.FluxoCaixaBuilder observacoes(final String observacoes) {
             this.observacoes = observacoes;
             return this;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ll ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public FluxoCaixa.FluxoCaixaBuilder metadata(final String metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public FluxoCaixa.FluxoCaixaBuilder dataCriacao(final LocalDateTime dataCriacao) {
+            this.dataCriacao = dataCriacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public FluxoCaixa.FluxoCaixaBuilder dataAtualizacao(final LocalDateTime dataAtualizacao) {
+            this.dataAtualizacao = dataAtualizacao;
+            return this;
+        }
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        public FluxoCaixa.FluxoCaixaBuilder versao(final Long versao) {
+            this.versao = versao;
+            return this;
+        }
+
+        @java.lang.SuppressWarnings("all")
+        public FluxoCaixa build() {
+            return new FluxoCaixa(this.id, this.dataReferencia, this.saldoInicial, this.entradasPrevistas, this.entradasRealizadas, this.saidasPrevistas, this.saidasRealizadas, this.saldoFinalPrevisto, this.saldoFinalRealizado, this.diferenca, this.tipoFluxo, this.contaBancaria, this.moeda, this.observacoes, this.metadata, this.dataCriacao, this.dataAtualizacao, this.versao);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        public java.lang.String toString() {
+            return "FluxoCaixa.FluxoCaixaBuilder(id=" + this.id + ", dataReferencia=" + this.dataReferencia + ", saldoInicial=" + this.saldoInicial + ", entradasPrevistas=" + this.entradasPrevistas + ", entradasRealizadas=" + this.entradasRealizadas + ", saidasPrevistas=" + this.saidasPrevistas + ", saidasRealizadas=" + this.saidasRealizadas + ", saldoFinalPrevisto=" + this.saldoFinalPrevisto + ", saldoFinalRealizado=" + this.saldoFinalRealizado + ", diferenca=" + this.diferenca + ", tipoFluxo=" + this.tipoFluxo + ", contaBancaria=" + this.contaBancaria + ", moeda=" + this.moeda + ", observacoes=" + this.observacoes + ", metadata=" + this.metadata + ", dataCriacao=" + this.dataCriacao + ", dataAtualizacao=" + this.dataAtualizacao + ", versao=" + this.versao + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public static FluxoCaixa.FluxoCaixaBuilder builder() {
+        return new FluxoCaixa.FluxoCaixaBuilder();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getId() {
+        return this.id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataReferencia() {
+        return this.dataReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaldoInicial() {
+        return this.saldoInicial;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getEntradasPrevistas() {
+        return this.entradasPrevistas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getEntradasRealizadas() {
+        return this.entradasRealizadas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaidasPrevistas() {
+        return this.saidasPrevistas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaidasRealizadas() {
+        return this.saidasRealizadas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaldoFinalPrevisto() {
+        return this.saldoFinalPrevisto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getSaldoFinalRealizado() {
+        return this.saldoFinalRealizado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public BigDecimal getDiferenca() {
+        return this.diferenca;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoFluxo getTipoFluxo() {
+        return this.tipoFluxo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getContaBancaria() {
+        return this.contaBancaria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMoeda() {
+        return this.moeda;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataReferencia(final LocalDate dataReferencia) {
+        this.dataReferencia = dataReferencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaldoInicial(final BigDecimal saldoInicial) {
+        this.saldoInicial = saldoInicial;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setEntradasPrevistas(final BigDecimal entradasPrevistas) {
+        this.entradasPrevistas = entradasPrevistas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setEntradasRealizadas(final BigDecimal entradasRealizadas) {
+        this.entradasRealizadas = entradasRealizadas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaidasPrevistas(final BigDecimal saidasPrevistas) {
+        this.saidasPrevistas = saidasPrevistas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaidasRealizadas(final BigDecimal saidasRealizadas) {
+        this.saidasRealizadas = saidasRealizadas;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaldoFinalPrevisto(final BigDecimal saldoFinalPrevisto) {
+        this.saldoFinalPrevisto = saldoFinalPrevisto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSaldoFinalRealizado(final BigDecimal saldoFinalRealizado) {
+        this.saldoFinalRealizado = saldoFinalRealizado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDiferenca(final BigDecimal diferenca) {
+        this.diferenca = diferenca;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoFluxo(final TipoFluxo tipoFluxo) {
+        this.tipoFluxo = tipoFluxo;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setContaBancaria(final String contaBancaria) {
+        this.contaBancaria = contaBancaria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMoeda(final String moeda) {
+        this.moeda = moeda;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof FluxoCaixa)) return false;
+        final FluxoCaixa other = (FluxoCaixa) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
         final java.lang.Object this$dataReferencia = this.getDataReferencia();
         final java.lang.Object other$dataReferencia = other.getDataReferencia();
         if (this$dataReferencia == null ? other$dataReferencia != null : !this$dataReferencia.equals(other$dataReferencia)) return false;

@@ -154,4 +154,47 @@ public class IFRS9Service {
         log.info("Gerando relatório consolidado IFRS 9 para: {}", dataReferencia);
         RelatorioIFRS9Service.RelatorioConsolidado relatorio = new RelatorioIFRS9Service.RelatorioConsolidado();
         // Dados por categoria
-        for (InstrumentoFinanceiro.CategoriaIFRS9 categoria : InstrumentoFinanceiro.CategoriaIFRS9.valu                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+        for (InstrumentoFinanceiro.CategoriaIFRS9 categoria : InstrumentoFinanceiro.CategoriaIFRS9.values()) {
+            long quantidade = instrumentoRepository.countByCategoriaIFRS9(categoria);
+            BigDecimal valor = instrumentoRepository.somaValorPorCategoria(categoria);
+            relatorio.adicionarCategoria(categoria.name(), quantidade, valor);
+        }
+        // Dados por estágio
+        for (InstrumentoFinanceiro.EstagioDeterioracao estagio : InstrumentoFinanceiro.EstagioDeterioracao.values()) {
+            long quantidade = instrumentoRepository.countByEstagioDeterioracao(estagio);
+            BigDecimal valor = instrumentoRepository.somaValorPorEstagio(estagio);
+            BigDecimal provisao = eclRepository.somaProvisaoPorEstagio(ExpectedCreditLoss.EstagioDeterioracao.valueOf(estagio.name()));
+            relatorio.adicionarEstagio(estagio.name(), quantidade, valor, provisao);
+        }
+        // Provisionamento total
+        relatorio.setProvisionamentoTotal(calcularProvisionamentoTotal());
+        log.info("Relatório consolidado gerado com sucesso");
+        return relatorio;
+    }
+
+    /**
+     * Valida se uma reclassificação é válida
+     */
+    private boolean isReclassificacaoValida(InstrumentoFinanceiro.EstagioDeterioracao estagioAnterior, InstrumentoFinanceiro.EstagioDeterioracao novoEstagio) {
+        // Regras de reclassificação do IFRS 9
+        switch (estagioAnterior) {
+        case ESTAGIO_1: 
+            return novoEstagio == InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_2 || novoEstagio == InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_3;
+        case ESTAGIO_2: 
+            return novoEstagio == InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1 || novoEstagio == InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_3;
+        case ESTAGIO_3: 
+            return novoEstagio == InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_1 || novoEstagio == InstrumentoFinanceiro.EstagioDeterioracao.ESTAGIO_2;
+        default: 
+            return false;
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public IFRS9Service(final InstrumentoFinanceiroRepository instrumentoRepository, final ExpectedCreditLossRepository eclRepository, final ECLCalculationService eclService, final HedgeAccountingService hedgeService, final ClassificationService classificationService) {
+        this.instrumentoRepository = instrumentoRepository;
+        this.eclRepository = eclRepository;
+        this.eclService = eclService;
+        this.hedgeService = hedgeService;
+        this.classificationService = classificationService;
+    }
+}

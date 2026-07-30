@@ -167,4 +167,38 @@ public class FaturaService {
         response.setCodigoFatura(fatura.getCodigoFatura());
         response.setCartaoId(fatura.getCartaoId());
         response.setMesReferencia(fatura.getMesReferencia());
-0\r§mûü   ¦  [Ôf    _keyhttps://chat.google.com/_/scs/mss-static/_/js/k=boq-dynamite.DynamiteWebUi.pt_BR.mZ7TYLOycQg.2020.O/ck=boq-dynamite.DynamiteWebUi.j5pTWmLBqlc.L.B1.O/am=5faHON4ky0QCQ9GYhuZhjDEOAvwWGElLECPQAAAAACkHaMMMgJApBA/d=1/exm=A7fCU,ADc1Qc,AUnC5d,AVbx5d,Bawggc,BvTWuc,CmPHhe,D24Yib,D8JrFc,DlUNQb,Dt2gCf,EDEDVd,EFQ78c,EN6Flf,EXCSKc,ExeBRd,FWbgnf,FjL88d,FzWyAd,G37fEe,GnCa3c,HFL46d,HI3kIb,HMzQbf,HT8XDe,Hd4Pff,HyV36c,IiC5yd,InC9Ub,J7N9C,JH6QEd,JNoxi,JQpsj,JVePRc,K7o0rf,KXYl2d,KdO0tc,Kdrenc,KhKOW,KjiSxc,L1AAkb,LAexbf,LEikZe,LHQHXe,Lgapxc,Mb9s2d,MpJwZc,NWS6Fb,NXrYEe,O6y8ed,P2Dmtd,P6sQOc,PKeqcf,PaZbEe,PgqL1e,Ph6DJc,QzZDqf,RMhBfe,SBvVne,SljRjc,T9U3df,TELHZb,TjMdgd,U8QHR,UJmqp,UO2sTd,UOHGWe,UUJqVe,Uas9Hd,Ulmmrd,UmkMob,VGENab,Vui2Cf,WO9ee,WOh2n,Xl5qNd,Xlgikf,XnyN2e,YHtpn,YgYfYe,ZVwchc,ZwDk9d,ZwmEcd,_b,_tp,aW3pY,audrJd,byfTOb,cUFky,cr0IMb,d4us9d,dWV0nd,dXeBNb,dc5asf,e13S9d,ePHIRd,eaOP3d,er6dh,evLPce,f7XYPd,fgj8Rb,g4eCSd,gTs7K,gepemd,gumPOd,hAljs,hqV0Bd,iKbDcd,j0Phob,jdQAx,jjSbgf,jkL5Y,kjdOUc,knP6Vb,lR8EEc,lfZYrc,ljBCgd,lsjVmc,lwddkf,mSX26d,n73qwf,oIlWU,p5tslb,pMYwdd,pyllr,q2CZ6,q4ha0e,qR3pt,r1uDVb,r65Xrf,r91Udd,sCvRpf,skvfJb,t0g5vc,tSw7nc,uff4cb,uqJhG,vGs3rf,w7Iwxd,wDcr7e,wPW5Je,xFm5He,xiIt6d,xlrZDb,yWLuYe,yXJmEe,yazeCb,yb08jf,zDD95,zVtWRd/excm=LEikZe,MpJwZc,UUJqVe,_b,_tp,byfTOb,lsjVmc,n73qwf,worldmoleview/ed=1/br=1/wt=2/ujg=1/rs=AKbVGRJWr0BROZEfqszm5CaGbxWJ_sahxw/ee=A5y9vd:zD4Om;ALeOPe:DTA9dd;Arv56d:UdO36;AzI
+        response.setAnoReferencia(fatura.getAnoReferencia());
+        response.setValorTotal(fatura.getValorTotal());
+        response.setValorPago(fatura.getValorPago());
+        response.setValorPendente(fatura.getValorPendente());
+        response.setValorMinimo(fatura.getValorMinimo());
+        response.setStatus(fatura.getStatus().name());
+        response.setDataVencimento(fatura.getDataVencimento());
+        response.setDataPagamento(fatura.getDataPagamento());
+        response.setLancamentos(lancamentos);
+        return response;
+    }
+
+    @Transactional(readOnly = true)
+    public List<FaturaResponse> listarFaturas(Long cartaoId) {
+        return faturaRepository.findByCartaoId(cartaoId).stream()
+            .map(this::toResponse).toList();
+    }
+
+    private FaturaResponse toResponse(Fatura f) {
+        FaturaResponse r = new FaturaResponse();
+        r.setId(f.getId());
+        r.setCodigoFatura(f.getCodigoFatura());
+        r.setCartaoId(f.getCartaoId());
+        r.setMesReferencia(f.getMesReferencia());
+        r.setAnoReferencia(f.getAnoReferencia());
+        r.setValorTotal(f.getValorTotal());
+        r.setValorPago(f.getValorPago());
+        r.setValorPendente(f.getValorPendente());
+        r.setValorMinimo(f.getValorMinimo());
+        r.setStatus(f.getStatus().name());
+        r.setDataVencimento(f.getDataVencimento());
+        r.setDataPagamento(f.getDataPagamento());
+        return r;
+    }
+}

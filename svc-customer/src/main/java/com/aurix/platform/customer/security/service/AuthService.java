@@ -176,4 +176,121 @@ public class AuthService {
         }
 
         if (token.getExpiraEm().isBefore(LocalDateTime.now())) {
-            throw new Illegal                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+            throw new IllegalStateException("Token expirado");
+        }
+
+        Usuario usuario = usuarioRepository.findById(token.getUsuarioId())
+            .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        usuario.setDataExpiracaoSenha(LocalDateTime.now().plusDays(90));
+        usuario.resetarTentativasLogin();
+        usuarioRepository.save(usuario);
+
+        token.setUtilizado(true);
+        passwordResetTokenRepository.save(token);
+
+        log.info("Senha redefinida com sucesso para usuário ID: {}", usuario.getId());
+    }
+
+    /**
+     * Renova o token JWT usando um refresh token
+     */
+    public LoginResponseDTO refreshToken(String refreshTokenValue) {
+        RefreshToken oldToken = refreshTokenRepository.findByToken(refreshTokenValue)
+            .orElseThrow(() -> new IllegalArgumentException("Refresh token inválido"));
+
+        if (oldToken.getRevogado()) {
+            throw new IllegalStateException("Refresh token já revogado");
+        }
+
+        if (oldToken.getExpiraEm().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Refresh token expirado");
+        }
+
+        oldToken.setRevogado(true);
+        refreshTokenRepository.save(oldToken);
+
+        Usuario usuario = usuarioRepository.findById(oldToken.getUsuarioId())
+            .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
+        Set<String> roles = usuario.getRoles().stream().map(role -> role.getNome()).collect(Collectors.toSet());
+        Set<String> permissions = usuario.getRoles().stream()
+            .flatMap(role -> role.getPermissions().stream())
+            .map(permission -> permission.getNome()).collect(Collectors.toSet());
+        String newToken = jwtService.generateToken(usuario.getEmail(), usuario.getId(), usuario.getNome(), roles, permissions);
+
+        String newRefreshTokenValue = UUID.randomUUID().toString();
+        RefreshToken newRefreshToken = new RefreshToken(
+            usuario.getId(),
+            newRefreshTokenValue,
+            LocalDateTime.now().plusDays(7)
+        );
+        refreshTokenRepository.save(newRefreshToken);
+
+        log.info("Token renovado para usuário ID: {}", usuario.getId());
+        return LoginResponseDTO.builder()
+            .token(newToken)
+            .tipoToken("Bearer")
+            .usuarioId(usuario.getId())
+            .nome(usuario.getNome())
+            .email(usuario.getEmail())
+            .roles(roles)
+            .permissions(permissions)
+            .dataExpiracao(LocalDateTime.now().plusHours(24))
+            .ultimoLogin(usuario.getUltimoLogin())
+            .build();
+    }
+
+    /**
+     * Verifica se o perfil ativo é dev
+     */
+    private boolean isDevProfile() {
+        return java.util.Arrays.asList(environment.getActiveProfiles()).contains("dev");
+    }
+
+    /**
+     * Converte entidade para DTO
+     */
+    private UsuarioDTO converterParaDTO(Usuario usuario) {
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setId(usuario.getId());
+        dto.setNome(usuario.getNome());
+        dto.setEmail(usuario.getEmail());
+        dto.setUltimoLogin(usuario.getUltimoLogin());
+        dto.setTentativasLogin(usuario.getTentativasLogin());
+        dto.setContaBloqueada(usuario.getContaBloqueada());
+        dto.setDataExpiracaoSenha(usuario.getDataExpiracaoSenha());
+        dto.setAtivo(usuario.getAtivo());
+        dto.setDataCriacao(usuario.getDataCriacao() != null ? usuario.getDataCriacao().toString() : null);
+        dto.setDataAtualizacao(usuario.getDataAtualizacao() != null ? usuario.getDataAtualizacao().toString() : null);
+        if (usuario.getCliente() != null) {
+            dto.setClienteId(usuario.getCliente().getId());
+            String nomeExibicao = usuario.getCliente().getTipoPessoa() == Cliente.TipoPessoa.FISICA
+                ? usuario.getCliente().getNome()
+                : usuario.getCliente().getNomeRazaoSocial();
+            dto.setClienteNome(nomeExibicao);
+            String documento = usuario.getCliente().getTipoPessoa() == Cliente.TipoPessoa.FISICA
+                ? usuario.getCliente().getCpf()
+                : usuario.getCliente().getCnpj();
+            dto.setClienteDocumento(documento);
+            dto.setClienteTipoPessoa(usuario.getCliente().getTipoPessoa().name());
+            dto.setClienteCpf(documento); // backward compat
+        }
+        if (usuario.getRoles() != null) {
+            dto.setRoles(usuario.getRoles().stream().map(role -> role.getNome()).collect(Collectors.toSet()));
+            dto.setPermissions(usuario.getRoles().stream().flatMap(role -> role.getPermissions().stream()).map(permission -> permission.getNome()).collect(Collectors.toSet()));
+        }
+        return dto;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public AuthService(final UsuarioRepository usuarioRepository, final JwtService jwtService, final PasswordEncoder passwordEncoder, final PasswordResetTokenRepository passwordResetTokenRepository, final RefreshTokenRepository refreshTokenRepository, final Environment environment) {
+        this.usuarioRepository = usuarioRepository;
+        this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.environment = environment;
+    }
+}

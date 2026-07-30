@@ -197,4 +197,43 @@ class SecurityFlowIntegrationTest {
         String valorCriptografado = (String) encrypted.getBody().get("valorCriptografado");
 
         Map<String, String> decryptRequest = Map.of("valorCriptografado", valorCriptografado);
-        ResponseEntity<Map> response = rest.postForEntity                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+        ResponseEntity<Map> response = rest.postForEntity(
+            url("/api/security/criptografia/descriptografar"), decryptRequest, Map.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get("texto")).isEqualTo("dado_sensivel_123");
+    }
+
+    @Test
+    void testCriarPermissaoGranular() {
+        Map<String, Object> request = Map.of(
+            "roleId", 1L,
+            "recurso", "credito",
+            "acao", "APROVAR",
+            "escopo", "propria",
+            "descricao", "Permissao para aprovar credito"
+        );
+
+        ResponseEntity<Map> response = rest.postForEntity(
+            url("/api/security/permissoes-granulares"), request, Map.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get("id")).isNotNull();
+    }
+
+    @Test
+    void testVerificarPermissaoGranular() {
+        Map<String, Object> request = Map.of(
+            "roleId", 1L,
+            "recurso", "credito",
+            "acao", "APROVAR",
+            "escopo", "propria",
+            "descricao", "Permissao para aprovar"
+        );
+        rest.postForEntity(url("/api/security/permissoes-granulares"), request, Map.class);
+
+        ResponseEntity<Map> response = rest.getForEntity(
+            url("/api/security/permissoes-granulares/verificar?roleId=1&recurso=credito&acao=APROVAR"),
+            Map.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get("podeAcessar")).isEqualTo(true);
+    }
+}

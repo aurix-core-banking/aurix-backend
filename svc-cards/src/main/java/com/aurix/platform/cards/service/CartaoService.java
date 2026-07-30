@@ -151,4 +151,94 @@ public class CartaoService {
         if (fatura.getValorPendente().compareTo(BigDecimal.ZERO) <= 0) {
             fatura.setStatus(Fatura.StatusFatura.PAGA);
             fatura.setDataPagamento(LocalDate.now());
-            Ca                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            Cartao cartao = cartaoRepository.findById(fatura.getCartaoId()).orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
+            cartao.setLimiteUtilizado(cartao.getLimiteUtilizado().subtract(fatura.getValorTotal()));
+            cartao.setLimiteDisponivel(cartao.getLimiteCredito().subtract(cartao.getLimiteUtilizado()));
+            cartaoRepository.save(cartao);
+        }
+        return faturaRepository.save(fatura);
+    }
+
+    @Scheduled(cron = "0 0 1 * * *")
+    public void fecharFaturasMensais() {
+        LocalDate hoje = LocalDate.now();
+        int mesAnterior = hoje.minusMonths(1).getMonthValue();
+        int anoAnterior = hoje.minusMonths(1).getYear();
+        List<Cartao> cartoes = cartaoRepository.findAll();
+        for (Cartao cartao : cartoes) {
+            try {
+                gerarFatura(cartao.getId(), mesAnterior, anoAnterior);
+            } catch (Exception e) {
+                log.error("Erro ao gerar fatura para cartão {}: {}", cartao.getId(), e.getMessage());
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 0 2 * * *")
+    public void atualizarFaturasVencidas() {
+        List<Fatura> vencidas = faturaRepository.findFaturasVencidas(LocalDate.now());
+        for (Fatura fatura : vencidas) {
+            if (fatura.getStatus() == Fatura.StatusFatura.ABERTA || fatura.getStatus() == Fatura.StatusFatura.FECHADA) {
+                fatura.setStatus(Fatura.StatusFatura.VENCIDA);
+                faturaRepository.save(fatura);
+            }
+        }
+    }
+
+    private void atualizarFatura(Cartao cartao, TransacaoCartao transacao) {
+        LocalDate hoje = LocalDate.now();
+        Optional<Fatura> faturaOpt = faturaRepository.findByCartaoMesAno(cartao.getId(), hoje.getMonthValue(), hoje.getYear());
+        if (faturaOpt.isPresent()) {
+            Fatura fatura = faturaOpt.get();
+            fatura.setValorTotal(fatura.getValorTotal().add(transacao.getValor()));
+            fatura.setValorPendente(fatura.getValorTotal().subtract(fatura.getValorPago()));
+            fatura.setValorMinimo(fatura.getValorTotal().multiply(BigDecimal.valueOf(0.1)));
+            faturaRepository.save(fatura);
+        } else {
+            gerarFatura(cartao.getId(), hoje.getMonthValue(), hoje.getYear());
+        }
+    }
+
+    private String gerarNumeroCartao(Cartao.BandeiraCartao bandeira) {
+        String prefixo = switch (bandeira) {
+            case VISA -> "4";
+            case MASTERCARD -> "5";
+            case ELO -> "6";
+            case AMEX -> "37";
+            case HIPERCARD -> "606282";
+            case DINERS -> "36";
+        };
+        StringBuilder numero = new StringBuilder(prefixo);
+        while (numero.length() < 16) {
+            numero.append((int) (Math.random() * 10));
+        }
+        return numero.toString();
+    }
+
+    private String mascararNumeroCartao(String numero) {
+        return "**** **** **** " + numero.substring(numero.length() - 4);
+    }
+
+    private String gerarCVV() {
+        return String.format("%03d", (int) (Math.random() * 1000));
+    }
+
+    private String gerarNSU() {
+        return String.format("%06d", (int) (Math.random() * 1000000));
+    }
+
+    private String gerarAutorizacao() {
+        return String.format("%06d", (int) (Math.random() * 1000000));
+    }
+
+    public List<Cartao> listarCartoesPorConta(Long contaId) {
+        return cartaoRepository.findByContaId(contaId);
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CartaoService(final CartaoRepository cartaoRepository, final FaturaRepository faturaRepository, final TransacaoCartaoRepository transacaoRepository) {
+        this.cartaoRepository = cartaoRepository;
+        this.faturaRepository = faturaRepository;
+        this.transacaoRepository = transacaoRepository;
+    }
+}

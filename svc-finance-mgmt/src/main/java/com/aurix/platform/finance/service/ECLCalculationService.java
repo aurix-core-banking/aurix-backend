@@ -176,4 +176,107 @@ public class ECLCalculationService {
     /**
      * Calcula PD para 12 meses
      */
-    private BigDecimal calc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+    private BigDecimal calcularPD12Meses(InstrumentoFinanceiro instrumento) {
+        // PD baseada em fatores de risco
+        BigDecimal pd = BigDecimal.valueOf(0.02); // 2% base
+        // Ajustar por rating/score
+        Integer score = extrairScoreCredito(instrumento.getMetadata());
+        if (score != null) {
+            if (score >= 800) {
+                pd = BigDecimal.valueOf(0.005); // 0.5% para excelente
+            } else if (score >= 700) {
+                pd = BigDecimal.valueOf(0.015); // 1.5% para bom
+            } else if (score >= 600) {
+                pd = BigDecimal.valueOf(0.035); // 3.5% para regular
+            } else {
+                pd = BigDecimal.valueOf(0.08); // 8% para ruim
+            }
+        }
+        return pd;
+    }
+
+    /**
+     * Calcula PD para vida útil (Estágio 2)
+     */
+    private BigDecimal calcularPDVidaUtil(InstrumentoFinanceiro instrumento) {
+        // PD baseada no tempo restante até vencimento
+        BigDecimal pd = calcularPD12Meses(instrumento);
+        if (instrumento.getDataVencimento() != null) {
+            long mesesRestantes = ChronoUnit.MONTHS.between(LocalDate.now(), instrumento.getDataVencimento());
+            if (mesesRestantes > 12) {
+                // Ajustar PD para vida útil
+                BigDecimal fatorVidaUtil = BigDecimal.valueOf(mesesRestantes).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+                pd = pd.multiply(fatorVidaUtil);
+            }
+        }
+        return pd;
+    }
+
+    /**
+     * Calcula PD para instrumentos deteriorados (Estágio 3)
+     */
+    private BigDecimal calcularPDDeteriorado(InstrumentoFinanceiro instrumento) {
+        // Para instrumentos deteriorados, PD é alta
+        BigDecimal pd = BigDecimal.valueOf(0.25); // 25% base
+        // Ajustar baseado na severidade da deterioração
+        if (instrumento.getMetadata() != null) {
+            if (instrumento.getMetadata().contains("inadimplente")) {
+                pd = BigDecimal.valueOf(0.5); // 50% para inadimplentes
+            } else if (instrumento.getMetadata().contains("reestruturado")) {
+                pd = BigDecimal.valueOf(0.35); // 35% para reestruturados
+            }
+        }
+        return pd;
+    }
+
+    /**
+     * Ajusta PD baseada em indicadores específicos
+     */
+    private BigDecimal ajustarPDPorIndicadores(InstrumentoFinanceiro instrumento, BigDecimal pdBase) {
+        BigDecimal pd = pdBase;
+        // Ajustar por setor econômico
+        if (instrumento.getMetadata() != null) {
+            if (instrumento.getMetadata().contains("setor_alto_risco")) {
+                pd = pd.multiply(BigDecimal.valueOf(1.5)); // +50%
+            } else if (instrumento.getMetadata().contains("setor_baixo_risco")) {
+                pd = pd.multiply(BigDecimal.valueOf(0.7)); // -30%
+            }
+        }
+        // Ajustar por concentração
+        // Implementar lógica de concentração de risco
+        return pd;
+    }
+
+    /**
+     * Calcula saldo devedor atual para instrumentos amortizáveis
+     */
+    private BigDecimal calcularSaldoDevedor(InstrumentoFinanceiro instrumento) {
+        // Implementar cálculo de saldo devedor baseado em amortização
+        // Por enquanto, retorna valor nominal
+        return instrumento.getValorNominal();
+    }
+
+    /**
+     * Extrai valor de garantia do metadata
+     */
+    private BigDecimal extrairValorGarantia(String metadata) {
+        // Implementar extração de valor de garantia do JSON metadata
+        // Por enquanto, retorna zero
+        return BigDecimal.ZERO;
+    }
+
+    /**
+     * Extrai score de crédito do metadata
+     */
+    private Integer extrairScoreCredito(String metadata) {
+        // Implementar extração de score do JSON metadata
+        // Por enquanto, retorna null
+        return null;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public ECLCalculationService(final ExpectedCreditLossRepository eclRepository, final RiskAssessmentService riskService) {
+        this.eclRepository = eclRepository;
+        this.riskService = riskService;
+    }
+}

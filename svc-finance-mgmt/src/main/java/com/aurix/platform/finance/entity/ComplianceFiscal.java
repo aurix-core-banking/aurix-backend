@@ -466,7 +466,375 @@ public class ComplianceFiscal {
     @java.lang.SuppressWarnings("all")
     public String getNome() {
         return this.nome;
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ode());
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDescricao() {
+        return this.descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public TipoObrigacao getTipoObrigacao() {
+        return this.tipoObrigacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CategoriaObrigacao getCategoria() {
+        return this.categoria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public StatusCompliance getStatus() {
+        return this.status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getCompetencia() {
+        return this.competencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataVencimento() {
+        return this.dataVencimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDate getDataCumprimento() {
+        return this.dataCumprimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Integer getPrazoAntecedencia() {
+        return this.prazoAntecedencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public FrequenciaCompliance getFrequencia() {
+        return this.frequencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getResponsavel() {
+        return this.responsavel;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getSistemaOrigem() {
+        return this.sistemaOrigem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getDocumentoGerado() {
+        return this.documentoGerado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getProtocoloEnvio() {
+        return this.protocoloEnvio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public java.math.BigDecimal getValorMulta() {
+        return this.valorMulta;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public java.math.BigDecimal getValorJuros() {
+        return this.valorJuros;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public java.math.BigDecimal getValorTotal() {
+        return this.valorTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getObservacoes() {
+        return this.observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Integer getAlertasEnviados() {
+        return this.alertasEnviados;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataUltimoAlerta() {
+        return this.dataUltimoAlerta;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getMetadata() {
+        return this.metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public LocalDateTime getDataAtualizacao() {
+        return this.dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public Long getVersao() {
+        return this.versao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCodigoObrigacao(final String codigoObrigacao) {
+        this.codigoObrigacao = codigoObrigacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setNome(final String nome) {
+        this.nome = nome;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDescricao(final String descricao) {
+        this.descricao = descricao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTipoObrigacao(final TipoObrigacao tipoObrigacao) {
+        this.tipoObrigacao = tipoObrigacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCategoria(final CategoriaObrigacao categoria) {
+        this.categoria = categoria;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setStatus(final StatusCompliance status) {
+        this.status = status;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setCompetencia(final String competencia) {
+        this.competencia = competencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataVencimento(final LocalDate dataVencimento) {
+        this.dataVencimento = dataVencimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCumprimento(final LocalDate dataCumprimento) {
+        this.dataCumprimento = dataCumprimento;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPrazoAntecedencia(final Integer prazoAntecedencia) {
+        this.prazoAntecedencia = prazoAntecedencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setFrequencia(final FrequenciaCompliance frequencia) {
+        this.frequencia = frequencia;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setResponsavel(final String responsavel) {
+        this.responsavel = responsavel;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setSistemaOrigem(final String sistemaOrigem) {
+        this.sistemaOrigem = sistemaOrigem;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDocumentoGerado(final String documentoGerado) {
+        this.documentoGerado = documentoGerado;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setProtocoloEnvio(final String protocoloEnvio) {
+        this.protocoloEnvio = protocoloEnvio;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorMulta(final java.math.BigDecimal valorMulta) {
+        this.valorMulta = valorMulta;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorJuros(final java.math.BigDecimal valorJuros) {
+        this.valorJuros = valorJuros;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setValorTotal(final java.math.BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setObservacoes(final String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setAlertasEnviados(final Integer alertasEnviados) {
+        this.alertasEnviados = alertasEnviados;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataUltimoAlerta(final LocalDateTime dataUltimoAlerta) {
+        this.dataUltimoAlerta = dataUltimoAlerta;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setDataAtualizacao(final LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setVersao(final Long versao) {
+        this.versao = versao;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) return true;
+        if (!(o instanceof ComplianceFiscal)) return false;
+        final ComplianceFiscal other = (ComplianceFiscal) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        final java.lang.Object this$prazoAntecedencia = this.getPrazoAntecedencia();
+        final java.lang.Object other$prazoAntecedencia = other.getPrazoAntecedencia();
+        if (this$prazoAntecedencia == null ? other$prazoAntecedencia != null : !this$prazoAntecedencia.equals(other$prazoAntecedencia)) return false;
+        final java.lang.Object this$alertasEnviados = this.getAlertasEnviados();
+        final java.lang.Object other$alertasEnviados = other.getAlertasEnviados();
+        if (this$alertasEnviados == null ? other$alertasEnviados != null : !this$alertasEnviados.equals(other$alertasEnviados)) return false;
+        final java.lang.Object this$versao = this.getVersao();
+        final java.lang.Object other$versao = other.getVersao();
+        if (this$versao == null ? other$versao != null : !this$versao.equals(other$versao)) return false;
+        final java.lang.Object this$codigoObrigacao = this.getCodigoObrigacao();
+        final java.lang.Object other$codigoObrigacao = other.getCodigoObrigacao();
+        if (this$codigoObrigacao == null ? other$codigoObrigacao != null : !this$codigoObrigacao.equals(other$codigoObrigacao)) return false;
+        final java.lang.Object this$nome = this.getNome();
+        final java.lang.Object other$nome = other.getNome();
+        if (this$nome == null ? other$nome != null : !this$nome.equals(other$nome)) return false;
+        final java.lang.Object this$descricao = this.getDescricao();
+        final java.lang.Object other$descricao = other.getDescricao();
+        if (this$descricao == null ? other$descricao != null : !this$descricao.equals(other$descricao)) return false;
+        final java.lang.Object this$tipoObrigacao = this.getTipoObrigacao();
+        final java.lang.Object other$tipoObrigacao = other.getTipoObrigacao();
+        if (this$tipoObrigacao == null ? other$tipoObrigacao != null : !this$tipoObrigacao.equals(other$tipoObrigacao)) return false;
+        final java.lang.Object this$categoria = this.getCategoria();
+        final java.lang.Object other$categoria = other.getCategoria();
+        if (this$categoria == null ? other$categoria != null : !this$categoria.equals(other$categoria)) return false;
+        final java.lang.Object this$status = this.getStatus();
+        final java.lang.Object other$status = other.getStatus();
+        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
+        final java.lang.Object this$competencia = this.getCompetencia();
+        final java.lang.Object other$competencia = other.getCompetencia();
+        if (this$competencia == null ? other$competencia != null : !this$competencia.equals(other$competencia)) return false;
+        final java.lang.Object this$dataVencimento = this.getDataVencimento();
+        final java.lang.Object other$dataVencimento = other.getDataVencimento();
+        if (this$dataVencimento == null ? other$dataVencimento != null : !this$dataVencimento.equals(other$dataVencimento)) return false;
+        final java.lang.Object this$dataCumprimento = this.getDataCumprimento();
+        final java.lang.Object other$dataCumprimento = other.getDataCumprimento();
+        if (this$dataCumprimento == null ? other$dataCumprimento != null : !this$dataCumprimento.equals(other$dataCumprimento)) return false;
+        final java.lang.Object this$frequencia = this.getFrequencia();
+        final java.lang.Object other$frequencia = other.getFrequencia();
+        if (this$frequencia == null ? other$frequencia != null : !this$frequencia.equals(other$frequencia)) return false;
+        final java.lang.Object this$responsavel = this.getResponsavel();
+        final java.lang.Object other$responsavel = other.getResponsavel();
+        if (this$responsavel == null ? other$responsavel != null : !this$responsavel.equals(other$responsavel)) return false;
+        final java.lang.Object this$sistemaOrigem = this.getSistemaOrigem();
+        final java.lang.Object other$sistemaOrigem = other.getSistemaOrigem();
+        if (this$sistemaOrigem == null ? other$sistemaOrigem != null : !this$sistemaOrigem.equals(other$sistemaOrigem)) return false;
+        final java.lang.Object this$documentoGerado = this.getDocumentoGerado();
+        final java.lang.Object other$documentoGerado = other.getDocumentoGerado();
+        if (this$documentoGerado == null ? other$documentoGerado != null : !this$documentoGerado.equals(other$documentoGerado)) return false;
+        final java.lang.Object this$protocoloEnvio = this.getProtocoloEnvio();
+        final java.lang.Object other$protocoloEnvio = other.getProtocoloEnvio();
+        if (this$protocoloEnvio == null ? other$protocoloEnvio != null : !this$protocoloEnvio.equals(other$protocoloEnvio)) return false;
+        final java.lang.Object this$valorMulta = this.getValorMulta();
+        final java.lang.Object other$valorMulta = other.getValorMulta();
+        if (this$valorMulta == null ? other$valorMulta != null : !this$valorMulta.equals(other$valorMulta)) return false;
+        final java.lang.Object this$valorJuros = this.getValorJuros();
+        final java.lang.Object other$valorJuros = other.getValorJuros();
+        if (this$valorJuros == null ? other$valorJuros != null : !this$valorJuros.equals(other$valorJuros)) return false;
+        final java.lang.Object this$valorTotal = this.getValorTotal();
+        final java.lang.Object other$valorTotal = other.getValorTotal();
+        if (this$valorTotal == null ? other$valorTotal != null : !this$valorTotal.equals(other$valorTotal)) return false;
+        final java.lang.Object this$observacoes = this.getObservacoes();
+        final java.lang.Object other$observacoes = other.getObservacoes();
+        if (this$observacoes == null ? other$observacoes != null : !this$observacoes.equals(other$observacoes)) return false;
+        final java.lang.Object this$dataUltimoAlerta = this.getDataUltimoAlerta();
+        final java.lang.Object other$dataUltimoAlerta = other.getDataUltimoAlerta();
+        if (this$dataUltimoAlerta == null ? other$dataUltimoAlerta != null : !this$dataUltimoAlerta.equals(other$dataUltimoAlerta)) return false;
+        final java.lang.Object this$metadata = this.getMetadata();
+        final java.lang.Object other$metadata = other.getMetadata();
+        if (this$metadata == null ? other$metadata != null : !this$metadata.equals(other$metadata)) return false;
+        final java.lang.Object this$dataCriacao = this.getDataCriacao();
+        final java.lang.Object other$dataCriacao = other.getDataCriacao();
+        if (this$dataCriacao == null ? other$dataCriacao != null : !this$dataCriacao.equals(other$dataCriacao)) return false;
+        final java.lang.Object this$dataAtualizacao = this.getDataAtualizacao();
+        final java.lang.Object other$dataAtualizacao = other.getDataAtualizacao();
+        if (this$dataAtualizacao == null ? other$dataAtualizacao != null : !this$dataAtualizacao.equals(other$dataAtualizacao)) return false;
+        return true;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof ComplianceFiscal;
+    }
+
+    @java.lang.Override
+    @java.lang.SuppressWarnings("all")
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final java.lang.Object $id = this.getId();
+        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
+        final java.lang.Object $prazoAntecedencia = this.getPrazoAntecedencia();
+        result = result * PRIME + ($prazoAntecedencia == null ? 43 : $prazoAntecedencia.hashCode());
+        final java.lang.Object $alertasEnviados = this.getAlertasEnviados();
+        result = result * PRIME + ($alertasEnviados == null ? 43 : $alertasEnviados.hashCode());
+        final java.lang.Object $versao = this.getVersao();
+        result = result * PRIME + ($versao == null ? 43 : $versao.hashCode());
+        final java.lang.Object $codigoObrigacao = this.getCodigoObrigacao();
+        result = result * PRIME + ($codigoObrigacao == null ? 43 : $codigoObrigacao.hashCode());
+        final java.lang.Object $nome = this.getNome();
+        result = result * PRIME + ($nome == null ? 43 : $nome.hashCode());
+        final java.lang.Object $descricao = this.getDescricao();
+        result = result * PRIME + ($descricao == null ? 43 : $descricao.hashCode());
+        final java.lang.Object $tipoObrigacao = this.getTipoObrigacao();
+        result = result * PRIME + ($tipoObrigacao == null ? 43 : $tipoObrigacao.hashCode());
+        final java.lang.Object $categoria = this.getCategoria();
+        result = result * PRIME + ($categoria == null ? 43 : $categoria.hashCode());
+        final java.lang.Object $status = this.getStatus();
+        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
+        final java.lang.Object $competencia = this.getCompetencia();
+        result = result * PRIME + ($competencia == null ? 43 : $competencia.hashCode());
+        final java.lang.Object $dataVencimento = this.getDataVencimento();
+        result = result * PRIME + ($dataVencimento == null ? 43 : $dataVencimento.hashCode());
         final java.lang.Object $dataCumprimento = this.getDataCumprimento();
         result = result * PRIME + ($dataCumprimento == null ? 43 : $dataCumprimento.hashCode());
         final java.lang.Object $frequencia = this.getFrequencia();

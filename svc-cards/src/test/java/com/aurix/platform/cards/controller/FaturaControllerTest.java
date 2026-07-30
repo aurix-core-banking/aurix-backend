@@ -1,29 +1,97 @@
-6-07-29 21:35:29.775) Debug :  File:() Line : (0) ThreadID: (8528) queryRootNode rootName =  "volume"
-(2026-07-29 21:35:29.775) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.784) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.784) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.784) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.784) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.792) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.792) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.792) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.792) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.792) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.798) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:29.798) Debug :  File:() Line : (0) ThreadID: (8528) DrLibManager::requestFilterItemInfo filterDataMap =  QMap(("deletefiles", 1516136)("existsfiles", 396328)("filesize100mb1gb", 265)("filesize1mb100mb", 26764)("filesizeless1mb", 1885412)("filesizemore1gb", 23)("timelessoneday", 894)("timeonemonth", 450309)("timeoneweek", 190616)("timeonewyear", 1130423)("timeyesterday", 102185))
-(2026-07-29 21:35:29.800) Debug :  File:() Line : (0) ThreadID: (8528) queryRootNodeAllData start
-(2026-07-29 21:35:29.801) Debug :  File:() Line : (0) ThreadID: (8528) queryRootNodeAllData count =  1
-(2026-07-29 21:35:30.379) Debug :  File:() Line : (0) ThreadID: (56376) DeliverServerNotify kMsgScanFinish
-(2026-07-29 21:35:30.388) Debug :  File:() Line : (0) ThreadID: (49676) DrLibManager::doStartScan finished code =  0
-(2026-07-29 21:35:30.388) Debug :  File:() Line : (0) ThreadID: (49676) DrLibManager::doStartScan mseconds =  929004
-(2026-07-29 21:35:30.445) Debug :  File:(pluginmanager.cpp) Line : (736) ThreadID: (49676) PluginManager dreFunctionCall type =  2
-(2026-07-29 21:35:30.447) Debug :  File:() Line : (0) ThreadID: (49676) DrLibManager::doStartScan start  QMap(("DeepScanType", QVariant(int, 3))("DeviceId", QVariant(int, 1))("DeviceType", QVariant(int, 0))("FileStatus", QVariant(int, 0))("LostFileNameText", QVariant(QString, "lost file name"))("RecycleScan", QVariant(bool, false))("ScanLetter", QVariant(QString, "C:"))("ScanPath", QVariant(QString, ""))("ScanType", QVariant(int, 256))("SupportFileType", QVariant(QString, "JPG|TIF|PNG|BMP|GIF|PSD|CRW|CR2|NEF|ORF|RAF|SR2|MRW|DCR|WMF|DNG|ERF|RAW|AIF|M4A|MP3|WAV|WMA|MID|OGG|AAC|AVI|MOV|MP4|M4V|3GP|3G2|WMV|ASF|FLV|SWF|MPG|RM|DOC|DOCX|XLS|XLSX|PPT|PPTX|PDF|CWK|HTM|INDD|EPS|ZIP|RAR|SIT|PST|DBX|EMLX|ARW|NRW|PEF|RW2|X3F|GPR|3FR|FFF|SVG|SKETCH|SQLITE|DWF|XD|IDML|DWG|CDR|AI|INDT|DWS|DWT|DXF|M2TS|M2T|MTS|HWP|HWPX|RTF|VSD|PAGES|NUMBERS|KEY|MXF|ARI|ARX|R3D|MKV|7Z|HEIC|HIF|AVIF|CR3|PSB|RMVB|EML|SCR|GZ|PRPROJ|CAF|ICO|CUR|CHM|ANI|TTF|MBOX|NEV|ISO|DPX|ONE|FCPEVENT|SKP|MDB|ACCDB|MOF")))
-(2026-07-29 21:35:30.529) Debug :  File:(scanbottomframe.cpp) Line : (296) ThreadID: (20304) showProgressValue =  30
-(2026-07-29 21:35:30.532) Debug :  File:(scanbottomframe.cpp) Line : (1015) ThreadID: (20304) window handle: QWidgetWindow(0x18f46789a70, name="MainWindowClassWindow") taskbar handle: QWidgetWindow(0x18f46789a70, name="MainWindowClassWindow")
-(2026-07-29 21:35:30.741) Debug :  File:(scanmanager.cpp) Line : (1070) ThreadID: (55772) updateScanDataThread rootLocationTreeItemDataList count =  4
-(2026-07-29 21:35:30.742) Debug :  File:() Line : (0) ThreadID: (55772) updateRootTreeData createTreeItem finished
-(2026-07-29 21:35:30.742) Debug :  File:(scanmanager.cpp) Line : (1083) ThreadID: (55772) updateScanDataThread rootTypeTreeItemDataList count =  11
-(2026-07-29 21:35:30.743) Debug :  File:() Line : (0) ThreadID: (55o(6);
+package com.aurix.platform.cards.controller;
+
+import com.aurix.platform.cards.CardsApplication;
+import com.aurix.platform.cards.config.CartoesTestConfig;
+import com.aurix.platform.cards.dto.EmitirCartaoRequest;
+import com.aurix.platform.cards.dto.FaturaDetalhadaResponse;
+import com.aurix.platform.cards.dto.FaturaResponse;
+import com.aurix.platform.cards.dto.PagarFaturaRequest;
+import com.aurix.platform.cards.dto.ProdutoCartaoRequest;
+import com.aurix.platform.cards.dto.ProdutoCartaoResponse;
+import com.aurix.platform.cards.entity.Cartao;
+import com.aurix.platform.cards.repository.CartaoRepository;
+import com.aurix.platform.cards.repository.FaturaRepository;
+import com.aurix.platform.cards.repository.LancamentoFaturaRepository;
+import com.aurix.platform.cards.repository.ProdutoCartaoRepository;
+import com.aurix.platform.shared.tenant.TenantContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
+import java.math.BigDecimal;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest(classes = CardsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Import(CartoesTestConfig.class)
+class FaturaControllerTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private ProdutoCartaoRepository produtoCartaoRepository;
+    @Autowired
+    private CartaoRepository cartaoRepository;
+    @Autowired
+    private FaturaRepository faturaRepository;
+    @Autowired
+    private LancamentoFaturaRepository lancamentoFaturaRepository;
+
+    private RestTemplate rest;
+    private Long cartaoId;
+
+    @BeforeEach
+    void setUp() {
+        lancamentoFaturaRepository.deleteAll();
+        faturaRepository.deleteAll();
+        cartaoRepository.deleteAll();
+        produtoCartaoRepository.deleteAll();
+        TenantContext.setTenantId("test-tenant");
+        rest = new RestTemplate();
+
+        var produtoReq = new ProdutoCartaoRequest();
+        produtoReq.setNome("Cartao Black");
+        produtoReq.setBandeira("VISA");
+        produtoReq.setAdquirente("REDE");
+        produtoReq.setAnuidade(BigDecimal.valueOf(300));
+        produtoReq.setTaxaJuros(BigDecimal.valueOf(0.15));
+        produtoReq.setTaxaMora(BigDecimal.valueOf(0.02));
+        produtoReq.setLimiteMinimo(BigDecimal.valueOf(1000));
+        produtoReq.setLimiteMaximo(BigDecimal.valueOf(50000));
+        produtoReq.setProgramaPontos("Multiplus");
+        produtoReq.setAtivo(true);
+        var produtoResponse = rest.postForEntity(url("/produtos"), produtoReq, ProdutoCartaoResponse.class);
+        assertThat(produtoResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        var produtoId = produtoResponse.getBody().getId();
+
+        var emitReq = new EmitirCartaoRequest();
+        emitReq.setProdutoId(produtoId);
+        emitReq.setContaId(1L);
+        emitReq.setNomePortador("Joao Silva");
+        emitReq.setTipo("CREDITO");
+        var emitResponse = rest.postForEntity(url("/emissao"), emitReq, Cartao.class);
+        assertThat(emitResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        cartaoId = emitResponse.getBody().getId();
+    }
+
+    private String url(String path) {
+        return "http://localhost:" + port + "/api/cards" + path;
+    }
+
+    @Test
+    void deveFecharFatura() {
+        var response = rest.postForEntity(url("/faturas/fechar?cartaoId=" + cartaoId + "&mes=6&ano=2026"),
+            null, FaturaResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getCodigoFatura()).isNotBlank();
+        assertThat(response.getBody().getMesReferencia()).isEqualTo(6);
         assertThat(response.getBody().getAnoReferencia()).isEqualTo(2026);
     }
 

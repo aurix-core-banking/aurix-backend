@@ -249,4 +249,53 @@ public class SolicitacaoPF {
         this.dataNascimento = dataNascimento;
     }
 
-    @java.lang.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    @java.lang.SuppressWarnings("all")
+    public void setOcupacao(final String ocupacao) {
+        this.ocupacao = ocupacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setRendaDeclarada(final BigDecimal rendaDeclarada) {
+        this.rendaDeclarada = rendaDeclarada;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPep(final Boolean pep) {
+        this.pep = pep;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setScoreBureau(final Integer scoreBureau) {
+        this.scoreBureau = scoreBureau;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setResultadoKyc(final String resultadoKyc) {
+        this.resultadoKyc = resultadoKyc;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setContaLimitadaAteKyc(final Boolean contaLimitadaAteKyc) {
+        this.contaLimitadaAteKyc = contaLimitadaAteKyc;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public SolicitacaoPF() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public SolicitacaoPF(final Long id, final Long solicitacaoId, final String tenantId, final String cpf, final String nome, final LocalDate dataNascimento, final String ocupacao, final BigDecimal rendaDeclarada, final Boolean pep, final Integer scoreBureau, final String resultadoKyc, final Boolean contaLimitadaAteKyc) {
+        this.id = id;
+        this.solicitacaoId = solicitacaoId;
+        this.tenantId = tenantId;
+        this.cpf = cpf;
+        this.nome = nome;
+        this.dataNascimento = dataNascimento;
+        this.ocupacao = ocupacao;
+        this.rendaDeclarada = rendaDeclarada;
+        this.pep = pep;
+        this.scoreBureau = scoreBureau;
+        this.resultadoKyc = resultadoKyc;
+        this.contaLimitadaAteKyc = contaLimitadaAteKyc;
+    }
+}
