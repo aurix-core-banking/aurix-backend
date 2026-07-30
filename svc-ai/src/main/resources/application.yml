@@ -1,0 +1,115 @@
+# ============================================================================
+# svc-ai — AI/LLM Integration Service
+# ============================================================================
+
+spring:
+  application:
+    name: svc-ai
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+      - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+server:
+  port: ${SERVER_PORT:8206}
+  servlet:
+    context-path: /api/ai
+
+aurix:
+  ml:
+    grpc:
+      host: ${ML_GRPC_HOST:localhost}
+      port: ${ML_GRPC_PORT:50051}
+      timeout-seconds: ${ML_GRPC_TIMEOUT:10}
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      model: ${AURIX_AI_MODEL:llama3.2}
+      timeout-seconds: 120
+    lmstudio:
+      base-url: http://localhost:1234/v1
+      model: lmstudio-community/Meta-Llama-3.2-3B-Instruct-GGUF
+    llamacpp:
+      base-url: ${LLAMACPP_BASE_URL:http://localhost:8080}
+      model: llama3.2
+    gpullama:
+      model-path: ${GPULLAMA_MODEL_PATH:models/llama3.2-3b-instruct-q8_0.gguf}
+      context-length: 4096
+      tornado-device: ${TORNADO_DEVICE:AUTO}
+    rag:
+      chunk-size: 500
+      chunk-overlap: 50
+      top-k: 5
+      similarity-threshold: 0.7
+    agents:
+      max-memory-messages: 20
+      default-temperature: 0.7
+      max-tokens: 1024
+      retry-attempts: 2
+
+logging:
+  level:
+    com.aurix.platform.ai: DEBUG
+    org.springframework.ai: INFO
+    dev.langchain4j: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+
+logging:
+  level:
+    com.aurix.platform.ai: DEBUG
+    org.springframework.ai: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  ai:
+    bedrock:
+      aws:
+        region: sa-east-1
+      converse:
+        chat:
+          model: amazon.nova-pro-v1:0
+
+logging:
+  level:
+    com.aurix.platform.ai: INFO
+    org.springframework.ai: WARN
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

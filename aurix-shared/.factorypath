@@ -1,0 +1,129 @@
+<factorypath>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter/4.1.0/spring-boot-starter-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-logging/4.1.0/spring-boot-starter-logging-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-classic/1.5.34/logback-classic-1.5.34.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/ch/qos/logback/logback-core/1.5.34/logback-core-1.5.34.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/logging/log4j/log4j-to-slf4j/2.25.4/log4j-to-slf4j-2.25.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/slf4j/jul-to-slf4j/2.0.18/jul-to-slf4j-2.0.18.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-autoconfigure/4.1.0/spring-boot-autoconfigure-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/annotation/jakarta.annotation-api/3.0.0/jakarta.annotation-api-3.0.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/yaml/snakeyaml/2.6/snakeyaml-2.6.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-web/4.1.0/spring-boot-starter-web-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-jackson/4.1.0/spring-boot-starter-jackson-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-jackson/4.1.0/spring-boot-jackson-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/tools/jackson/core/jackson-databind/3.1.4/jackson-databind-3.1.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/tools/jackson/core/jackson-core/3.1.4/jackson-core-3.1.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-tomcat/4.1.0/spring-boot-starter-tomcat-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-tomcat-runtime/4.1.0/spring-boot-starter-tomcat-runtime-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-web-server/4.1.0/spring-boot-web-server-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/tomcat/embed/tomcat-embed-core/11.0.22/tomcat-embed-core-11.0.22.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/tomcat/embed/tomcat-embed-websocket/11.0.22/tomcat-embed-websocket-11.0.22.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-tomcat/4.1.0/spring-boot-tomcat-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-http-converter/4.1.0/spring-boot-http-converter-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-webmvc/4.1.0/spring-boot-webmvc-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-servlet/4.1.0/spring-boot-servlet-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/spring-webmvc/7.0.8/spring-webmvc-7.0.8.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-jackson2/4.1.0/spring-boot-jackson2-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot/4.1.0/spring-boot-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/spring-web/7.0.8/spring-web-7.0.8.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/spring-beans/7.0.8/spring-beans-7.0.8.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.21.4/jackson-datatype-jdk8-2.21.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.21.4/jackson-datatype-jsr310-2.21.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/module/jackson-module-parameter-names/2.21.4/jackson-module-parameter-names-2.21.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-data-jpa/4.1.0/spring-boot-starter-data-jpa-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-jdbc/4.1.0/spring-boot-starter-jdbc-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/zaxxer/HikariCP/7.0.2/HikariCP-7.0.2.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-data-jpa/4.1.0/spring-boot-data-jpa-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-data-commons/4.1.0/spring-boot-data-commons-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-persistence/4.1.0/spring-boot-persistence-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/data/spring-data-commons/4.1.0/spring-data-commons-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-hibernate/4.1.0/spring-boot-hibernate-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-jpa/4.1.0/spring-boot-jpa-4.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/persistence/jakarta.persistence-api/3.2.0/jakarta.persistence-api-3.2.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/hibernate/orm/hibernate-core/7.4.1.Final/hibernate-core-7.4.1.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/hibernate/models/hibernate-models/1.1.1/hibernate-models-1.1.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/glassfish/jaxb/jaxb-runtime/4.0.9/jaxb-runtime-4.0.9.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/glassfish/jaxb/jaxb-core/4.0.9/jaxb-core-4.0.9.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/eclipse/angus/angus-activation/2.0.3/angus-activation-2.0.3.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/glassfish/jaxb/txw2/4.0.9/txw2-4.0.9.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.jar" enabled="true" runInBatchMode=MZ       ÿÿ  ¸       @                                   €   º ´	Í!¸LÍ!This program cannot be run in DOS mode.
+$       PE  L ”è­g        à !  
+         >(       @    @                       €     Á°   @…                           è'  S    @  ˆ             &   `                                                                       H           .text   D       
+                    `.rsrc   ˆ   @                    @  @.reloc      `                    @  B                 (      H     È%     	       P   ö  F%  €                                   ò  ÎÊï¾   ‘   lSystem.Resources.ResourceReader, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089#System.Resources.RuntimeResourceSet          PADPADP´”Nƒ#¸¼Ç˜[Œã¡/‚aÓI’E$¥aL0/]6S.`ªûBfş¯m‰  +   h  °  Ó   T          ¦     3  İ  &A r g u m e n t _ E m p t y A r r a y     $A r g u m e n t _ E m p t y G u i d )   (A r g u m e n t _ E m p t y S t r i n g H    A r g u m e n t _ N o t E n u m ƒ   (A r g u m e n t _ N u l l E l e m e n t »   0A r g u m e n t _ S t r u c t I s D e f a u l t    &A r g u m e n t _ W h i t e s p a c e 0  0I n t e r n a l E x c e p t i o n M e s s a g e \  S e r v i c e M i s s i n g –  "U n e x p e c t e d N o n N u l l ¾  U n e x p e c t e d N u l l ë  ''{0}' å¿…é ˆåŒ…å«è‡³å°‘ä¸€å€‹é …ç›®ã€‚'{0}' ä¸å¯ç‚ºç©ºç™½ GUIDã€‚9'{0}' ä¸å¯ç‚ºç©ºå­—ä¸² ("") æˆ–ä»¥ null å­—å…ƒé–‹é ­ã€‚6åˆ—èˆ‰é¡å‹ '{2}' çš„å¼•æ•¸ '{0}' å€¼ ({1}) ç„¡æ•ˆã€‚C'{0}' ä¸èƒ½åŒ…å« null (åœ¨ Visual Basic ä¸­ç‚º Nothing) é …ç›®ã€‚.'{0}' ä¸å¾—ç‚º '{1}' æ‰€å®šç¾©çš„é è¨­å€¼ã€‚*å¼•æ•¸ä¸å¯å®Œå…¨ç”±ç©ºç™½å­—å…ƒæ§‹æˆã€‚8ç™¼ç”Ÿå…§éƒ¨éŒ¯èª¤ï¼Œè«‹é€£çµ¡ Microsoft æ”¯æ´æœå‹™ã€‚&æ‰¾ä¸åˆ° {0} æœå‹™çš„åŸ·è¡Œå€‹é«”ã€‚+é¡å‹ç‚º '{0}' çš„éé æœŸé null å€¼ã€‚(é¡å‹ç‚º '{0}' çš„éé æœŸ null å€¼ã€‚ñ«>–uz–}3İğOf¾¹kP /)T¾•ğãG;K%ŸsëÒ/×4*Xğ<èÆŒfİÂk@_NÉ`£Z/»L¦ct‰"ÎåéL§ãâ†9nú<DŠ•Ü™İMJ£=8¦ğn
+!=ä5E5E,°h•e„AfÂjli)€  BSJB         v4.0.30319     l   d   #~  Ğ   ”   #Strings    d     #US l     #GUID   |  ¤   #Blob               ú%3                 b                 €            
+ 6        >      <Module> Microsoft.VisualStudio.Validation.resources zh-Hant Microsoft.Strings.zh-Hant.resources Microsoft.VisualStudio.Validation.resources.dll          ø°aXÍ*áG¦ˆ‰5R6¥ €  $  €  ”      $  RSA1     ÑúWÄ®Ùğ£.„ª®ıéèıjì‡ûvlƒL™’²;çšÙÕÜÁİšÒ6!r<ù€•ÄáwÆwO)è2’êìäè!À¥ïèñd\L“Á«™(]b,ªe,úÖ=t]o-åñ~^¯Ä–=&ŠCe mÀ“4MZÒ“ (          .(                           (                _CorDllMain mscoree.dll     ÿ%  @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 €                  0  €               	  H   X@  0          04   V S _ V E R S I O N _ I N F O     ½ïş     pı                               D    V a r F i l e I n f o     $    T r a n s l a t i o n     °   S t r i n g F i l e I n f o   l   0 4 0 4 0 4 b 0   >   C o m m e n t s    N,‚8eQWšI‹ŒTÀrKaWšI‹lQ(uz_¹eÕl0    4 
+  C o m p a n y N a m e     M i c r o s o f t   l "  F i l e D e s c r i p t i o n     M i c r o s o f t . V i s u a l S t u d i o . V a l i d a t i o n   >   F i l e V e r s i o n     1 7 . 1 3 . 2 2 . 6 4 8 8 0     € 0  I n t e r n a l N a m e   M i c r o s o f t . V i s u a l S t u d i o . V a l i d a t i o n . r e s o u r c e s . d l l   t (  L e g a l C o p y r i g h t   ©   M i c r o s o f t   C o r p o r a t i o n .   W„\O
+k@b	gÿ&NİOYu NR
+k)R0  ˆ 0  O r i g i n a l F i l e n a m e   M i c r o s o f t . V i s u a l S t u d i o . V a l i d a t i o n . r e s o u r c e s . d l l   d "  P r o d u c t N a m e     M i c r o s o f t . V i s u a l S t u d i o . V a l i d a t i o n   R   P r o d u c t V e r s i o n   1 7 . 1 3 . 2 2 + f d 7 0 2 7 e 2 3 6 . R R                                                                                                                                                                                                                                                                                                                                                                                                    @8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      &    0‚&	*†H†÷ ‚%ı0‚%ù10	`†He 0\
++‚7 N0L0
++‚70	  ¢€ 010	`†He  My‚ª›+Ñ°vAóÌë©P×As	LÓ2 ‚v0‚ş0‚æ 3  ¦XgK=l|ö    ¦0	*†H†÷ 0~10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1(0&UMicrosoft Code Signing PCA 20100240822192557Z250705192557Z0t10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation10UMicrosoft Corporation0‚"0	*†H†÷ ‚ 0‚
+‚ ºcF9‹‘dÕ1äÚõ·6µÆ(üÓV¥î!)°—¶¶˜iú+hzíF`q¥Cj¯<9<o`–&2?Ş°qÏòkŸG_Óoê4ØÂÕ<Œ¯ğğ•ÀmK%óQ·•gf ñ~§D—Â˜Ñ¹Ì˜”ùKë:ºâuÙ(€	÷n;ÄĞ“ã‡/NÃcËÃÂÙÖ£w£5fLù79÷Ô¸·[Ã–c’{£ÙÏå~?TÈÉv³êî¦ˆ&Æ‘#ÍÊËçÊú$m¥€âŒ¼ Ğ»‰¾:íV/Òe¤1V¯˜î7Å¥µ2ªÊÒ+Úß‹lva Ì—¤‚>¨LÇ £‚}0‚y0U%0
++‚7=+0UNœ#ïƒÁó91_Ì-ıR–-0TUM0K¤I0G1-0+U$Microsoft Ireland Operations Limited10U230865+5027120U#0€æü_{»" XärNµô!t#2æï¬0VUO0M0K I G†Ehttp://crl.microsoft.com/pki/crl/products/MicCodSigPCA_2010-07-06.crl0Z+N0L0J+0†>http://www.microsoft.com/pki/certs/MicCodSigPCA_2010-07-06.crt0Uÿ0 0	*†H†÷ ‚ µşf¨XËz}Y¬”ù»«7||”´İg˜Ôõ›!8Øè!å‹@¬¶¦cãF(ûy¶^$e.7sÿÑ×ÛĞPÜ®s4OŒÌ “QM[ì5ŸÃFÙqÌ//˜©ER7.¿RApê,íûâu²^ùÂ{oë¨C#êÎÁuófß¾±Y_»qZ´=òe´Rˆ“éñ¼ië8Ùê‡wõ§ıó½t–"ôCbWÎ9)B:¸1~Ÿó„mÏÀƒ	®b‰ä5U¬2Ê£Vô³©¼oÌÌj+¿ÚÍíŞÕ?”¯ lúºrÙ]BQã»²îÓHéÜÖ7?W	´%c‘ıg½Õô@0‚p0‚X 
+aRL     0	*†H†÷ 0ˆ10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1200U)Microsoft Root Certificate Authority 20100100706204017Z250706205017Z0~10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1(0&UMicrosoft Code Signing PCA 20100‚"0	*†H†÷ ‚ 0‚
+‚ édPygµÄãı	 L”¬÷VhêDØÏÅXO©¥v|mEºÓ9’´¤ùùe‚äÒıDœèe“Î,U„¿}ã.+¨A+·¢KnILkŞÑÒÂ‰q”ÍµK´¯ØÌˆÖk”:“Î&?ìæş4˜WÕ]Iö²*.Õ…»Y?ø´+ƒtÊ+³;FãğFIÁfTÉ½ÄUbWrøg¹% 4Ş]¦¥•^«(€ÍÕ²åµcÓ²ÈÁÈŠ&
+Yìÿí€5L¦¾R[õ¦Úà‹HwÖ…GÕ¹Æèªî‹j-\`Æ´*[œ#_Eão7Ë3€j‰M£jfcx“Õ0Ï• £‚ã0‚ß0	+‚7 0Uæü_{»" XärNµô!t#2æï¬0	+‚7
+ S u b C A0U†0Uÿ0ÿ0U#0€ÕöVËè¢\bhÑ=”[×ÎšÄ0VUO0M0K I G†Ehttp://crl.microsoft.com/pki/crl/products/MicRooCerAut_2010-06-23.crl0Z+N0L0J+0†>http://www.microsoft.com/pki/certs/MicRooCerAut_2010-06-23.crt0U •0’0	+‚7.00=+1http://www.microsoft.com/PKI/docs/CPS/default.htm0@+042  L e g a l _ P o l i c y _ S t a t e m e n t . 0	*†H†÷ ‚ tïWO){Ä…x¸PÓ"ü	¬‚—ø4ÿ*,—•åä¿Ï¿“Èã4©Û¸Ü ¾Ò5o¯åy•wåÔñëØÍNa¢ÂZ#ğŒ¨bQEgã?<“ø0…È9@¦×³!)å¥¡iŒ"“Ìt˜ç¡GCòS¬À0işÒ% moaÓßÕÙr ,i†v=QÛ¦9HÉ7amİSË§ÖaÂ¿âƒ«àk›•Ö}(Q°‰JQ¤šlÈ·Ji©×ÜÁ~ÑIpª¶­»rGcú¦Ö¢¦†ì¨D›c¶²i‰ÇF†z?èÅ!Õ{ù#-ÅAË¿LÈï±œü"KIŠnã¦v[ÑSy‘…ÕÒÛ=s5ó<®T²RGjÀª•ÒÚ™g^2Œû7…ÑÜu…œ‡ÆZW…Â¿İŒ›-ë´îÏ'Óµ^iú¤§$gsÏMO¶ŞV—z÷éRMôwO…ÆØñíB	Ñvã#Vx"&6¾Ê±Œnªä…ÚG3b¤É‘3_q@¯˜eÉ"èB!%Š-`Ù7‰A‰*×a<”h`RïÖG™ €@îw>œàSP8•›f3'9x‡6ÎNÃ_²õ=GS¶àåÛa=*×’,Î7Z>@B1¤ÂVœ¿$]QjyÒÓÚÁ”{%qD«jæÔÆß#š–uÅ1‚	0‚0•0~10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1(0&UMicrosoft Code Signing PCA 20103  ¦XgK=l|ö    ¦0	`†He  ®0	*†H†÷	1
++‚70
++‚710
++‚70/	*†H†÷	1" ƒjY×í$f]Æò6w		ùš¡Ø_Hø53Œú£©á0B
++‚71402 € M i c r o s o f t¡€http://www.microsoft.com0	*†H†÷ ‚ 2i<Èèá	¬°~ÒœqØ“\X‡P	¨®M /'ôÕ¸aàN:‹OÕ—LºÈ?Cˆ©İ°²ì3!®”SNæ«q:56'_eGXÍNÎğ*µá¨Ei½A÷µ#¼_CQé["SYè&d¿Lçª$:Óü]17zrñ¢hJø±µiËkcÓ!¾ OÍgS!ÖÃÎÅÑ°ªTx$ÕYyË%¦~Ò,¾²0Ê³`ÈÈğ¦eŸ{X*ëÜ›…Í;w¡¯ßx°\iêEñ®ÏÖ ’Sßô¢ˆ@ÿì·Ô£	g:³
+Á:A|Ñ°U_*êÊ‚©~×i.¤‰ŒEÓËÈpõ#dŒEd¶›¡‚“0‚
++‚71‚0‚{	*†H†÷ ‚l0‚h10	`†He 0‚R*†H†÷	 ‚A‚=0‚9
++„Y
+010	`†He  ”Ò¶ âj€œÁ’Ëä—ñŞCõzÇà¼RŠœXøcÖg­ÚQ±20250213124226.377Z0€ô Ñ¤Î0Ë10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1%0#UMicrosoft America Operations1'0%UnShield TSS ESN:A935-03E0-D9471%0#UMicrosoft Time-Stamp Service ‚é0‚ 0‚ 3  éq0~]ñ6   é0	*†H†÷ 0|10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1&0$UMicrosoft Time-Stamp PCA 20100231206184526Z250305184526Z0Ë10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1%0#UMicrosoft America Operations1'0%UnShield TSS ESN:A935-03E0-D9471%0#UMicrosoft Time-Stamp Service0‚"0	*†H†÷ ‚ 0‚
+‚ ¬šŒ1A`§„ÒsyÓk¬« ògW ;i–'OòÇİ.Ô4‡óÙï}soî_˜¼¦‘ûé9‰Î1Ôp‰ó@ş›Ùc“¼< nìj¾Ç•Şê™P·ŒpUE@„ñ’S™Õ½|g‡È'ÄìZ{1L3lË2’° ¤ÁpÜµ‚¯$2êC¶±RÁëióİ™ÁÆ)ˆ…qÜ´õ,÷L·RK~Jc“1ÊT]M.ÄÔš—}Àb%ú§1Ç´åá"¤‹;€ÈŸÿÓ´ıQÇÕ]ûÂ;ÃR
+]ÆÌ¯%QV>ºº¿Äƒ¥ÿº#D_ñ>Ş˜k!ì#Ü-¼1Æ=ô6¾5Ç4éÃb:efˆ„ü»ïvAÍ^ïa=íoÛS¾&7¦Ë¥Õ>C÷?óK©©Õ›Oã,ôTR_¡ë¦\iBNÆ–Ò"2&hâÅ×ÃNgõŸ Ú¶Àh¹u—®Äå--¨N ÂÄq¸™mæ¤Ô(¤ÏÔÕbgËB[Šñæş02¥“Ñ?„àX*ÍŠ}ä8nİ9Â¾ÀÃš˜gğ¾BíÙ2—9¼à@/Æ°ÊHR/…iw	_AŠ0`;sz„ë€Mâ…#}.õ‰q<À¸°ÊÓ½ÜÓâ¦ƒİë—¬T4*3ƒºâ†!ÔhÎ7fık‘—M¶û#ğrY²’Ë$ßF¸Fïõ £‚I0‚E0U‘~3‰Åv#¸ˆôZëşÈíìN0U#0€Ÿ§] ^b]ƒôåÒe§S5ér0_UX0V0T R P†Nhttp://www.microsoft.com/pkiops/crl/Microsoft%20Time-Stamp%20PCA%202010(1).crl0l+`0^0\+0†Phttp://www.microsoft.com/pkiops/certs/Microsoft%20Time-Stamp%20PCA%202010(1).crt0Uÿ0 0U%ÿ0
++0Uÿ€0	*†H†÷ ‚ V±*~®k1·ºÔ=Ğ§§Ùsà@rC‰.l¸oÍõcğæ9ÔDï›¢!ÇFÀr›VbÊÒQÕÔ
+süw"fŠ2z€/tbáÀ¤£  WiIÇ4…ô»Ş/MÂg¸Ñ_ÅÊM´B‘Ãé0)$} D_ÍÀÊô3•ÿÛ 3hX¡ ¥Ğ,/Ä³5Å.pèÏ0‰­Ï x@kğN
+Û6Yr?dœYKÿÜWp+\óR$›Wi·ÆÃİÊ‚DPí'P·ü™ã\À¡o[,0õÁ¢{LúyÁ‡oĞé}ù£t·Pf;0£ğ9ª*å0Î Šõ8íÃ’”£ºB7 9İ_ûY­ıÙ×ÑzùtjÊ’›, zº®µàùKÜä¾áÈ‹ş_)›ê%u†]‚Kä~‹6r²\•DÃıElî>?”áñEÆÍ’ñL/¬ØqÅPôï…–>ñLˆL›¦Ğ/DJ‚sïØÇ8H*@<ñ„’”Ö³jÒGí“‹BÂ+*@îóR™4‹’Ño5añ@zyõ¥o¹P˜Ïa©ÌU\¤õ
+åvQÑô>­XF©ØFNÎƒ÷òƒ%<mØê…Æ'b"Ê ÃoŒ„s^²"ç«z&B{ä½éd‡Ù²$šM“5± u\­£%h*íYA¸ıA¹xÙŞ¨2›ÚõÂıµ0‚q0‚Y 3   Åçk›I™     0	*†H†÷ 0ˆ10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1200U)Microsoft Root Certificate Authority 20100210930182225Z300930183225Z0|10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1&0$UMicrosoft Time-Stamp PCA 20100‚"0	*†H†÷ ‚ 0‚
+‚ äá¦Lç´r!y¢Ë×$y½Õ‚ÓıîœÒ©lNuÈÊ5WölJàâ½¹>`3ÿ\OÇf÷•SqZâ~JZş¸6g…F#µÏw2Àè`}jRƒD·¦FkóÅvõ†PÜÁDÈq\Q17 
+8ní×Ø&S|9azÄªıri¯«¬ö6¾5&dÚ˜;º{3­€[~ŒRş¶èb%ÜjÏ]ôşSÏÖì…VMïİ¼¤ã‘²9,QœépiÊ6-p1È5(½ã´‡$ÃàÉ~µTÜúU˜mh;šF½í¤®z)7¬ËëƒEçFnÊ2ÕÀ†0\O,âb²Í¹âˆä–¬J»¾q©[g`Şø’‘=ı Ïs}AšFuÍÄ_4İ‰Öı¥ }~üÙEß¶r/Û}_€ºÛª~6ì6Lö+n¨Qè¿£Ñs¦M7t”4‚ğò·Gí§è™|?LÛ¯^ÂóÕØs=CNÁ39L¼Bh.ê„QFâÑ½jZasÊg¢^×(vâ3r×§ ğÂú
+×coÉ6d‹[ ¦ƒ!]_0t‘””Ø¹Pù‰aó65„GÛÜÑı²ÔÅkö\RQ]Û%º¯PzlÅrïùRÄ…“À<Û7Ç?x«E¶õ‡^ÚriÆ®{··>jâ.­ £‚İ0‚Ù0	+‚7 0#	+‚7*§RşdÄš¾‚‘<F5)Ïÿ/î0UŸ§] ^b]ƒôåÒe§S5ér0\U U0S0Q+‚7Lƒ}0A0?+3http://www.microsoft.com/pkiops/Docs/Repository.htm0U%0
++0	+‚7
+ S u b C A0U†0Uÿ0ÿ0U#0€ÕöVËè¢\bhÑ=”[×ÎšÄ0VUO0M0K I G†Ehttp://crl.microsoft.com/pki/crl/products/MicRooCerAut_2010-06-23.crl0Z+N0L0J+0†>http://www.microsoft.com/pki/certs/MicRooCerAut_2010-06-23.crt0	*†H†÷ ‚ U}ü*­á,g1$[árKü©oê\¶>NGdx±“—=13µ9×Âq6?Údl|Ğu9m»1äÂûlÑ¡”"îéfg:SMİ˜º¶xØ6.œ©‚V °¾‰èiàº	î{ßjo¾)ËnØ?HuÙŞm‚õm#TäxSu$W¹İŸó=Æóhßeö¤Vª÷•¶(U'Ğ$½@ ¿¶]='à@–8¬÷ù)‰Ã¼°T…B³ü‹‰çğjÂBRuŠ6ÂÃas.,k{n?,	xé‘²©[ßI£t¼ì‘€Ò=æJ>f;O»†ú2Ù–ôö‘öÎÆtıöLro«u0Å4°zØPş
+Xİ@<ÇTmctH,±NG-Áq¿dù$¾smÊ	½³WITdÙs×[DZ‘kŸ¤(Üg($º8Kšnû!TkjEG©ñ·®Èè‰^OÒĞLvµWT	±iD~|¡alsş
+»ìAf=iıËÁAI~~“¾Ëø;ä·¿´Î>¥1Q„¼¿Á‚¢{‰pşçµĞ(‰6ÚºLù›ÿ
+é4ø$5g+à¸æŒ™Öá"êğ'B=%”ætt[jÑ>í~ 13}¼Ëé{¿8pDÑñÈ«:Š:bÙpcSMî‚m¥Áqj´U3X³¡pfò¡‚L0‚40ù¡Ñ¤Î0Ë10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1%0#UMicrosoft America Operations1'0%UnShield TSS ESN:A935-03E0-D9471%0#UMicrosoft Time-Stamp Service¢#
+0+ «i‡õÄ96¬ÉÔıRhØaŠÖ|hñ ƒ0€¤~0|10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1&0$UMicrosoft Time-Stamp PCA 20100	*†H†÷  ëXXÒ0"20250213114106Z20250214114106Z0s09
++„Y
+1+0)0
+ ëXXÒ 0 0 !0
+ ëYªR 06
++„Y
+1(0&0
++„Y
+ 
+0 ¡ ¡
+0 † 0	*†H†÷ ‚ 4÷—ÃÀ¥µDÄ}Ïü%Ğ§Æl³\E°î„€\İÀ2kDP}Ôz¬MŠ©zC>ÃIÚgXTzqXTåï)M“\æ@ë¶péÒœ„w™×ûãcG×46;G»ãmÀc~Úş$\ófßÖjcvŠØŒŒo°V,Ÿ˜ZÆzmÆÓzêİ³=Œî¨å‰^ù&€9ö1cn`‚
+—­
++”Aô/¶XVİæä¨¬‘•kZ À91$j+äé(¼¥ `ËÏÈÖz¯Gv7îs³†E’SOê< ltù`<ISá|Wt7ÃPôÙí•âòïò„ôxòyâŠRBSêq5–9—Ún1‚0‚	0“0|10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1&0$UMicrosoft Time-Stamp PCA 20103  éq0~]ñ6   é0	`†He  ‚J0	*†H†÷	1*†H†÷	0/	*†H†÷	1" \Ğ´ÿ«ü¸¶ğ³ÖgB"ñ¼Îñ7dëºTOu_U0ú*†H†÷	/1ê0ç0ä0½ ¤’x—i7&TÊAa~Çe8®%h¬`üO	 U³}ªÄ%0˜0€¤~0|10	UUS10U
+Washington10URedmond10U
+Microsoft Corporation1&0$UMicrosoft Time-Stamp PCA 20103  éq0~]ñ6   é0" ?'Ğz NÌÚ–ÔºÓ RL¨î÷Á_‡ÑØàÓ0	*†H†÷ ‚ ?ÑÂr·•Q0h¹vğ%‡Ôñ˜•3zÏQ‹©ÊçŠ¹Ã_Ïª«Ù¯¤fGlı×[G|SÌldISèÏ ¨ıNğøÆ5F©=*¡Ùfgmg›šIcÿÒ},Yÿ¼é…šL¦§À~DíZ¯U+¸¬µ_)š£rùC©¿ö{“;ÖšP§*$.Ô3™fÑÙu¤›|ùS<3¶×\1á—ÎíPIRÕ¸4Bíô³µ¦²®˜ÌbL(Œ¡‡†ªV<Éƒ6wPA  hº‡eW|•¥$K-CãrÙKVŠÈÄxéÉâ×mÅ,–ÁõÁ7É`ö|•åîŞÂïûA•ò±|õÖ¬¿µ¿šU‰¥PĞ}ïÀQy®ÇHÍvÒÒ»Ş(E £ZÉúBIè¡5E'¼mï`”s´È[êÈ‘•T#†ªóVƒr(·<bÈo†º[HÒŞ ;F|$û6ÃªÆ8á”8P¾,{mÅç®ìnŠÃ†¦ÑØ÷ı¤‡–»Ë˜Ãëg‘ÙDHEHrz"é„1a2¥"Àkœ©m}Öd‹÷N?Á”¿XYå?'/ÛÓi¡iÙ"jYç) 9ÙY™T¡½çï	ôF{ƒ|X&^ä<‘zİVÿ+,ë%<’ä©ÇÉô÷Ú®D²6•/~êQM>5¡Œ¡8CËÎÒ                                                                                                                                                                                                                                                                                                                                                                                                                  
