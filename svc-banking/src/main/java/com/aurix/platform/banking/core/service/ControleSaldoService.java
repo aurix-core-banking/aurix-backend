@@ -450,8 +450,9 @@ public class ControleSaldoService {
                         .add(movimento.getValorMovimento());
                 break;
             default:
-                throw new UnsupportedOperationException(
-                        "Tipo de movimento não suportado: " + movimento.getTipoMovimento());
+                log.warn("Tipo de movimento nao suportado: {}. Movimento ignorado.",
+                    movimento.getTipoMovimento());
+                return;
         }
 
         // Calcular saldo total

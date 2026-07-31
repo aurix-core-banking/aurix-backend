@@ -13,9 +13,9 @@ management:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/aurix_credit
-    username: aurix
-    password: aurix
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/aurix_credit}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

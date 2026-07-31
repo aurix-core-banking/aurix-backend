@@ -3,6 +3,7 @@ package com.aurix.platform.customer.onboarding.service;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile({"dev", "test", "stub"})
 public class ReceitaFederalStub implements ReceitaFederalService {
 
     @Override

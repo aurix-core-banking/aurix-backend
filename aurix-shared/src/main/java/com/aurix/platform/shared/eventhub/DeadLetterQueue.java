@@ -2,6 +2,7 @@ package com.aurix.platform.shared.eventhub;
 
 import com.aurix.platform.shared.event.BaseEvent;
 import com.aurix.platform.shared.event.Topics;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
@@ -26,6 +27,14 @@ public class DeadLetterQueue {
      * Contador de eventos enviados para DLQ.
      */
     private final AtomicLong totalDLQEvents = new AtomicLong(0);
+    /**
+     * Repositório para persistência de eventos.
+     */
+    private final StoredEventJpaRepository repository;
+    /**
+     * ObjectMapper para serialização JSON.
+     */
+    private final ObjectMapper objectMapper;
     /**
      * Número padrão de tentativas de reprocessamento.
      */
@@ -124,13 +133,32 @@ public class DeadLetterQueue {
      */
     private void saveEventLocally(final BaseEvent event, final String failureReason, final String errorMessage) {
         try {
-            // Implementar salvamento local (arquivo, banco, etc.)
-            log.error("Salvando evento localmente: EventId={}, Reason={}, " + "Error={}", event.getEventId(), failureReason, errorMessage);
-        } catch (
-        // Por enquanto, apenas log
-        // Em produção, implementar salvamento em arquivo ou banco
-        Exception e) {
-            log.error("Erro crítico ao salvar evento localmente: {}", e.getMessage());
+            if (repository == null) {
+                log.error("Repositorio nao disponivel. Salvando evento localmente: EventId={}, Reason={}, Error={}",
+                    event.getEventId(), failureReason, errorMessage);
+                return;
+            }
+
+            StoredEventEntity entity = new StoredEventEntity();
+            entity.setEventId(event.getEventId());
+            entity.setEventType(event.getEventType());
+            entity.setSource(event.getSource());
+            entity.setTimestamp(event.getTimestamp());
+            entity.setCorrelationId(event.getCorrelationId());
+            entity.setPayload(objectMapper.writeValueAsString(event));
+            entity.setMetadataJson(objectMapper.writeValueAsString(Map.of(
+                "failureReason", failureReason,
+                "errorMessage", errorMessage,
+                "deadLetter", true
+            )));
+            entity.setStoredAt(LocalDateTime.now());
+            entity.setVersion(1L);
+
+            repository.save(entity);
+            log.info("Evento salvo em banco: EventId={}, Reason={}", event.getEventId(), failureReason);
+        } catch (Exception e) {
+            log.error("Erro critico ao salvar evento localmente: EventId={}, Error={}",
+                event.getEventId(), e.getMessage());
         }
     }
 
@@ -478,7 +506,10 @@ public class DeadLetterQueue {
      * @param kafkaTemplate Template do Kafka para operações de DLQ.
      */
     @java.lang.SuppressWarnings("all")
-    public DeadLetterQueue(final KafkaTemplate<String, Object> kafkaTemplate) {
+    public DeadLetterQueue(final KafkaTemplate<String, Object> kafkaTemplate,
+                           final StoredEventJpaRepository repository) {
         this.kafkaTemplate = kafkaTemplate;
+        this.repository = repository;
+        this.objectMapper = new ObjectMapper();
     }
 }

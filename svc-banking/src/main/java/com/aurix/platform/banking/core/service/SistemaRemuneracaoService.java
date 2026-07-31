@@ -394,9 +394,9 @@ public class SistemaRemuneracaoService {
                             diasDecorridos);
                     break;
                 default:
-                    throw new UnsupportedOperationException(
-                            "Tipo de remuneração não suportado: "
-                                    + produto.getTipoRemuneracao());
+                    log.warn("Tipo de remuneracao nao suportado: {}. Usando taxa zero.",
+                        produto.getTipoRemuneracao());
+                    remuneracao = BigDecimal.ZERO;
             }
 
             return remuneracao.setScale(4, RoundingMode.HALF_UP);

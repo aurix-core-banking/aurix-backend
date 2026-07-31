@@ -137,4 +137,7 @@ public final class Topics {
     public static final String DLQ = "aurix-dlq";
     public static final String REPROCESS = "aurix-reprocess";
     public static final String DLQ_PERMANENT = "aurix-dlq-permanent";
+
+    // ===== compliance: lgpd =====
+    public static final String LGPD_DADOS_EXCLUIDOS = "compliance.lgpd.dados.excluidos.v1";
 }

@@ -236,9 +236,9 @@ public class MotorTarifasService {
                 break;
 
             default:
-                throw new UnsupportedOperationException(
-                        "Unidade de tarifa não suportada: "
-                                + tarifa.getUnidadeTarifa());
+                log.warn("Unidade de tarifa nao suportada: {}. Tarifa nao aplicada.",
+                    tarifa.getUnidadeTarifa());
+                return BigDecimal.ZERO;
         }
 
         // Aplicar regras especiais se existirem

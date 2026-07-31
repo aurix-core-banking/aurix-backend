@@ -218,7 +218,11 @@ public class Cliente extends BaseEntity {
         /**
          * Suspenso.
          */
-        SUSPENSO("Suspenso");
+        SUSPENSO("Suspenso"),
+        /**
+         * Excluído (LGPD).
+         */
+        EXCLUIDO("Excluído LGPD");
         /**
          * Descrição do status.
          */

@@ -29,15 +29,15 @@
 
         <!-- Consolidated services -->
         <module>svc-banking</module>
-        <!--<module>svc-payments</module> POM corrompido -->
+        <module>svc-payments</module>
         <module>svc-credit</module>
         <module>svc-products</module>
         <module>svc-customer</module>
         <module>svc-fraud</module>
         <module>svc-compliance</module>
         <module>svc-finance-mgmt</module>
-        <!--<module>svc-platform</module> POM corrompido -->
-        <!--<module>svc-intelligence</module> POM corrompido -->
+        <module>svc-platform</module>
+        <module>svc-intelligence</module>
 
         <module>svc-cambio</module>
         <module>svc-cards</module>

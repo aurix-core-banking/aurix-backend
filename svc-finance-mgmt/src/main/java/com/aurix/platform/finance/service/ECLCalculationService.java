@@ -269,8 +269,24 @@ public class ECLCalculationService {
      * Extrai score de crédito do metadata
      */
     private Integer extrairScoreCredito(String metadata) {
-        // Implementar extração de score do JSON metadata
-        // Por enquanto, retorna null
+        if (metadata == null || metadata.isEmpty()) {
+            return null;
+        }
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(metadata);
+            if (node.has("creditScore")) {
+                return node.get("creditScore").asInt();
+            }
+            if (node.has("score")) {
+                return node.get("score").asInt();
+            }
+            if (node.has("score_credito")) {
+                return node.get("score_credito").asInt();
+            }
+        } catch (Exception e) {
+            log.warn("Falha ao extrair score de credito do metadata: {}", e.getMessage());
+        }
         return null;
     }
 
