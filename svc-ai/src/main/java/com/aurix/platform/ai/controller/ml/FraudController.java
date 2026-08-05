@@ -9,8 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/ai/ml/fraud")
@@ -33,9 +32,12 @@ public class FraudController {
         if (request.getAmount() != null) builder.setAmount(request.getAmount().doubleValue());
         if (request.getCurrency() != null) builder.setCurrency(request.getCurrency());
         if (request.getChannel() != null) builder.setChannel(request.getChannel());
-        if (request.getIpAddress() != null) builder.setIpAddress(request.getIpAddress());
         if (request.getDeviceId() != null) builder.setDeviceId(request.getDeviceId());
-        if (request.getLocation() != null) builder.setLocation(request.getLocation());
+        if (request.getIpAddress() != null) builder.setIpAddress(request.getIpAddress());
+        if (request.getUserAgent() != null) builder.setUserAgent(request.getUserAgent());
+        if (request.getCity() != null) builder.setCity(request.getCity());
+        if (request.getState() != null) builder.setState(request.getState());
+        if (request.getTimestamp() != null) builder.setTimestamp(request.getTimestamp());
         if (request.getMetadata() != null) builder.putAllMetadata(request.getMetadata());
 
         FraudAnalysisResponse protoResponse = mlClient.analyzeTransaction(builder.build());
@@ -44,31 +46,21 @@ public class FraudController {
 
     @PostMapping("/analyze/transaction")
     @Operation(summary = "Analyze transaction from raw data")
-    public FraudAnalysisResponseDTO analyzeFromData(@RequestBody Map<String, Object> data) {
-        FraudAnalysisRequest.Builder builder = FraudAnalysisRequest.newBuilder();
-        if (data.containsKey("transactionId")) builder.setTransactionId((String) data.get("transactionId"));
-        if (data.containsKey("accountId")) builder.setAccountId((String) data.get("accountId"));
-        if (data.containsKey("transactionType")) builder.setTransactionType((String) data.get("transactionType"));
-        if (data.containsKey("amount")) builder.setAmount(((Number) data.get("amount")).doubleValue());
-        if (data.containsKey("channel")) builder.setChannel((String) data.get("channel"));
-        if (data.containsKey("ipAddress")) builder.setIpAddress((String) data.get("ipAddress"));
-        FraudAnalysisResponse protoResponse = mlClient.analyzeTransaction(builder.build());
-        return toDto(protoResponse);
+    public FraudAnalysisResponseDTO analyzeFromData(@RequestBody FraudAnalysisRequestDTO request) {
+        return analyze(request);
     }
 
     private FraudAnalysisResponseDTO toDto(FraudAnalysisResponse proto) {
         FraudAnalysisResponseDTO dto = new FraudAnalysisResponseDTO();
-        dto.setFraud(proto.getIsFraud());
-        dto.setRiskScore(proto.getRiskScore());
-        if (proto.getAction() != null) {
-            dto.setAction(FraudAnalysisResponseDTO.FraudAction.valueOf(proto.getAction().name()));
-        }
-        if (proto.getReason() != null && !proto.getReason().isEmpty()) {
-            dto.setReason(proto.getReason());
-        }
-        Map<String, String> details = new HashMap<>();
-        details.putAll(proto.getDetailsMap());
-        dto.setDetails(details);
+        dto.setFraudScore(proto.getFraudScore());
+        dto.setAnomalyScore(proto.getAnomalyScore());
+        dto.setSupervisedScore(proto.getSupervisedScore());
+        dto.setRiskLevel(proto.getRiskLevel());
+        dto.setRedFlags(List.copyOf(proto.getRedFlagsList()));
+        dto.setBlockTransaction(proto.getBlockTransaction());
+        dto.setRecommendation(proto.getRecommendation());
+        dto.setDecisionId(proto.getDecisionId());
+        dto.setProcessingTimeMs(proto.getProcessingTimeMs());
         return dto;
     }
 }

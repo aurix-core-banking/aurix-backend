@@ -28,6 +28,11 @@ import java.util.stream.Collectors;
 public class ControleSaldoService {
 
     /**
+     * Logger da classe.
+     */
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ControleSaldoService.class);
+
+    /**
      * Limite padrão para novas contas.
      */
     private static final BigDecimal LIMITE_PADRAO = BigDecimal.valueOf(5000.00);

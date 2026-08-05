@@ -174,4 +174,62 @@ public class NotificacaoConsumer {
             variaveis.put("valor", event.getValor().toPlainString());
         }
         if (event.getTipoCredito() != null) {
-            variaveis.pu                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            variaveis.put("tipoCredito", event.getTipoCredito());
+        }
+        notificacaoService.enviar(clienteId, "solicitacao_credito_criada", "cliente-" + clienteId, variaveis);
+    }
+
+    @KafkaListener(topics = Topics.CONSIGNADO_CONTRATO_ASSINADO, groupId = "aurix-notification-group")
+    public void onConsignadoContratoAssinado(ConsignadoContratoAssinadoEvent event) {
+        Long clienteId = event.getClienteId();
+        if (clienteId == null) {
+            log.warn("Evento CONSIGNADO_CONTRATO_ASSINADO sem clienteId, ignorando");
+            return;
+        }
+        Map<String, String> variaveis = new HashMap<>();
+        variaveis.put("clienteId", String.valueOf(clienteId));
+        if (event.getValorTotal() != null) {
+            variaveis.put("valorTotal", event.getValorTotal().toPlainString());
+        }
+        if (event.getValorParcela() != null) {
+            variaveis.put("valorParcela", event.getValorParcela().toPlainString());
+        }
+        notificacaoService.enviar(clienteId, "consignado_contrato_assinado", "cliente-" + clienteId, variaveis);
+    }
+
+    @KafkaListener(topics = Topics.FINANCIAMENTO_CONTRATO_ASSINADO, groupId = "aurix-notification-group")
+    public void onFinanciamentoContratoAssinado(FinanciamentoContratoAssinadoEvent event) {
+        Long clienteId = event.getClienteId();
+        if (clienteId == null) {
+            log.warn("Evento FINANCIAMENTO_CONTRATO_ASSINADO sem clienteId, ignorando");
+            return;
+        }
+        Map<String, String> variaveis = new HashMap<>();
+        variaveis.put("clienteId", String.valueOf(clienteId));
+        if (event.getValorFinanciado() != null) {
+            variaveis.put("valorFinanciado", event.getValorFinanciado().toPlainString());
+        }
+        if (event.getPrazoMeses() != null) {
+            variaveis.put("prazoMeses", String.valueOf(event.getPrazoMeses()));
+        }
+        notificacaoService.enviar(clienteId, "financiamento_contrato_assinado", "cliente-" + clienteId, variaveis);
+    }
+
+    @KafkaListener(topics = Topics.SEGUROS_APOLICE_EMITIDA, groupId = "aurix-notification-group")
+    public void onSegurosApoliceEmitida(SegurosApoliceEmitidaEvent event) {
+        Long clienteId = event.getClienteId();
+        if (clienteId == null) {
+            log.warn("Evento SEGUROS_APOLICE_EMITIDA sem clienteId, ignorando");
+            return;
+        }
+        Map<String, String> variaveis = new HashMap<>();
+        variaveis.put("clienteId", String.valueOf(clienteId));
+        if (event.getNumero() != null) {
+            variaveis.put("numeroApolice", event.getNumero());
+        }
+        if (event.getPremioTotal() != null) {
+            variaveis.put("premioTotal", event.getPremioTotal().toPlainString());
+        }
+        notificacaoService.enviar(clienteId, "seguros_apolice_emitida", "cliente-" + clienteId, variaveis);
+    }
+}

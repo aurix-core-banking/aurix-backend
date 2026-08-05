@@ -2,12 +2,17 @@ package com.aurix.platform.contracts;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URI;
 
 /**
  * Contract tests for svc-payments (PIX operations).
@@ -21,7 +26,20 @@ class PixPaymentContractTest {
 
     @BeforeAll
     void setup() {
+        assumeTrue(gatewayAlive(BASE_URL), "Gateway indisponivel em " + BASE_URL + " - teste ignorado");
         RestAssured.baseURI = BASE_URL;
+    }
+
+    private static boolean gatewayAlive(String url) {
+        try {
+            URI uri = URI.create(url);
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress(uri.getHost(), uri.getPort()), 1500);
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Test

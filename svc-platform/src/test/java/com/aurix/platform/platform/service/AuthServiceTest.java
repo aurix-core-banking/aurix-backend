@@ -191,4 +191,15 @@ class AuthServiceTest {
         when(usuarioRepository.findByEmailAndAtivoTrue("user@test.com"))
             .thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("correct-senha", "encoded-senha")).thenReturn(true);
-        when(jwtService.generateToken(anyString(), any(), anyStr                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        when(jwtService.generateToken(anyString(), any(), anyString(), any(), any()))
+            .thenReturn("jwt-token");
+
+        LoginRequestDTO loginRequest = new LoginRequestDTO("user@test.com", "correct-senha");
+        LoginResponseDTO response = authService.login(loginRequest);
+
+        verify(usuario, times(2)).resetarTentativasLogin();
+        verify(usuarioRepository, atLeastOnce()).save(usuario);
+        assertThat(response).isNotNull();
+        assertThat(response.getToken()).isEqualTo("jwt-token");
+    }
+}

@@ -1,1 +1,152 @@
-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
+package com.aurix.platform.platform.integration;
+
+import com.aurix.platform.platform.PlatformApplication;
+import com.aurix.platform.platform.entity.ConsentimentoCustodia;
+import com.aurix.platform.platform.entity.ParceiroCustodia;
+import com.aurix.platform.platform.repository.ConsentimentoCustodiaRepository;
+import com.aurix.platform.platform.repository.ParceiroCustodiaRepository;
+import com.aurix.platform.platform.repository.SubContaCustodiaRepository;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@SpringBootTest(classes = PlatformApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class BaasFlowIntegrationTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private ParceiroCustodiaRepository parceiroRepository;
+
+    @Autowired
+    private SubContaCustodiaRepository subContaRepository;
+
+    @Autowired
+    private ConsentimentoCustodiaRepository consentimentoRepository;
+
+    private RestTemplate rest;
+
+    @BeforeEach
+    void setUp() {
+        consentimentoRepository.deleteAll();
+        subContaRepository.deleteAll();
+        parceiroRepository.deleteAll();
+        rest = new RestTemplate();
+    }
+
+    private String url(String path) {
+        return "http://localhost:" + port + path;
+    }
+
+    private HttpHeaders tenantHeaders(String tenantId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Tenant-Id", tenantId);
+        return headers;
+    }
+
+    private HttpHeaders clientHeaders(String tenantId, String clientId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Tenant-Id", tenantId);
+        headers.set("X-Client-Id", clientId);
+        return headers;
+    }
+
+    @Test
+    void deveCriarParceiro() {
+        Map<String, String> body = Map.of("clientId", "client-001", "nome", "Parceiro Teste");
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, tenantHeaders("tenant-baas-1"));
+
+        ResponseEntity<ParceiroCustodia> response = rest.exchange(
+            url("/api/platform/parceiros"), HttpMethod.POST, entity, ParceiroCustodia.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getClientId()).isEqualTo("client-001");
+    }
+
+    @Test
+    void deveRejeitarParceiroDuplicado() {
+        Map<String, String> body = Map.of("clientId", "client-001", "nome", "Primeiro");
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, tenantHeaders("tenant-baas-1"));
+        rest.exchange(url("/api/platform/parceiros"), HttpMethod.POST, entity, ParceiroCustodia.class);
+
+        var ex = assertThrows(HttpClientErrorException.class, () ->
+            rest.exchange(url("/api/platform/parceiros"), HttpMethod.POST, entity, ParceiroCustodia.class));
+        assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    void deveListarParceiros() {
+        HttpEntity<Map<String, String>> entity1 = new HttpEntity<>(
+            Map.of("clientId", "c1", "nome", "Parceiro A"), tenantHeaders("tenant-baas-2"));
+        HttpEntity<Map<String, String>> entity2 = new HttpEntity<>(
+            Map.of("clientId", "c2", "nome", "Parceiro B"), tenantHeaders("tenant-baas-2"));
+        rest.exchange(url("/api/platform/parceiros"), HttpMethod.POST, entity1, ParceiroCustodia.class);
+        rest.exchange(url("/api/platform/parceiros"), HttpMethod.POST, entity2, ParceiroCustodia.class);
+
+        HttpEntity<Void> getEntity = new HttpEntity<>(tenantHeaders("tenant-baas-2"));
+        ResponseEntity<ParceiroCustodia[]> response = rest.exchange(
+            url("/api/platform/parceiros"), HttpMethod.GET, getEntity, ParceiroCustodia[].class);
+
+        assertThat(response.getBody()).isNotEmpty();
+    }
+
+    @Test
+    void deveCriarSubContaCustodia() {
+        HttpEntity<Map<String, String>> parceiroEntity = new HttpEntity<>(
+            Map.of("clientId", "client-sc", "nome", "Parceiro SC"), tenantHeaders("tenant-baas-3"));
+        rest.exchange(url("/api/platform/parceiros"), HttpMethod.POST, parceiroEntity, ParceiroCustodia.class);
+
+        Map<String, Object> subContaBody = Map.of(
+            "contaId", 100L,
+            "identificadorExterno", "ext-001");
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(
+            subContaBody, clientHeaders("tenant-baas-3", "client-sc"));
+
+        ResponseEntity<Map> response = rest.exchange(
+            url("/api/platform/custodia/subcontas"), HttpMethod.POST, entity, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    void deveConsultarSaldoCustodia() {
+        HttpEntity<Map<String, String>> parceiroEntity = new HttpEntity<>(
+            Map.of("clientId", "client-saldo", "nome", "Parceiro Saldo"), tenantHeaders("tenant-baas-4"));
+        ResponseEntity<ParceiroCustodia> parceiroResp = rest.exchange(
+            url("/api/platform/parceiros"), HttpMethod.POST, parceiroEntity, ParceiroCustodia.class);
+
+        Map<String, Object> consentBody = Map.of(
+            "contaId", 1L,
+            "parceiroId", parceiroResp.getBody().getId(),
+            "escopos", List.of("CONSULTAR_SALDO", "MOVIMENTAR"),
+            "dataExpiracao", "2027-12-31T23:59:59");
+        HttpEntity<Map<String, Object>> consentEntity = new HttpEntity<>(
+            consentBody, tenantHeaders("tenant-baas-4"));
+        rest.exchange(url("/api/platform/custodia/consentimentos"), HttpMethod.POST, consentEntity, ConsentimentoCustodia.class);
+
+        HttpEntity<Void> entity = new HttpEntity<>(clientHeaders("tenant-baas-4", "client-saldo"));
+        ResponseEntity<Map> response = rest.exchange(
+            url("/api/platform/custodia/saldo?contaId=1"), HttpMethod.GET, entity, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsKey("saldo");
+    }
+}

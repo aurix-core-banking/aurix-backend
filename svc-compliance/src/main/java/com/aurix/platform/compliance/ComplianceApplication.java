@@ -29,9 +29,13 @@ import java.util.Map;
 @ComponentScan(basePackages = {"com.aurix.platform.compliance", "com.aurix.platform.shared"})
 @EntityScan(basePackages = {
     "com.aurix.platform.compliance.entity",
-    "com.aurix.platform.shared.entity"
+    "com.aurix.platform.shared.entity",
+    "com.aurix.platform.shared.eventhub"
 })
-@EnableJpaRepositories(basePackages = {"com.aurix.platform.compliance.repository"})
+@EnableJpaRepositories(basePackages = {
+    "com.aurix.platform.compliance.repository",
+    "com.aurix.platform.shared.eventhub"
+})
 @EnableKafka
 @EnableScheduling
 @EnableCaching

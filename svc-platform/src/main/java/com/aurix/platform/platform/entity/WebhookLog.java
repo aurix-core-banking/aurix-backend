@@ -267,4 +267,25 @@ public class WebhookLog {
     }
 
     @java.lang.SuppressWarnings("all")
-    public void setDataCriacao(final Loc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+    public void setDataCriacao(final LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public WebhookLog() {
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public WebhookLog(final Long id, final String tenantId, final String evento, final String payload, final StatusEnvio status, final Integer tentativas, final Integer responseCode, final String responseBody, final LocalDateTime proximaTentativa, final LocalDateTime dataCriacao) {
+        this.id = id;
+        this.tenantId = tenantId;
+        this.evento = evento;
+        this.payload = payload;
+        this.status = status;
+        this.tentativas = tentativas;
+        this.responseCode = responseCode;
+        this.responseBody = responseBody;
+        this.proximaTentativa = proximaTentativa;
+        this.dataCriacao = dataCriacao;
+    }
+}

@@ -19,11 +19,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Map;
 
 @SpringBootApplication(scanBasePackages = {"com.aurix.platform.cards", "com.aurix.platform.shared"})
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = {
+    "com.aurix.platform.cards.repository",
+    "com.aurix.platform.shared.eventhub"
+})
 @EnableKafka
 @EnableScheduling
 @EnableCaching
-@EntityScan(basePackages = {"com.aurix.platform.cards.entity", "com.aurix.platform.shared.entity"})
+@EntityScan(basePackages = {
+    "com.aurix.platform.cards.entity",
+    "com.aurix.platform.shared.entity",
+    "com.aurix.platform.shared.eventhub"
+})
 public class CardsApplication {
 
     public static void main(String[] args) {

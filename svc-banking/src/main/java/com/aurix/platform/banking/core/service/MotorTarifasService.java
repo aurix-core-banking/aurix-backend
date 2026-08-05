@@ -29,6 +29,11 @@ import java.util.stream.Collectors;
 public class MotorTarifasService {
 
     /**
+     * Logger da classe.
+     */
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MotorTarifasService.class);
+
+    /**
      * Valor máximo para o código aleatório.
      */
     private static final int MAX_RANDOM_CODE = 1000000;
@@ -238,7 +243,11 @@ public class MotorTarifasService {
             default:
                 log.warn("Unidade de tarifa nao suportada: {}. Tarifa nao aplicada.",
                     tarifa.getUnidadeTarifa());
-                return BigDecimal.ZERO;
+                calculoRequest.setAplicavel(false);
+                calculoRequest.setMotivoNaoAplicavel(
+                        "Unidade de tarifa não suportada: "
+                        + tarifa.getUnidadeTarifa());
+                return calculoRequest;
         }
 
         // Aplicar regras especiais se existirem

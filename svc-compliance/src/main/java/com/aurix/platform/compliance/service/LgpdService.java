@@ -1,5 +1,8 @@
 package com.aurix.platform.compliance.service;
 
+import com.aurix.platform.compliance.entity.ConsentimentoLGPD;
+import com.aurix.platform.compliance.entity.LgpdExclusao;
+import com.aurix.platform.compliance.repository.ConsentimentoLGPDRepository;
 import com.aurix.platform.compliance.repository.LgpdExclusaoRepository;
 import com.aurix.platform.shared.cache.SharedCacheService;
 import com.aurix.platform.shared.entity.Cliente;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class LgpdService {
@@ -30,13 +34,69 @@ public class LgpdService {
     private final LgpdExclusaoRepository exclusaoRepository;
     private final SharedCacheService cacheService;
     private final EventPublisher eventPublisher;
+    private final ConsentimentoLGPDRepository consentimentoRepository;
 
     public LgpdService(LgpdExclusaoRepository exclusaoRepository,
                        SharedCacheService cacheService,
-                       EventPublisher eventPublisher) {
+                       EventPublisher eventPublisher,
+                       ConsentimentoLGPDRepository consentimentoRepository) {
         this.exclusaoRepository = exclusaoRepository;
         this.cacheService = cacheService;
         this.eventPublisher = eventPublisher;
+        this.consentimentoRepository = consentimentoRepository;
+    }
+
+    @Transactional
+    public ConsentimentoLGPD criarConsentimento(Long clienteId, String cpfCnpj,
+                                                ConsentimentoLGPD.TipoConsentimento tipo,
+                                                String descricaoFinalidade,
+                                                String finalidades, String dadosColetados,
+                                                String compartilhamentos, String ipAddress,
+                                                String userAgent) {
+        ConsentimentoLGPD consentimento = new ConsentimentoLGPD();
+        consentimento.setCodigoConsentimento("CONS-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        consentimento.setClienteId(clienteId);
+        consentimento.setCpfCnpj(cpfCnpj);
+        consentimento.setTipoConsentimento(tipo);
+        consentimento.setStatus(ConsentimentoLGPD.StatusConsentimento.PENDENTE);
+        consentimento.setDataSolicitacao(LocalDateTime.now());
+        consentimento.setDescricaoFinalidade(descricaoFinalidade);
+        consentimento.setFinalidades(finalidades);
+        consentimento.setDadosColetados(dadosColetados);
+        consentimento.setCompartilhamentos(compartilhamentos);
+        consentimento.setIpAddress(ipAddress);
+        consentimento.setUserAgent(userAgent);
+        consentimento.setConsentimentoEspecifico(true);
+        consentimento.setConsentimentoInformado(true);
+        consentimento.setConsentimentoLivre(true);
+        consentimento.setConsentimentoIndubitavel(true);
+        return consentimentoRepository.save(consentimento);
+    }
+
+    @Transactional
+    public ConsentimentoLGPD concederConsentimento(String codigoConsentimento, LocalDateTime dataExpiracao) {
+        ConsentimentoLGPD consentimento = consentimentoRepository.findByCodigoConsentimento(codigoConsentimento)
+            .orElseThrow(() -> new IllegalArgumentException("Consentimento nao encontrado: " + codigoConsentimento));
+        consentimento.setStatus(ConsentimentoLGPD.StatusConsentimento.CONCEDIDO);
+        consentimento.setDataConsentimento(LocalDateTime.now());
+        consentimento.setDataExpiracao(dataExpiracao);
+        return consentimentoRepository.save(consentimento);
+    }
+
+    @Transactional
+    public ConsentimentoLGPD revogarConsentimento(String codigoConsentimento) {
+        ConsentimentoLGPD consentimento = consentimentoRepository.findByCodigoConsentimento(codigoConsentimento)
+            .orElseThrow(() -> new IllegalArgumentException("Consentimento nao encontrado: " + codigoConsentimento));
+        consentimento.setStatus(ConsentimentoLGPD.StatusConsentimento.REVOGADO);
+        return consentimentoRepository.save(consentimento);
+    }
+
+    public List<ConsentimentoLGPD> listarConsentimentosPorCliente(Long clienteId) {
+        return consentimentoRepository.findByClienteId(clienteId);
+    }
+
+    public List<ConsentimentoLGPD> listarConsentimentosAtivos(Long clienteId) {
+        return consentimentoRepository.findConsentimentosAtivosPorCliente(clienteId, LocalDateTime.now());
     }
 
     @Transactional

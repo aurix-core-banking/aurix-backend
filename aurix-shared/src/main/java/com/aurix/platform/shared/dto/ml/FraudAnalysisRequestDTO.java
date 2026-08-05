@@ -11,9 +11,12 @@ public class FraudAnalysisRequestDTO {
     private BigDecimal amount;
     private String currency;
     private String channel;
-    private String ipAddress;
     private String deviceId;
-    private String location;
+    private String ipAddress;
+    private String userAgent;
+    private String city;
+    private String state;
+    private String timestamp;
     private Map<String, String> metadata;
 
     public String getTransactionId() { return transactionId; }
@@ -34,14 +37,23 @@ public class FraudAnalysisRequestDTO {
     public String getChannel() { return channel; }
     public void setChannel(String channel) { this.channel = channel; }
 
-    public String getIpAddress() { return ipAddress; }
-    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
-
     public String getDeviceId() { return deviceId; }
     public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public String getIpAddress() { return ipAddress; }
+    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+
+    public String getUserAgent() { return userAgent; }
+    public void setUserAgent(String userAgent) { this.userAgent = userAgent; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+
+    public String getTimestamp() { return timestamp; }
+    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
 
     public Map<String, String> getMetadata() { return metadata; }
     public void setMetadata(Map<String, String> metadata) { this.metadata = metadata; }

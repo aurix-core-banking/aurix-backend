@@ -21,12 +21,15 @@ class DeadLetterQueueTest {
     @Mock
     private KafkaTemplate<String, Object> kafkaTemplate;
 
+    @Mock
+    private StoredEventJpaRepository repository;
+
     private DeadLetterQueue deadLetterQueue;
     private ContaEvent event;
 
     @BeforeEach
     void setUp() {
-        deadLetterQueue = new DeadLetterQueue(kafkaTemplate);
+        deadLetterQueue = new DeadLetterQueue(kafkaTemplate, repository);
         event = ContaEvent.contaCriada("conta-1", "cliente-1", BigDecimal.TEN, "CORRENTE");
     }
 
