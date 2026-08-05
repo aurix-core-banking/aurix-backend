@@ -1,29 +1,43 @@
 package com.aurix.platform.shared.dto.ml;
 
-import java.util.Map;
+import java.util.List;
 
 public class FraudAnalysisResponseDTO {
 
-    public enum FraudAction { ALLOW, BLOCK, REVIEW }
+    private double fraudScore;
+    private double anomalyScore;
+    private double supervisedScore;
+    private String riskLevel;
+    private List<String> redFlags;
+    private boolean blockTransaction;
+    private String recommendation;
+    private String decisionId;
+    private long processingTimeMs;
 
-    private boolean fraud;
-    private double riskScore;
-    private FraudAction action;
-    private String reason;
-    private Map<String, String> details;
+    public double getFraudScore() { return fraudScore; }
+    public void setFraudScore(double fraudScore) { this.fraudScore = fraudScore; }
 
-    public boolean isFraud() { return fraud; }
-    public void setFraud(boolean fraud) { this.fraud = fraud; }
+    public double getAnomalyScore() { return anomalyScore; }
+    public void setAnomalyScore(double anomalyScore) { this.anomalyScore = anomalyScore; }
 
-    public double getRiskScore() { return riskScore; }
-    public void setRiskScore(double riskScore) { this.riskScore = riskScore; }
+    public double getSupervisedScore() { return supervisedScore; }
+    public void setSupervisedScore(double supervisedScore) { this.supervisedScore = supervisedScore; }
 
-    public FraudAction getAction() { return action; }
-    public void setAction(FraudAction action) { this.action = action; }
+    public String getRiskLevel() { return riskLevel; }
+    public void setRiskLevel(String riskLevel) { this.riskLevel = riskLevel; }
 
-    public String getReason() { return reason; }
-    public void setReason(String reason) { this.reason = reason; }
+    public List<String> getRedFlags() { return redFlags; }
+    public void setRedFlags(List<String> redFlags) { this.redFlags = redFlags; }
 
-    public Map<String, String> getDetails() { return details; }
-    public void setDetails(Map<String, String> details) { this.details = details; }
+    public boolean isBlockTransaction() { return blockTransaction; }
+    public void setBlockTransaction(boolean blockTransaction) { this.blockTransaction = blockTransaction; }
+
+    public String getRecommendation() { return recommendation; }
+    public void setRecommendation(String recommendation) { this.recommendation = recommendation; }
+
+    public String getDecisionId() { return decisionId; }
+    public void setDecisionId(String decisionId) { this.decisionId = decisionId; }
+
+    public long getProcessingTimeMs() { return processingTimeMs; }
+    public void setProcessingTimeMs(long processingTimeMs) { this.processingTimeMs = processingTimeMs; }
 }

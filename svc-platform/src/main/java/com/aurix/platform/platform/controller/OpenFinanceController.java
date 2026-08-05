@@ -121,4 +121,49 @@ public class OpenFinanceController {
      * API de recursos - Lista recursos disponíveis
      */
     @GetMapping("/resources")
-    @Operation(summary = "Listar recursos"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    @Operation(summary = "Listar recursos", description = "Lista recursos disponíveis no Open Finance")
+    public ResponseEntity<Map<String, Object>> listarRecursos(@Parameter(description = "Token de acesso") @RequestHeader("Authorization") String authorization, HttpServletRequest request) {
+        log.info("Recebida solicitação para listar recursos");
+        // Extrair token
+        String accessToken = extrairToken(authorization);
+        // Validar token
+        var token = tokenService.validarToken(accessToken);
+        // Verificar rate limit
+        if (!tokenService.verificarRateLimit(accessToken)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+        }
+        // Registrar acesso
+        logService.registrarAcesso(token.getConsentId(), token.getClientId(), token.getUserId(), "/open-finance/resources", "GET", 200, System.currentTimeMillis(), obterIpAddress(request), request.getHeader("User-Agent"), request.getHeader("X-Device-Id"), request.getHeader("X-Geolocation"), "{\"dados\": \"recursos\"}");
+        // Lista de recursos disponíveis
+        Map<String, Object> response = Map.of("data", Map.of("resources", Map.of("accounts", "/open-finance/accounts", "transactions", "/open-finance/accounts/{accountId}/transactions", "creditCards", "/open-finance/credit-cards-accounts", "personalIdentifications", "/open-finance/customers/personal/identifications")), "links", Map.of("self", "/open-finance/resources"), "meta", Map.of("totalRecords", 4, "totalPages", 1));
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Extrai token do header Authorization
+     */
+    private String extrairToken(String authorization) {
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            return authorization.substring(7);
+        }
+        throw new RuntimeException("Token de autorização inválido");
+    }
+
+    /**
+     * Obtém IP address da requisição
+     */
+    private String obterIpAddress(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public OpenFinanceController(final TokenOpenFinanceService tokenService, final LogAcessoOpenFinanceService logService, final OpenFinanceDataService openFinanceDataService) {
+        this.tokenService = tokenService;
+        this.logService = logService;
+        this.openFinanceDataService = openFinanceDataService;
+    }
+}

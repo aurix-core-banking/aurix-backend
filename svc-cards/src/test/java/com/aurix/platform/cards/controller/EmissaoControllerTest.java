@@ -99,19 +99,35 @@ class EmissaoControllerTest {
         assertThat(response.getBody().getStatus().name()).isEqualTo("BLOQUEADO");
     }
 
-  :35:28.735) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.737) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.737) Debug :  File:() Line : (0) ThreadID: (8528) queryRootNode count =  1
-(2026-07-29 21:35:28.737) Debug :  File:() Line : (0) ThreadID: (8528) queryRootNode rootName =  "volume"
-(2026-07-29 21:35:28.741) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.743) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.746) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.748) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.750) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.751) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.751) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.753) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.753) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.755) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-29 21:35:28.757) Debug :  File:() Line : (0) ThreadID: (8528) queryNodeChildItems end
-(2026-07-2
+    @Test
+    void deveAtivarCartao() {
+        var emitReq = new EmitirCartaoRequest();
+        emitReq.setProdutoId(produtoId);
+        emitReq.setContaId(1L);
+        emitReq.setNomePortador("Joao Silva");
+        emitReq.setTipo("CREDITO");
+        var emitResponse = rest.postForEntity(url("/emissao"), emitReq, Cartao.class);
+        assertThat(emitResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        var cartaoId = emitResponse.getBody().getId();
+
+        var response = rest.postForEntity(url("/emissao/" + cartaoId + "/ativar"), null, Cartao.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getStatus().name()).isEqualTo("ATIVO");
+    }
+
+    @Test
+    void deveCancelarCartao() {
+        var emitReq = new EmitirCartaoRequest();
+        emitReq.setProdutoId(produtoId);
+        emitReq.setContaId(1L);
+        emitReq.setNomePortador("Joao Silva");
+        emitReq.setTipo("CREDITO");
+        var emitResponse = rest.postForEntity(url("/emissao"), emitReq, Cartao.class);
+        assertThat(emitResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        var cartaoId = emitResponse.getBody().getId();
+
+        var response = rest.postForEntity(url("/emissao/" + cartaoId + "/cancelar"), null, Cartao.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getStatus().name()).isEqualTo("CANCELADO");
+    }
+}

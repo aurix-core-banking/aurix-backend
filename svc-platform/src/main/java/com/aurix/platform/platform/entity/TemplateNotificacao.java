@@ -1,1 +1,46 @@
-tationRequestError: (error, _request, errorContext, silenceLog)=>routeModule.onRequestError(req, error, errorContext, silenceLog, routerServerContext),\n                    err: getRequestMeta(req, 'invokeError')\n                }\n            };\n            // When we're revalidating in the background, we should not allow dynamic\n            // responses.\n            if (forceStaticRender) {\n                context.renderOpts.supportsDynamicResponse = false;\n            }\n            const result = await invokeRouteModule(span, context);\n            const { metadata } = result;\n            const { cacheControl, headers = {}, // Add any fetch tags that were on the page to the response headers.\n            fetchTags: cacheTags, fetchMetrics } = metadata;\n            if (cacheTags) {\n                headers[NEXT_CACHE_TAGS_HEADER] = cacheTags;\n            }\n            // Pull any fetch metrics from the render onto the request.\n            ;\n            req.fetchMetrics = fetchMetrics;\n            // we don't throw static to dynamic errors in dev as isSSG\n            // is a best guess in dev since we don't have the prerender pass\n            // to know whether the path is actually static or not\n            if (isSSG && (cacheControl == null ? void 0 : cacheControl.revalidate) === 0 && !routeModule.isDev && !isRoutePPREnabled) {\n                const staticBailoutInfo = metadata.staticBailoutInfo;\n                const err = Object.defineProperty(new Error(`Page changed from static to dynamic at runtime ${resolvedPathname}${(staticBailoutInfo == null ? void 0 : staticBailoutInfo.description) ? `, reason: ${staticBailoutInfo.description}` : ``}` + `\\nsee more here https://nextj
+package com.aurix.platform.platform.entity;
+
+import com.aurix.platform.shared.entity.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "templates_notificacao", schema = "aurix")
+public class TemplateNotificacao extends BaseEntity {
+    @Column(name = "codigo", nullable = false, unique = true, length = 100)
+    private String codigo;
+
+    @Column(name = "nome", nullable = false, length = 200)
+    private String nome;
+
+    @Column(name = "canal", nullable = false, length = 30)
+    private String canal;
+
+    @Column(name = "assunto", length = 200)
+    private String assunto;
+
+    @Column(name = "corpo", nullable = false, length = 4000)
+    private String corpo;
+
+    @Column(name = "variaveis", length = 2000)
+    private String variaveis;
+
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo = true;
+
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getCanal() { return canal; }
+    public void setCanal(String canal) { this.canal = canal; }
+    public String getAssunto() { return assunto; }
+    public void setAssunto(String assunto) { this.assunto = assunto; }
+    public String getCorpo() { return corpo; }
+    public void setCorpo(String corpo) { this.corpo = corpo; }
+    public String getVariaveis() { return variaveis; }
+    public void setVariaveis(String variaveis) { this.variaveis = variaveis; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+}

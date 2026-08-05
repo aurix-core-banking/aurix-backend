@@ -44,8 +44,6 @@ aurix:
 
 server:
   port: 0
-  servlet:
-    context-path: /api/cambio
 
 logging:
   level:

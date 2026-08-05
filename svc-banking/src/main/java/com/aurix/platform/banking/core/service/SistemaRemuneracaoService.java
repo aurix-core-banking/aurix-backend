@@ -32,6 +32,11 @@ import java.util.stream.Collectors;
 public class SistemaRemuneracaoService {
 
     /**
+     * Logger da classe.
+     */
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SistemaRemuneracaoService.class);
+
+    /**
      * Valor máximo para o código aleatório.
      */
     private static final int MAX_RANDOM_CODE = 1000000;

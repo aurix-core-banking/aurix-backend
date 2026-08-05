@@ -176,9 +176,20 @@
                         </goals>
                         <configuration>
                             <inputDirectories>
-                                <include>${project.basedir}/../../../proto</include>
+                                <include>${project.basedir}/../../proto/aurix/ml/v1</include>
                             </inputDirectories>
-                            <outputDirectory>${project.build.directory}/generated-sources/protobuf</outputDirectory>
+                            <protocArtifact>com.google.protobuf:protoc:4.29.3:exe:linux-x86_64</protocArtifact>
+                            <outputTargets>
+                                <outputTarget>
+                                    <type>java</type>
+                                    <outputDirectory>${project.build.directory}/generated-sources/protobuf</outputDirectory>
+                                </outputTarget>
+                                <outputTarget>
+                                    <type>grpc-java</type>
+                                    <outputDirectory>${project.build.directory}/generated-sources/protobuf</outputDirectory>
+                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.70.0</pluginArtifact>
+                                </outputTarget>
+                            </outputTargets>
                         </configuration>
                     </execution>
                 </executions>

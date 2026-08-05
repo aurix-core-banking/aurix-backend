@@ -28,10 +28,10 @@ public class FraudCheckService {
         try {
             FraudAnalysisResponseDTO response = restTemplate.postForObject(
                     fraudEndpoint, request, FraudAnalysisResponseDTO.class);
-            log.info("Fraud analysis result: action={}, riskScore={}, fraud={}",
-                    response != null ? response.getAction() : "UNKNOWN",
-                    response != null ? response.getRiskScore() : -1,
-                    response != null ? response.isFraud() : false);
+            log.info("Fraud analysis result: riskLevel={}, fraudScore={}, blocked={}",
+                    response != null ? response.getRiskLevel() : "UNKNOWN",
+                    response != null ? response.getFraudScore() : -1,
+                    response != null ? response.isBlockTransaction() : false);
             return Optional.ofNullable(response);
         } catch (Exception e) {
             log.warn("Fraud analysis call failed (proceeding without blocking): {}", e.getMessage());
@@ -42,6 +42,6 @@ public class FraudCheckService {
     public boolean isBlocked(FraudAnalysisRequestDTO request) {
         Optional<FraudAnalysisResponseDTO> result = analyze(request);
         return result.isPresent()
-                && result.get().getAction() == FraudAnalysisResponseDTO.FraudAction.BLOCK;
+                && result.get().isBlockTransaction();
     }
 }
