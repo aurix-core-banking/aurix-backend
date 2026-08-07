@@ -8,7 +8,6 @@ spring:
     name: aurix-gateway
   autoconfigure:
     exclude:
-      - org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
@@ -29,6 +28,7 @@ spring:
             - Path=/api/core/**,/api/pix/**,/api/payments/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-credit (port 8082) — credit, consignado, financiamento
         - id: svc-credit
@@ -37,6 +37,7 @@ spring:
             - Path=/api/credit/**,/api/consignado/**,/api/financiamento/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-customer (port 8083) — customers
         - id: svc-customer
@@ -45,6 +46,7 @@ spring:
             - Path=/api/customer/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-products (port 8084) — products, poupanca, salario, treasury, investimento, seguros
         - id: svc-products
@@ -53,6 +55,7 @@ spring:
             - Path=/api/products/**,/api/poupanca/**,/api/salario/**,/api/treasury/**,/api/investimento/**,/api/seguros/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-finance-mgmt (port 8089) — finance, accounting, settlement, pricing
         - id: svc-finance-mgmt
@@ -61,6 +64,7 @@ spring:
             - Path=/api/finance/**,/api/accounting/**,/api/settlement/**,/api/pricing/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-intelligence (port 8091) — analytics, intelligence
         - id: svc-intelligence
@@ -69,6 +73,7 @@ spring:
             - Path=/api/intelligence/**,/api/analytics/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-platform (port 8092) — platform, openfinance, baas, provisioning, billing, webhooks, internet-banking, mobile-banking, audit
         - id: svc-platform
@@ -77,6 +82,7 @@ spring:
             - Path=/api/platform/**,/api/openfinance/**,/api/baas/**,/api/provisioning/**,/api/billing/**,/api/webhooks/**,/api/internet-banking/**,/api/mobile-banking/**,/api/audit/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-cambio (port 8093) — cambio, bacen
         - id: svc-cambio
@@ -85,6 +91,7 @@ spring:
             - Path=/api/cambio/**,/api/bacen/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-banking (port 8095) — banking, onboarding, organization
         - id: svc-banking
@@ -93,6 +100,7 @@ spring:
             - Path=/api/banking/**,/api/onboarding/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-fraud (port 8204) — fraud detection
         - id: svc-fraud
@@ -101,6 +109,7 @@ spring:
             - Path=/api/fraud/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-compliance (port 8205) — compliance
         - id: svc-compliance
@@ -109,6 +118,7 @@ spring:
             - Path=/api/compliance/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-cards (port 8094) — cards, cartoes
         - id: svc-cards
@@ -117,6 +127,7 @@ spring:
             - Path=/api/cards/**,/api/cartoes/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # svc-ai (port 8206) — AI/LLM integration
         - id: svc-ai
@@ -125,18 +136,17 @@ spring:
             - Path=/api/ai/**
           filters:
             - StripPrefix=2
+            - CircuitBreaker=name:gateway
 
         # ===== Health Check =====
-        - id: health
-          uri: http://localhost:8081/api/core/health
-          predicates:
-            - Path=/health/**
+        # Rota de health removida: o HealthController local em /health e o actuator
+        # do gateway nao devem ser encaminhados para servicos de backend.
 
       # CORS
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
@@ -184,29 +194,52 @@ aurix:
       enabled: true
     version: "1.0.0"
     description: "Aurix Gateway - API Gateway"
+    api-key:
+      enabled: false
+      required: false
+      header-name: X-API-Key
+      tenant-header: X-Tenant-Id
+      plan-header: X-Plan
+      exempt-paths:
+        - /actuator/**
+        - /health/**
+      keys:
+        sandbox-key-aurix-demo:
+          plan: sandbox
+          tenantId: default
+      plan-limits:
+        free: 10
+        sandbox: 30
+        starter: 60
+        growth: 300
+        enterprise: 1000
+    rate-limit:
+      enabled: true
+      redis-enabled: false
+      requests-per-minute: 100
+      burst-capacity: 200
 
   security:
     jwt:
-      secret: ${AURIX_JWT_SECRET}
+      enabled: false
+      issuer-uri: ${KEYCLOAK_ISSUER_URI:}
+      jwk-set-uri: ${KEYCLOAK_JWKS_URI:}
+      secret: ${AURIX_JWT_SECRET:}
       expiration: 86400000
 
-  rate-limit:
-    requests-per-minute: 100
-    burst-capacity: 200
-
-  api-key:
-    enabled: false
-    required: false
-    keys:
-      sandbox-key-aurix-demo:
-        plan: sandbox
-        tenantId: default
-    plan-limits:
-      free: 10
-      sandbox: 30
-      starter: 60
-      growth: 300
-      enterprise: 1000
+# Resilience4j (circuit breaker)
+resilience4j:
+  circuitbreaker:
+    instances:
+      gateway:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
 
 ---
 # Development profile
@@ -227,6 +260,17 @@ spring:
   config:
     activate:
       on-profile: prod
+
+aurix:
+  gateway:
+    api-key:
+      enabled: true
+      required: true
+    rate-limit:
+      redis-enabled: true
+  security:
+    jwt:
+      enabled: true
 
 logging:
   level:
