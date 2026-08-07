@@ -8,7 +8,7 @@ import com.aurix.platform.banking.core.entity.ControleSaldo;
 import com.aurix.platform.banking.core.repository.LiquidacaoRepository;
 import com.aurix.platform.banking.core.repository.LiquidacaoItemRepository;
 import com.aurix.platform.banking.core.repository.ControleSaldoRepository;
-import com.aurix.platform.banking.core.repository.TransacaoRepository;
+import com.aurix.platform.shared.repository.TransacaoRepository;
 import com.aurix.platform.shared.entity.Conta;
 import com.aurix.platform.shared.entity.Transacao;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.aurix.platform.payments.pix.repository;
+package com.aurix.platform.shared.repository;
 
 import com.aurix.platform.shared.entity.PixChave;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,68 +9,31 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repositório para PIX Chave
- */
 @Repository
 public interface PixChaveRepository extends JpaRepository<PixChave, Long> {
-    
-    /**
-     * Busca chave PIX por chave
-     */
+
     Optional<PixChave> findByChavePix(String chavePix);
-    
-    /**
-     * Busca chaves por conta
-     */
+
     List<PixChave> findByContaId(Long contaId);
-    
-    /**
-     * Busca chaves ativas por conta
-     */
+
     @Query("SELECT p FROM PixChave p WHERE p.conta.id = :contaId AND p.status = 'ATIVA'")
     List<PixChave> findChavesAtivasByContaId(@Param("contaId") Long contaId);
-    
-    /**
-     * Busca chaves por tipo
-     */
+
     List<PixChave> findByTipoChave(PixChave.TipoChavePix tipoChave);
-    
-    /**
-     * Busca chaves por status
-     */
+
     List<PixChave> findByStatus(PixChave.StatusChavePix status);
-    
-    /**
-     * Verifica se existe chave PIX
-     */
+
     boolean existsByChavePix(String chavePix);
-    
-    /**
-     * Verifica se existe chave ativa para a conta
-     */
+
     @Query("SELECT COUNT(p) > 0 FROM PixChave p WHERE p.conta.id = :contaId AND p.status = 'ATIVA'")
     boolean existsChaveAtivaByContaId(@Param("contaId") Long contaId);
-    
-    /**
-     * Busca chave ativa por chave PIX
-     */
+
     @Query("SELECT p FROM PixChave p WHERE p.chavePix = :chavePix AND p.status = 'ATIVA'")
     Optional<PixChave> findChaveAtivaByChavePix(@Param("chavePix") String chavePix);
-    
-    /**
-     * Conta chaves por status
-     */
+
     long countByStatus(PixChave.StatusChavePix status);
-    
-    /**
-     * Conta chaves por tipo
-     */
+
     long countByTipoChave(PixChave.TipoChavePix tipoChave);
-    
-    /**
-     * Conta chaves por conta
-     */
+
     long countByContaId(Long contaId);
 }
-

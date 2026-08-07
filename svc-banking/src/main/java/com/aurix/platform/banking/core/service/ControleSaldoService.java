@@ -8,7 +8,7 @@ import com.aurix.platform.banking.core.entity.MovimentoConta;
 import com.aurix.platform.banking.core.repository.ControleSaldoRepository;
 import com.aurix.platform.banking.core.repository.HistoricoSaldoRepository;
 import com.aurix.platform.banking.core.repository.MovimentoContaRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.shared.entity.Conta;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

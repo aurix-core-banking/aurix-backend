@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.aurix.platform.banking.core.entity.ControleSaldo;
 import com.aurix.platform.banking.core.integration.BoletoProvider;
-import com.aurix.platform.banking.core.repository.ClienteRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ClienteRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.banking.core.repository.ControleSaldoRepository;
 import com.aurix.platform.banking.core.repository.HistoricoSaldoRepository;
 import com.aurix.platform.banking.core.repository.MovimentoContaRepository;

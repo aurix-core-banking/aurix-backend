@@ -34,7 +34,8 @@ import java.util.Map;
 })
 @EnableJpaRepositories(basePackages = {
     "com.aurix.platform.compliance.repository",
-    "com.aurix.platform.shared.eventhub"
+    "com.aurix.platform.shared.eventhub",
+    "com.aurix.platform.shared.repository"
 })
 @EnableKafka
 @EnableScheduling

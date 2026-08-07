@@ -1,6 +1,6 @@
 package com.aurix.platform.intelligence.service;
 
-import com.aurix.platform.intelligence.repository.MetricaRepository;
+import com.aurix.platform.shared.repository.MetricaRepository;
 import com.aurix.platform.shared.dto.MetricaDTO;
 import com.aurix.platform.shared.entity.Metrica;
 import org.springframework.stereotype.Service;

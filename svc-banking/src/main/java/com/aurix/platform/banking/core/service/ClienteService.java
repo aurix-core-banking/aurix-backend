@@ -1,6 +1,6 @@
 package com.aurix.platform.banking.core.service;
 
-import com.aurix.platform.banking.core.repository.ClienteRepository;
+import com.aurix.platform.shared.repository.ClienteRepository;
 import com.aurix.platform.shared.dto.ClienteDTO;
 import com.aurix.platform.shared.entity.Cliente;
 import com.aurix.platform.shared.exception.ClienteNaoEncontradoException;

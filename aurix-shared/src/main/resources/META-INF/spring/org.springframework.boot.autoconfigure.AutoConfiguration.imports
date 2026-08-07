@@ -1,1 +1,2 @@
 com.aurix.platform.shared.config.CacheConfig
+com.aurix.platform.shared.config.AuditServiceAutoConfiguration

@@ -8,7 +8,7 @@ import com.aurix.platform.banking.core.entity.Tarifa;
 import com.aurix.platform.banking.core.repository.CobrancaTarifaRepository;
 import com.aurix.platform.banking.core.repository.ContaTarifaRepository;
 import com.aurix.platform.banking.core.repository.TarifaRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.shared.entity.Conta;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

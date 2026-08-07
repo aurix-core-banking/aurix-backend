@@ -4,7 +4,7 @@ import com.aurix.platform.banking.core.dto.LiquidacaoDTO;
 import com.aurix.platform.banking.core.entity.Boleto;
 import com.aurix.platform.banking.core.integration.BoletoProvider;
 import com.aurix.platform.banking.core.repository.BoletoRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.shared.entity.Conta;
 import com.aurix.platform.shared.entity.Transacao;
 import com.aurix.platform.shared.tenant.TenantContext;

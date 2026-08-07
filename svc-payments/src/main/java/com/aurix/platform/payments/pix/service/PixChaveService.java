@@ -1,7 +1,7 @@
 package com.aurix.platform.payments.pix.service;
 
-import com.aurix.platform.payments.pix.repository.ContaRepository;
-import com.aurix.platform.payments.pix.repository.PixChaveRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
+import com.aurix.platform.shared.repository.PixChaveRepository;
 import com.aurix.platform.shared.dto.PixChaveDTO;
 import com.aurix.platform.shared.entity.Conta;
 import com.aurix.platform.shared.entity.PixChave;

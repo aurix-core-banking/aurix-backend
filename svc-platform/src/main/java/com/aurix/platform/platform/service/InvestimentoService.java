@@ -1,7 +1,7 @@
 package com.aurix.platform.platform.service;
 
 import com.aurix.platform.shared.entity.Conta;
-import com.aurix.platform.platform.repository.InvestimentoRepository;
+import com.aurix.platform.shared.repository.InvestimentoRepository;
 import com.aurix.platform.shared.dto.InvestimentoDTO;
 import com.aurix.platform.shared.entity.Investimento;
 import jakarta.persistence.EntityManager;

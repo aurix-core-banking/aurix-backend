@@ -1,4 +1,4 @@
-package com.aurix.platform.banking.core.repository;
+package com.aurix.platform.shared.repository;
 
 import com.aurix.platform.shared.entity.Transacao;
 import org.springframework.data.domain.Page;
@@ -49,10 +49,10 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
                                           @Param("inicio") LocalDateTime inicio,
                                           @Param("fim") LocalDateTime fim);
 
-    @Query("SELECT COALESCE(SUM(t.valor), 0) FROM Transacao t " +
-           "WHERE (t.contaOrigem.id = :contaId) " +
-           "AND t.dataTransacao >= :startOfDay " +
-           "AND t.status NOT IN ('CANCELADA', 'FALHADA', 'REVERTIDA')")
+    @Query("SELECT COALESCE(SUM(t.valor), 0) FROM Transacao t "
+           + "WHERE (t.contaOrigem.id = :contaId) "
+           + "AND t.dataTransacao >= :startOfDay "
+           + "AND t.status NOT IN ('CANCELADA', 'FALHADA', 'REVERTIDA')")
     BigDecimal sumDailyDebitsByContaOrigem(@Param("contaId") Long contaId,
                                            @Param("startOfDay") LocalDateTime startOfDay);
 

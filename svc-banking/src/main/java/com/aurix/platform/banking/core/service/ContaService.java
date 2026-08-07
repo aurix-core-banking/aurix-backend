@@ -1,7 +1,7 @@
 package com.aurix.platform.banking.core.service;
 
-import com.aurix.platform.banking.core.repository.ClienteRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ClienteRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.shared.dto.ContaDTO;
 import com.aurix.platform.shared.entity.Cliente;
 import com.aurix.platform.shared.entity.Conta;

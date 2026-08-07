@@ -2,7 +2,7 @@ package com.aurix.platform.banking.core.controller;
 
 import com.aurix.platform.banking.core.entity.ControleSaldo;
 import com.aurix.platform.banking.core.repository.ControleSaldoRepository;
-import com.aurix.platform.banking.core.repository.TransactionLegRepository;
+import com.aurix.platform.shared.repository.TransactionLegRepository;
 import com.aurix.platform.banking.core.service.NtoNTransactionService;
 import com.aurix.platform.shared.dto.TransacaoDTO;
 import com.aurix.platform.shared.entity.Conta;

@@ -2,9 +2,9 @@ package com.aurix.platform.banking.core.validation;
 
 import com.aurix.platform.banking.core.entity.ControleSaldo;
 import com.aurix.platform.banking.core.entity.ValidationRule;
-import com.aurix.platform.banking.core.repository.AssetRateRepository;
+import com.aurix.platform.shared.repository.AssetRateRepository;
 import com.aurix.platform.banking.core.repository.ControleSaldoRepository;
-import com.aurix.platform.banking.core.repository.TransacaoRepository;
+import com.aurix.platform.shared.repository.TransacaoRepository;
 import com.aurix.platform.banking.core.repository.ValidationRuleRepository;
 import com.aurix.platform.shared.entity.*;
 import org.junit.jupiter.api.BeforeEach;

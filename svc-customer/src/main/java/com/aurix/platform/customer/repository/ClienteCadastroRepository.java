@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+public interface ClienteCadastroRepository extends JpaRepository<Cliente, Long> {
     Optional<Cliente> findByDocumento(String documento);
     List<Cliente> findBySegmento(String segmento);
     List<Cliente> findByStatus(String status);

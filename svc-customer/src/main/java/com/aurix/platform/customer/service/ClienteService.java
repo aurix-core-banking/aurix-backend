@@ -3,7 +3,7 @@ package com.aurix.platform.customer.service;
 import com.aurix.platform.customer.entity.Cliente;
 import com.aurix.platform.customer.entity.Endereco;
 import com.aurix.platform.customer.entity.Contato;
-import com.aurix.platform.customer.repository.ClienteRepository;
+import com.aurix.platform.customer.repository.ClienteCadastroRepository;
 import com.aurix.platform.customer.repository.EnderecoRepository;
 import com.aurix.platform.customer.repository.ContatoRepository;
 import org.springframework.stereotype.Service;
@@ -13,12 +13,12 @@ import java.util.List;
 @Service
 @Transactional
 public class ClienteService {
-    private final ClienteRepository clienteRepository;
+    private final ClienteCadastroRepository clienteRepository;
     private final EnderecoRepository enderecoRepository;
     private final ContatoRepository contatoRepository;
     private final ClienteProducer clienteProducer;
 
-    public ClienteService(ClienteRepository clienteRepository, EnderecoRepository enderecoRepository,
+    public ClienteService(ClienteCadastroRepository clienteRepository, EnderecoRepository enderecoRepository,
                           ContatoRepository contatoRepository, ClienteProducer clienteProducer) {
         this.clienteRepository = clienteRepository;
         this.enderecoRepository = enderecoRepository;

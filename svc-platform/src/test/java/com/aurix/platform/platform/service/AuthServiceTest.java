@@ -4,7 +4,7 @@ import com.aurix.platform.platform.entity.PasswordResetToken;
 import com.aurix.platform.platform.entity.RefreshToken;
 import com.aurix.platform.platform.repository.PasswordResetTokenRepository;
 import com.aurix.platform.platform.repository.RefreshTokenRepository;
-import com.aurix.platform.platform.repository.UsuarioRepository;
+import com.aurix.platform.shared.repository.UsuarioRepository;
 import com.aurix.platform.shared.dto.LoginRequestDTO;
 import com.aurix.platform.shared.dto.LoginResponseDTO;
 import com.aurix.platform.shared.entity.Usuario;

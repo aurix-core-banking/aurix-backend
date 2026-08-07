@@ -2,8 +2,8 @@ package com.aurix.platform.banking.core.service;
 
 import com.aurix.platform.banking.core.dto.MovimentoContaDTO;
 import com.aurix.platform.banking.core.entity.MovimentoConta;
-import com.aurix.platform.banking.core.repository.TransacaoRepository;
-import com.aurix.platform.banking.core.repository.TransactionLegRepository;
+import com.aurix.platform.shared.repository.TransacaoRepository;
+import com.aurix.platform.shared.repository.TransactionLegRepository;
 import com.aurix.platform.banking.core.validation.TransactionValidator;
 import com.aurix.platform.shared.dto.ml.FraudAnalysisRequestDTO;
 import com.aurix.platform.shared.entity.*;

@@ -2,9 +2,9 @@ package com.aurix.platform.credit.credit.integration;
 
 import com.aurix.platform.credit.CreditApplication;
 import com.aurix.platform.credit.credit.entity.ProdutoCredito;
-import com.aurix.platform.credit.credit.repository.ClienteRepository;
+import com.aurix.platform.shared.repository.ClienteRepository;
 import com.aurix.platform.credit.credit.repository.ProdutoCreditoRepository;
-import com.aurix.platform.credit.credit.repository.SolicitacaoCreditoRepository;
+import com.aurix.platform.shared.repository.SolicitacaoCreditoRepository;
 import com.aurix.platform.shared.dto.SolicitacaoCreditoDTO;
 import com.aurix.platform.shared.entity.Cliente;
 import com.aurix.platform.shared.entity.SolicitacaoCredito;

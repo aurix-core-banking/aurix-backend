@@ -7,7 +7,7 @@ import com.aurix.platform.shared.entity.Investimento;
 import com.aurix.platform.shared.entity.Conta.TipoConta;
 import com.aurix.platform.shared.entity.Conta.StatusConta;
 import com.aurix.platform.platform.PlatformApplication;
-import com.aurix.platform.platform.repository.InvestimentoRepository;
+import com.aurix.platform.shared.repository.InvestimentoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;

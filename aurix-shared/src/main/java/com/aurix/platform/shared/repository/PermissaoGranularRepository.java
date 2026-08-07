@@ -1,4 +1,4 @@
-package com.aurix.platform.customer.security.repository;
+package com.aurix.platform.shared.repository;
 
 import com.aurix.platform.shared.entity.PermissaoGranular;
 import org.springframework.data.jpa.repository.JpaRepository;

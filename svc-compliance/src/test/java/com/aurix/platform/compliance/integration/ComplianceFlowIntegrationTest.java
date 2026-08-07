@@ -26,7 +26,7 @@ class ComplianceFlowIntegrationTest {
     private int port;
 
     @Autowired
-    private com.aurix.platform.compliance.repository.RegulacaoRepository regulacaoRepository;
+    private com.aurix.platform.shared.repository.RegulacaoRepository regulacaoRepository;
 
     @Autowired
     private com.aurix.platform.compliance.repository.ConsentimentoLGPDRepository consentimentoRepository;

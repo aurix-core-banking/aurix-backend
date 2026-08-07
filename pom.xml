@@ -71,12 +71,6 @@
                 <artifactId>aurix-shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- Aurix Organization -->
-            <dependency>
-                <groupId>com.aurix.platform</groupId>
-                <artifactId>aurix-organization</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

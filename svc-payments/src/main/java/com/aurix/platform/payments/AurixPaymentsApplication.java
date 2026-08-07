@@ -25,7 +25,8 @@ import java.util.Map;
 })
 @EnableJpaRepositories(basePackages = {
     "com.aurix.platform.payments.pix.repository",
-    "com.aurix.platform.shared.eventhub"
+    "com.aurix.platform.shared.eventhub",
+    "com.aurix.platform.shared.repository"
 })
 @EnableScheduling
 @EnableCaching
