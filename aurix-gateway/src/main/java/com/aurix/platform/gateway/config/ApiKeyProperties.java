@@ -2,7 +2,9 @@ package com.aurix.platform.gateway.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -10,6 +12,10 @@ import java.util.Map;
 public class ApiKeyProperties {
     private boolean enabled = false;
     private boolean required = false;
+    private String headerName = "X-API-Key";
+    private String tenantHeader = "X-Tenant-Id";
+    private String planHeader = "X-Plan";
+    private List<String> exemptPaths = new ArrayList<>();
     private Map<String, ApiKeyEntry> keys = new HashMap<>();
     private Map<String, Integer> planLimits = defaultPlanLimits();
 
@@ -112,6 +118,26 @@ public class ApiKeyProperties {
     }
 
     @java.lang.SuppressWarnings("all")
+    public String getHeaderName() {
+        return this.headerName;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getTenantHeader() {
+        return this.tenantHeader;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public String getPlanHeader() {
+        return this.planHeader;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public List<String> getExemptPaths() {
+        return this.exemptPaths;
+    }
+
+    @java.lang.SuppressWarnings("all")
     public Map<String, ApiKeyEntry> getKeys() {
         return this.keys;
     }
@@ -129,6 +155,26 @@ public class ApiKeyProperties {
     @java.lang.SuppressWarnings("all")
     public void setRequired(final boolean required) {
         this.required = required;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setHeaderName(final String headerName) {
+        this.headerName = headerName;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setTenantHeader(final String tenantHeader) {
+        this.tenantHeader = tenantHeader;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setPlanHeader(final String planHeader) {
+        this.planHeader = planHeader;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public void setExemptPaths(final List<String> exemptPaths) {
+        this.exemptPaths = exemptPaths;
     }
 
     @java.lang.SuppressWarnings("all")
