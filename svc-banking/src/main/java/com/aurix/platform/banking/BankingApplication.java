@@ -38,7 +38,8 @@ import java.util.Map;
     "com.aurix.platform.banking.pricing.repository",
     "com.aurix.platform.banking.settlement.repository",
     "com.aurix.platform.banking.integration.webhook",
-    "com.aurix.platform.shared.eventhub"
+    "com.aurix.platform.shared.eventhub",
+    "com.aurix.platform.shared.repository"
 })
 @EnableScheduling
 @EnableCaching

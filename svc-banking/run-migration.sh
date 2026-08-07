@@ -94,8 +94,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     "com.aurix.platform.banking.salario.entity",
     "com.aurix.platform.banking.pricing.entity",
     "com.aurix.platform.banking.settlement.entity",
-    "com.aurix.platform.shared.entity",
-    "com.aurix.platform.organization.entity"
+    "com.aurix.platform.shared.entity"
 })
 @EnableJpaRepositories(basePackages = {
     "com.aurix.platform.banking.core.repository",

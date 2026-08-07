@@ -1,4 +1,4 @@
-package com.aurix.platform.banking.core.repository;
+package com.aurix.platform.shared.repository;
 
 import com.aurix.platform.shared.entity.TransactionLeg;
 import org.springframework.data.jpa.repository.JpaRepository;

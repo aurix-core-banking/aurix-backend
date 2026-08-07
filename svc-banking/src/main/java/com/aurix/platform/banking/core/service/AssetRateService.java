@@ -1,6 +1,6 @@
 package com.aurix.platform.banking.core.service;
 
-import com.aurix.platform.banking.core.repository.AssetRateRepository;
+import com.aurix.platform.shared.repository.AssetRateRepository;
 import com.aurix.platform.shared.entity.AssetRate;
 import org.springframework.stereotype.Service;
 

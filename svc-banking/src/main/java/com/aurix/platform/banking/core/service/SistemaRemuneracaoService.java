@@ -7,7 +7,7 @@ import com.aurix.platform.banking.core.entity.HistoricoRemuneracao;
 import com.aurix.platform.banking.core.entity.ProdutoFinanceiro;
 import com.aurix.platform.banking.core.entity.Remuneracao;
 import com.aurix.platform.banking.core.repository.AplicacaoFinanceiraRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.banking.core.repository.HistoricoRemuneracaoRepository;
 import com.aurix.platform.banking.core.repository.ProdutoFinanceiroRepository;
 import com.aurix.platform.banking.core.repository.RemuneracaoRepository;

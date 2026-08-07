@@ -1,7 +1,7 @@
 package com.aurix.platform.banking.core.event;
 
-import com.aurix.platform.banking.core.repository.ContaRepository;
-import com.aurix.platform.banking.core.repository.TransacaoRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
+import com.aurix.platform.shared.repository.TransacaoRepository;
 import com.aurix.platform.shared.cache.SharedCacheService;
 import com.aurix.platform.shared.dto.ContaDTO;
 import com.aurix.platform.shared.dto.TransacaoDTO;

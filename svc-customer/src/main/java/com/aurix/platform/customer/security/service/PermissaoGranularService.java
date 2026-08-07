@@ -1,7 +1,7 @@
 package com.aurix.platform.customer.security.service;
 
 import com.aurix.platform.shared.entity.PermissaoGranular;
-import com.aurix.platform.customer.security.repository.PermissaoGranularRepository;
+import com.aurix.platform.shared.repository.PermissaoGranularRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;

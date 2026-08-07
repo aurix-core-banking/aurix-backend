@@ -2,6 +2,7 @@ package com.aurix.platform.banking.core.service;
 
 import com.aurix.platform.banking.core.entity.*;
 import com.aurix.platform.banking.core.repository.*;
+import com.aurix.platform.shared.repository.*;
 import com.aurix.platform.shared.entity.Conta;
 import com.aurix.platform.shared.entity.Transacao;
 import org.junit.jupiter.api.BeforeEach;

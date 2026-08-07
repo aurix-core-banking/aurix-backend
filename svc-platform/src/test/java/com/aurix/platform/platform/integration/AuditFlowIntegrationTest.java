@@ -2,8 +2,8 @@ package com.aurix.platform.platform.integration;
 
 import com.aurix.platform.platform.PlatformApplication;
 import com.aurix.platform.platform.dto.RelatorioComplianceDTO;
-import com.aurix.platform.platform.repository.LogAuditoriaRepository;
-import com.aurix.platform.platform.repository.SessaoAuditoriaRepository;
+import com.aurix.platform.shared.repository.LogAuditoriaRepository;
+import com.aurix.platform.shared.repository.SessaoAuditoriaRepository;
 import com.aurix.platform.shared.dto.LogAuditoriaDTO;
 import com.aurix.platform.shared.entity.LogAuditoria;
 import java.time.LocalDateTime;

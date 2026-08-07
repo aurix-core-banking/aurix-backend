@@ -22,7 +22,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 })
 @EnableJpaRepositories(basePackages = {
     "com.aurix.platform.intelligence.repository",
-    "com.aurix.platform.shared.eventhub"
+    "com.aurix.platform.shared.eventhub",
+    "com.aurix.platform.shared.repository"
 })
 @EnableScheduling
 @EnableCaching

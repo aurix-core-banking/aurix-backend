@@ -1,7 +1,7 @@
 package com.aurix.platform.platform.service;
 
 import com.aurix.platform.shared.entity.Investimento;
-import com.aurix.platform.platform.repository.InvestimentoRepository;
+import com.aurix.platform.shared.repository.InvestimentoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;

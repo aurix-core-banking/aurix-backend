@@ -2,9 +2,9 @@ package com.aurix.platform.payments.pix.service;
 
 import com.aurix.platform.payments.pix.client.PixBacenClient;
 import com.aurix.platform.payments.pix.client.dto.SpiResult;
-import com.aurix.platform.payments.pix.repository.ContaRepository;
-import com.aurix.platform.payments.pix.repository.PixChaveRepository;
-import com.aurix.platform.payments.pix.repository.PixTransferenciaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
+import com.aurix.platform.shared.repository.PixChaveRepository;
+import com.aurix.platform.shared.repository.PixTransferenciaRepository;
 import com.aurix.platform.shared.dto.PixTransferenciaDTO;
 import com.aurix.platform.shared.entity.Conta;
 import com.aurix.platform.shared.entity.PixChave;

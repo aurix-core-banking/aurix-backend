@@ -3,7 +3,7 @@ package com.aurix.platform.banking.core.service;
 import com.aurix.platform.banking.core.dto.LiquidacaoDTO;
 import com.aurix.platform.banking.core.entity.AgendamentoDebito;
 import com.aurix.platform.banking.core.repository.AgendamentoDebitoRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.shared.entity.Conta;
 import com.aurix.platform.shared.entity.Transacao;
 import com.aurix.platform.shared.tenant.TenantContext;

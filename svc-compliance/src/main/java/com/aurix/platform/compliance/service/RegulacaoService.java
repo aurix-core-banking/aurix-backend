@@ -1,6 +1,6 @@
 package com.aurix.platform.compliance.service;
 
-import com.aurix.platform.compliance.repository.RegulacaoRepository;
+import com.aurix.platform.shared.repository.RegulacaoRepository;
 import com.aurix.platform.shared.dto.RegulacaoDTO;
 import com.aurix.platform.shared.entity.Regulacao;
 import org.springframework.stereotype.Service;

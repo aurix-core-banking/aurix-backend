@@ -5,7 +5,7 @@ import com.aurix.platform.banking.core.entity.ItemConciliacao;
 import com.aurix.platform.banking.core.entity.Liquidacao;
 import com.aurix.platform.banking.core.entity.Reconciliacao;
 import com.aurix.platform.banking.core.repository.ConciliacaoBancariaRepository;
-import com.aurix.platform.banking.core.repository.ContaRepository;
+import com.aurix.platform.shared.repository.ContaRepository;
 import com.aurix.platform.banking.core.repository.ItemConciliacaoRepository;
 import com.aurix.platform.banking.core.repository.LiquidacaoRepository;
 import com.aurix.platform.banking.core.repository.ReconciliacaoRepository;

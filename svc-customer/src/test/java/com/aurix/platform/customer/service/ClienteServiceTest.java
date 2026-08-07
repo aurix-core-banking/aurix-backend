@@ -1,7 +1,7 @@
 package com.aurix.platform.customer.service;
 
 import com.aurix.platform.customer.entity.Cliente;
-import com.aurix.platform.customer.repository.ClienteRepository;
+import com.aurix.platform.customer.repository.ClienteCadastroRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClienteServiceTest {
-    @Mock private ClienteRepository clienteRepository;
+    @Mock private ClienteCadastroRepository clienteRepository;
     @Mock private com.aurix.platform.customer.repository.EnderecoRepository enderecoRepository;
     @Mock private com.aurix.platform.customer.repository.ContatoRepository contatoRepository;
     @Mock private ClienteProducer clienteProducer;

@@ -1,7 +1,7 @@
 package com.aurix.platform.platform.service;
 
 import com.aurix.platform.platform.dto.RelatorioComplianceDTO;
-import com.aurix.platform.platform.repository.LogAuditoriaRepository;
+import com.aurix.platform.shared.repository.LogAuditoriaRepository;
 import com.aurix.platform.shared.dto.LogAuditoriaDTO;
 import com.aurix.platform.shared.entity.LogAuditoria;
 import org.springframework.stereotype.Service;
