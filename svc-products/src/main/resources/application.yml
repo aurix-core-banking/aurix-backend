@@ -2,6 +2,12 @@ server:
   port: 8084
 
 spring:
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    validate-migration-naming: true
+    locations: classpath:db/migration
+    schemas: aurix
   application:
     name: svc-products
   profiles:

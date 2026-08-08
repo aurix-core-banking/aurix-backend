@@ -2,6 +2,12 @@ server:
   port: 8094
 
 spring:
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    validate-migration-naming: true
+    locations: classpath:db/migration
+    schemas: aurix
   profiles:
     active: dev
   application:

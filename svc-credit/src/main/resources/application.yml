@@ -12,6 +12,12 @@ management:
         include: health,info,prometheus,metrics
 
 spring:
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    validate-migration-naming: true
+    locations: classpath:db/migration
+    schemas: aurix
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/aurix_credit}
     username: ${SPRING_DATASOURCE_USERNAME}
