@@ -74,6 +74,18 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Flyway: migrações versionadas do banco compartilhado (aurix_db).
+             Todas as migrações ficam em src/main/resources/db/migration deste módulo.
+             flyway-database-postgresql é exigido pelo Flyway 10+ para suporte a PostgreSQL. -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
         
         <!-- Redis -->
         <dependency>
