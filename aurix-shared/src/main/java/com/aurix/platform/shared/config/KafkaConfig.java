@@ -43,6 +43,9 @@ public class KafkaConfig {
         /** Número de tentativas de reenvio. */
         private static final int KAFKA_RETRIES = 3;
 
+        /** Tempo máximo de bloqueio para obter metadata do tópico em ms. */
+        private static final int KAFKA_MAX_BLOCK_MS = 5000;
+
         /** Tamanho do lote de mensagens. */
         private static final int KAFKA_BATCH_SIZE = 16384;
 
@@ -84,6 +87,8 @@ public class KafkaConfig {
                 configProps.put(ProducerConfig.RETRIES_CONFIG, KAFKA_RETRIES);
                 configProps.put(ProducerConfig.BATCH_SIZE_CONFIG, KAFKA_BATCH_SIZE);
                 configProps.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+                configProps.put(ProducerConfig.MAX_BLOCK_MS_CONFIG,
+                                KAFKA_MAX_BLOCK_MS);
                 configProps.put(ProducerConfig.BUFFER_MEMORY_CONFIG,
                                 KAFKA_BUFFER_MEMORY);
 

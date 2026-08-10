@@ -77,7 +77,8 @@
 
         <!-- Flyway: migrações versionadas do banco compartilhado (aurix_db).
              Todas as migrações ficam em src/main/resources/db/migration deste módulo.
-             flyway-database-postgresql é exigido pelo Flyway 10+ para suporte a PostgreSQL. -->
+             flyway-database-postgresql é exigido pelo Flyway 10+ para suporte a PostgreSQL.
+             spring-boot-starter-flyway é exigido pelo Spring Boot 4 para ativar a auto-configuração do Flyway. -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -85,6 +86,10 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         
         <!-- Redis -->
