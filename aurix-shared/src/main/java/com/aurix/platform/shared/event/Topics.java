@@ -140,4 +140,15 @@ public final class Topics {
 
     // ===== compliance: lgpd =====
     public static final String LGPD_DADOS_EXCLUIDOS = "compliance.lgpd.dados.excluidos.v1";
+
+    // ===== products: catalogo =====
+    public static final String PRODUTO_CRIADO = "products.produto.criado.v1";
+    public static final String PRODUTO_ATUALIZADO = "products.produto.atualizado.v1";
+    public static final String PRODUTO_DESCONTINUADO = "products.produto.descontinuado.v1";
+
+    // ===== contracts: gestao de contratos =====
+    public static final String CONTRATO_CRIADO = "contracts.contrato.criado.v1";
+    public static final String CONTRATO_ASSINADO = "contracts.contrato.assinado.v1";
+    public static final String CONTRATO_LIQUIDADO = "contracts.contrato.liquidado.v1";
+    public static final String CONTRATO_CANCELADO = "contracts.contrato.cancelado.v1";
 }

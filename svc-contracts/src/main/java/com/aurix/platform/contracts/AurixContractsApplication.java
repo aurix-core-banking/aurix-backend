@@ -1,4 +1,4 @@
-package com.aurix.platform.products;
+package com.aurix.platform.contracts;
 
 import org.apache.kafka.clients.producer.MockProducer;
 import org.springframework.boot.SpringApplication;
@@ -23,24 +23,24 @@ import java.time.Clock;
 import java.util.Map;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.aurix.platform.products", "com.aurix.platform.shared"})
+@ComponentScan(basePackages = {"com.aurix.platform.contracts", "com.aurix.platform.shared"})
 @EntityScan(basePackages = {
-    "com.aurix.platform.products.entity",
+    "com.aurix.platform.contracts.entity",
     "com.aurix.platform.shared.entity",
     "com.aurix.platform.shared.eventhub"
 })
 @EnableJpaRepositories(basePackages = {
-    "com.aurix.platform.products.repository",
+    "com.aurix.platform.contracts.repository",
     "com.aurix.platform.shared.eventhub",
     "com.aurix.platform.shared.repository"
 })
 @EnableKafka
 @EnableScheduling
 @EnableCaching
-public class AurixProductsApplication {
+public class AurixContractsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AurixProductsApplication.class, args);
+        SpringApplication.run(AurixContractsApplication.class, args);
     }
 
     @Bean
