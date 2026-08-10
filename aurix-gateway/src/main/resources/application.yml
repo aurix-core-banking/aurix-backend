@@ -57,6 +57,15 @@ spring:
             - StripPrefix=2
             - CircuitBreaker=name:gateway
 
+        # svc-contracts (port 8085) — contracts
+        - id: svc-contracts
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/contracts/**
+          filters:
+            - StripPrefix=2
+            - CircuitBreaker=name:gateway
+
         # svc-finance-mgmt (port 8089) — finance, accounting, settlement, pricing
         - id: svc-finance-mgmt
           uri: http://localhost:8089
