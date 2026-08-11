@@ -46,6 +46,7 @@ RUN mvn package -pl ${SVC_NAME} -am -DskipTests -q -B
 FROM eclipse-temurin:25-jre-jammy
 ARG SVC_NAME
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r aurix && useradd -r -g aurix aurix
 USER aurix
 COPY --from=builder /build/${SVC_NAME}/target/*.jar app.jar
