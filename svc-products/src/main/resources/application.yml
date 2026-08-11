@@ -2,8 +2,6 @@ server:
   port: 8084
 
 management:
-  server:
-    port: 9084
   endpoints:
     web:
       exposure:

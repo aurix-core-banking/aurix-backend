@@ -19,132 +19,125 @@ spring:
   cloud:
     gateway:
       routes:
-        # ===== Consolidated Services =====
+        # ===== Serviços consolidados =====
+        # Os controllers expõem /api/<dominio>/... e o path original é encaminhado
+        # integralmente ao serviço (sem StripPrefix). O gateway real de produção é o
+        # Traefik (aurix-infrastructure/traefik/dynamic.yml); este SCG serve de
+        # alternativa standalone para desenvolvimento.
 
-        # svc-payments (port 8081) — core, pix, payments
-        - id: svc-payments
-          uri: http://localhost:8081
+        # svc-banking (8200) — núcleo, contas, poupança, salário, transações
+        - id: svc-banking
+          uri: http://localhost:8200
           predicates:
-            - Path=/api/core/**,/api/pix/**,/api/payments/**
+            - Path=/api/banking/**,/api/core/**,/api/poupanca/**,/api/salario/**,/api/transacoes/**,/api/controle-saldos/**,/api/gestao-risco/**,/api/liquidacao/**,/api/motor-tarifas/**,/api/remuneracao/**,/api/settlement/**,/api/pricing/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-credit (port 8082) — credit, consignado, financiamento
+        # svc-payments (8201) — PIX
+        - id: svc-payments
+          uri: http://localhost:8201
+          predicates:
+            - Path=/api/payments/**,/api/pix/**
+          filters:
+            - CircuitBreaker=name:gateway
+
+        # svc-credit (8082) — crédito, consignado, financiamento
         - id: svc-credit
           uri: http://localhost:8082
           predicates:
             - Path=/api/credit/**,/api/consignado/**,/api/financiamento/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-customer (port 8083) — customers
+        # svc-customer (8083) — clientes, auth, onboarding (controllers fora de /api/customer)
         - id: svc-customer
           uri: http://localhost:8083
           predicates:
-            - Path=/api/customer/**
+            - Path=/api/clientes/**,/api/onboarding/**,/api/mfa/**,/api/security/**,/auth/**,/contas/pf/**,/contas/pj/**,/solicitacoes/**
           filters:
-            - StripPrefix=2
+            - RewritePath=/api/clientes(?<segment>/?.*),/clientes${segment}
+            - RewritePath=/api/onboarding(?<segment>/?.*),${segment}
             - CircuitBreaker=name:gateway
 
-        # svc-products (port 8084) — products, poupanca, salario, treasury, investimento, seguros
+        # svc-products (8084) — catálogo de produtos
         - id: svc-products
           uri: http://localhost:8084
           predicates:
-            - Path=/api/products/**,/api/poupanca/**,/api/salario/**,/api/treasury/**,/api/investimento/**,/api/seguros/**
+            - Path=/api/products/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-contracts (port 8085) — contracts
+        # svc-contracts (8085) — contratos
         - id: svc-contracts
           uri: http://localhost:8085
           predicates:
             - Path=/api/contracts/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-finance-mgmt (port 8089) — finance, accounting, settlement, pricing
+        # svc-finance-mgmt (8089) — contabilidade, orçamento, impostos
         - id: svc-finance-mgmt
           uri: http://localhost:8089
           predicates:
-            - Path=/api/finance/**,/api/accounting/**,/api/settlement/**,/api/pricing/**
+            - Path=/api/finance/**,/api/accounting/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-intelligence (port 8091) — analytics, intelligence
+        # svc-intelligence (8091) — analytics, BI
         - id: svc-intelligence
           uri: http://localhost:8091
           predicates:
             - Path=/api/intelligence/**,/api/analytics/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-platform (port 8092) — platform, openfinance, baas, provisioning, billing, webhooks, internet-banking, mobile-banking, audit
+        # svc-platform (8092) — open finance, webhooks, notificações, audit
         - id: svc-platform
           uri: http://localhost:8092
           predicates:
-            - Path=/api/platform/**,/api/openfinance/**,/api/baas/**,/api/provisioning/**,/api/billing/**,/api/webhooks/**,/api/internet-banking/**,/api/mobile-banking/**,/api/audit/**
+            - Path=/api/platform/**,/api/openfinance/**,/api/baas/**,/api/provisioning/**,/api/billing/**,/api/webhooks/**,/api/audit/**,/api/notificacoes/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-cambio (port 8093) — cambio, bacen
+        # svc-cambio (8093) — câmbio, BACEN
         - id: svc-cambio
           uri: http://localhost:8093
           predicates:
-            - Path=/api/cambio/**,/api/bacen/**
+            - Path=/api/cambio/**,/api/bacen/**,/api/cotacoes/**,/api/remessas/**,/api/selic/**,/api/spi-str/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-banking (port 8095) — banking, onboarding, organization
-        - id: svc-banking
-          uri: http://localhost:8095
-          predicates:
-            - Path=/api/banking/**,/api/onboarding/**
-          filters:
-            - StripPrefix=2
-            - CircuitBreaker=name:gateway
-
-        # svc-fraud (port 8204) — fraud detection
+        # svc-fraud (8207) — detecção de fraude
         - id: svc-fraud
-          uri: http://localhost:8204
+          uri: http://localhost:8207
           predicates:
             - Path=/api/fraud/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-compliance (port 8205) — compliance
+        # svc-compliance (8205) — compliance, regulação
         - id: svc-compliance
           uri: http://localhost:8205
           predicates:
             - Path=/api/compliance/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
-        # svc-cards (port 8094) — cards, cartoes
+        # svc-cards (8094) — cartões
         - id: svc-cards
           uri: http://localhost:8094
           predicates:
             - Path=/api/cards/**,/api/cartoes/**
           filters:
-            - StripPrefix=2
+            - RewritePath=/api/cartoes(?<segment>/?.*),/api/cards${segment}
             - CircuitBreaker=name:gateway
 
-        # svc-ai (port 8206) — AI/LLM integration
+        # svc-ai (8206) — IA/LLM
         - id: svc-ai
           uri: http://localhost:8206
           predicates:
             - Path=/api/ai/**
           filters:
-            - StripPrefix=2
             - CircuitBreaker=name:gateway
 
         # ===== Health Check =====
