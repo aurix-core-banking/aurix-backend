@@ -4,8 +4,6 @@ server:
     context-path: /
 
 management:
-  server:
-    port: 9205
   endpoints:
     web:
       exposure:
