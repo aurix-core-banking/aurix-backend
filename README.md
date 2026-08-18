@@ -33,4 +33,4 @@ The backend is a Maven multi-module project (`apps/backend/pom.xml`) containing 
 
 - [aurix-core-banking](https://github.com/aureus-platform/aurix-core-banking) — monorepo
 - [aurix-frontend](https://github.com/aureus-platform/aurix-frontend)
-- [aurix-api-specs](https://github.com/aureus-platform/aurix-api-specs)
+

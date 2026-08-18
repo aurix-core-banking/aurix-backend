@@ -14,7 +14,7 @@ The Aurix backend follows a microservices architecture built with Spring Boot. E
 
 ## Communication
 
-- **Synchronous**: REST APIs defined in [aurix-api-specs](https://github.com/aureus-platform/aurix-api-specs)
+- **Synchronous**: REST APIs defined via springdoc-openapi in each service
 - **Asynchronous**: Apache Kafka for domain events and CQRS-style reads
 
 ## Database
