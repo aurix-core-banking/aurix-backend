@@ -25,6 +25,10 @@ import java.util.Map;
 })
 @EnableJpaRepositories(basePackages = {
     "com.aurix.platform.payments.pix.repository",
+    "com.aurix.platform.payments.ted.repository",
+    "com.aurix.platform.payments.boleto.repository",
+    "com.aurix.platform.payments.dda.repository",
+    "com.aurix.platform.payments.chargeback.repository",
     "com.aurix.platform.shared.eventhub",
     "com.aurix.platform.shared.repository"
 })

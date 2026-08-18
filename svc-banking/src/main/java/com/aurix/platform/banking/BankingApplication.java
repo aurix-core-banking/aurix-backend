@@ -38,6 +38,10 @@ import java.util.Map;
     "com.aurix.platform.banking.pricing.repository",
     "com.aurix.platform.banking.settlement.repository",
     "com.aurix.platform.banking.integration.webhook",
+    "com.aurix.platform.banking.ted.repository",
+    "com.aurix.platform.banking.boleto.repository",
+    "com.aurix.platform.banking.cnab.repository",
+    "com.aurix.platform.banking.extrato.repository",
     "com.aurix.platform.shared.eventhub",
     "com.aurix.platform.shared.repository"
 })
