@@ -47,3 +47,12 @@ aurix:
     redis:
       enabled: false
       port: 6379
+
+temporal:
+  connection:
+    target: ${TEMPORAL_ADDRESS:localhost:7233}
+    namespace: ${TEMPORAL_NAMESPACE:aurix}
+  worker:
+    task-queue: credito
+    workflow扫描包: com.aurix.platform.credit.temporal
+    activity扫描包: com.aurix.platform.credit.temporal

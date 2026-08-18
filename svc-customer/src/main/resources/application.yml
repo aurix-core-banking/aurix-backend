@@ -47,3 +47,12 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+temporal:
+  connection:
+    target: ${TEMPORAL_ADDRESS:localhost:7233}
+    namespace: ${TEMPORAL_NAMESPACE:aurix}
+  worker:
+    task-queue: onboarding
+    workflow扫描包: com.aurix.platform.customer.temporal
+    activity扫描包: com.aurix.platform.customer.temporal
