@@ -37,17 +37,20 @@ public class FaturaService {
     private final CartaoRepository cartaoRepository;
     private final ContaCorrenteClient contaCorrenteClient;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final BigDecimal percentualPagamentoMinimo;
 
     public FaturaService(FaturaRepository faturaRepository,
                          LancamentoFaturaRepository lancamentoFaturaRepository,
                          CartaoRepository cartaoRepository,
                          ContaCorrenteClient contaCorrenteClient,
-                         KafkaTemplate<String, Object> kafkaTemplate) {
+                         KafkaTemplate<String, Object> kafkaTemplate,
+                         @org.springframework.beans.factory.annotation.Value("${aurix.cartoes.percentual-pagamento-minimo:0.10}") BigDecimal percentualPagamentoMinimo) {
         this.faturaRepository = faturaRepository;
         this.lancamentoFaturaRepository = lancamentoFaturaRepository;
         this.cartaoRepository = cartaoRepository;
         this.contaCorrenteClient = contaCorrenteClient;
         this.kafkaTemplate = kafkaTemplate;
+        this.percentualPagamentoMinimo = percentualPagamentoMinimo;
     }
 
     public FaturaResponse fecharFatura(Long cartaoId, Integer mes, Integer ano) {
@@ -81,7 +84,7 @@ public class FaturaService {
 
         fatura.setValorTotal(cartao.getLimiteUtilizado());
         fatura.setValorPendente(cartao.getLimiteUtilizado());
-        fatura.setValorMinimo(cartao.getLimiteUtilizado().multiply(BigDecimal.valueOf(0.1)));
+        fatura.setValorMinimo(cartao.getLimiteUtilizado().multiply(percentualPagamentoMinimo));
         fatura = faturaRepository.save(fatura);
 
         kafkaTemplate.send(Topics.CARTOES_FATURA_FECHADA, String.valueOf(fatura.getId()),
