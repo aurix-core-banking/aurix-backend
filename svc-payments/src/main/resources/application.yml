@@ -57,6 +57,5 @@ springdoc:
     path: /swagger-ui.html
 
 aurix:
-  pix:
-    bacen:
-      spi-url: ${AURIX_PIX_BACEN_SPI_URL:http://localhost:8094}
+  payments:
+    spi-url: ${AURIX_PAYMENTS_SPI_URL:http://localhost:8095}

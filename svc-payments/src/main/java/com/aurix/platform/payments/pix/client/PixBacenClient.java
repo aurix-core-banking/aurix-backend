@@ -11,7 +11,7 @@ public class PixBacenClient {
 
     private final RestClient restClient;
 
-    public PixBacenClient(@Value("${aurix.pix.bacen.spi-url}") String spiUrl) {
+    public PixBacenClient(@Value("${aurix.payments.spi-url}") String spiUrl) {
         this.restClient = RestClient.builder().baseUrl(spiUrl).build();
     }
 

@@ -17,13 +17,13 @@ public class PixHttpConfig {
 
     private static final Logger log = LoggerFactory.getLogger(PixHttpConfig.class);
 
-    @Value("${aurix.pix.bacen.base-url:https://api-hml.bcb.gov.br}")
-    private String bacenBaseUrl;
+    @Value("${aurix.payments.spi-url}")
+    private String spiUrl;
 
     @Bean
     public RestClient bacenRestClient() {
         return RestClient.builder()
-            .baseUrl(bacenBaseUrl)
+            .baseUrl(spiUrl)
             .build();
     }
 

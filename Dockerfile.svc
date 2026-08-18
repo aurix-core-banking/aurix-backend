@@ -45,11 +45,12 @@ RUN mvn package -pl ${SVC_NAME} -am -DskipTests -q -B
 # ── Stage 2: Runtime ──
 FROM eclipse-temurin:25-jre-jammy
 ARG SVC_NAME
+ARG PORT=8080
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r aurix && useradd -r -g aurix aurix
 USER aurix
 COPY --from=builder /build/${SVC_NAME}/target/*.jar app.jar
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom"
-EXPOSE 8080
+EXPOSE ${PORT}
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
