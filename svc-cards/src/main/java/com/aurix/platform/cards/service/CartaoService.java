@@ -25,13 +25,29 @@ public class CartaoService {
     private final CartaoRepository cartaoRepository;
     private final FaturaRepository faturaRepository;
     private final TransacaoCartaoRepository transacaoRepository;
+    private final int diaVencimentoFatura;
+    private final int validadeAnos;
+    private final BigDecimal percentualPagamentoMinimo;
+
+    public CartaoService(CartaoRepository cartaoRepository, FaturaRepository faturaRepository,
+                         TransacaoCartaoRepository transacaoRepository,
+                         @org.springframework.beans.factory.annotation.Value("${aurix.cartoes.dia-vencimento-fatura:10}") int diaVencimentoFatura,
+                         @org.springframework.beans.factory.annotation.Value("${aurix.cartoes.validade-anos:5}") int validadeAnos,
+                         @org.springframework.beans.factory.annotation.Value("${aurix.cartoes.percentual-pagamento-minimo:0.10}") BigDecimal percentualPagamentoMinimo) {
+        this.cartaoRepository = cartaoRepository;
+        this.faturaRepository = faturaRepository;
+        this.transacaoRepository = transacaoRepository;
+        this.diaVencimentoFatura = diaVencimentoFatura;
+        this.validadeAnos = validadeAnos;
+        this.percentualPagamentoMinimo = percentualPagamentoMinimo;
+    }
 
     public Cartao emitirCartao(Long contaId, Cartao.TipoCartao tipoCartao, Cartao.BandeiraCartao bandeira, String nomePortador, BigDecimal limiteCredito) {
         Cartao cartao = new Cartao();
         cartao.setNumeroCartao(gerarNumeroCartao(bandeira));
         cartao.setNumeroCartaoMascarado(mascararNumeroCartao(cartao.getNumeroCartao()));
         cartao.setCvv(gerarCVV());
-        cartao.setDataValidade(LocalDate.now().plusYears(5));
+        cartao.setDataValidade(LocalDate.now().plusYears(validadeAnos));
         cartao.setNomePortador(nomePortador);
         cartao.setContaId(contaId);
         cartao.setTipoCartao(tipoCartao);
@@ -41,7 +57,7 @@ public class CartaoService {
         cartao.setLimiteUtilizado(BigDecimal.ZERO);
         cartao.setLimiteDisponivel(limiteCredito);
         cartao.setDataEmissao(LocalDateTime.now());
-        cartao.setDiaVencimentoFatura(10);
+        cartao.setDiaVencimentoFatura(diaVencimentoFatura);
         return cartaoRepository.save(cartao);
     }
 
@@ -134,7 +150,7 @@ public class CartaoService {
         fatura.setValorTotal(valorTotal);
         fatura.setValorPago(BigDecimal.ZERO);
         fatura.setValorPendente(valorTotal);
-        fatura.setValorMinimo(valorTotal.multiply(BigDecimal.valueOf(0.1)));
+        fatura.setValorMinimo(valorTotal.multiply(percentualPagamentoMinimo));
         fatura.setDataVencimento(LocalDate.of(ano, mes, cartao.getDiaVencimentoFatura()).plusMonths(1));
         fatura.setDataGeracao(LocalDateTime.now());
         return faturaRepository.save(fatura);
@@ -192,7 +208,7 @@ public class CartaoService {
             Fatura fatura = faturaOpt.get();
             fatura.setValorTotal(fatura.getValorTotal().add(transacao.getValor()));
             fatura.setValorPendente(fatura.getValorTotal().subtract(fatura.getValorPago()));
-            fatura.setValorMinimo(fatura.getValorTotal().multiply(BigDecimal.valueOf(0.1)));
+            fatura.setValorMinimo(fatura.getValorTotal().multiply(percentualPagamentoMinimo));
             faturaRepository.save(fatura);
         } else {
             gerarFatura(cartao.getId(), hoje.getMonthValue(), hoje.getYear());
@@ -235,10 +251,4 @@ public class CartaoService {
         return cartaoRepository.findByContaId(contaId);
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CartaoService(final CartaoRepository cartaoRepository, final FaturaRepository faturaRepository, final TransacaoCartaoRepository transacaoRepository) {
-        this.cartaoRepository = cartaoRepository;
-        this.faturaRepository = faturaRepository;
-        this.transacaoRepository = transacaoRepository;
-    }
 }

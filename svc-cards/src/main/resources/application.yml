@@ -39,6 +39,12 @@ management:
   server:
     port: 9094
 
+aurix:
+  cartoes:
+    dia-vencimento-fatura: ${AURIX_CARTOES_DIA_VENCIMENTO:10}
+    validade-anos: ${AURIX_CARTOES_VALIDADE_ANOS:5}
+    percentual-pagamento-minimo: ${AURIX_CARTOES_PAGAMENTO_MINIMO:0.10}
+
 springdoc:
   api-docs:
     path: /v3/api-docs
