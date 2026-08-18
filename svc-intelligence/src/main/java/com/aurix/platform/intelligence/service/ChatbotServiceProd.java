@@ -9,11 +9,14 @@ import java.util.Map;
 @Profile("prod")
 public class ChatbotServiceProd implements ChatbotService {
 
+    // @Value("${aurix.ml.chatbot-url:http://localhost:8000/chatbot}")
+    // private String chatbotUrl;
+
     @Override
     public Map<String, Object> processarMensagem(String texto) {
         return Map.of(
-            "resposta", "Funcionalidade em implementação",
-            "escalarParaHumano", true
+                "resposta", "Funcionalidade em implementação",
+                "escalarParaHumano", true
         );
     }
 }

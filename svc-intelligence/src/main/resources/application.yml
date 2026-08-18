@@ -32,6 +32,10 @@ management:
     kafka:
       enabled: false
 
+aurix:
+  ml:
+    url: http://localhost:8000
+
 springdoc:
   api-docs:
     path: /v3/api-docs
