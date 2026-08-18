@@ -1,0 +1,30 @@
+# ============================================================
+# Kafka SASL/SSL — Configuração para produção
+# Em dev, usar plaintext (port 9092) sem SASL
+# ============================================================
+
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+# Config Aurix — SASL habilitado em prod
+aurix:
+  kafka:
+    sasl:
+      enabled: ${KAFKA_SASL_ENABLED:false}
+      mechanism: SCRAM-SHA-512
+      jaas-config: ${KAFKA_SASL_JAAS_CONFIG:}
+    security:
+      protocol: SASL_SSL
+    ssl:
+      truststore:
+        location: ${KAFKA_SSL_TRUSTSTORE_LOCATION:}
+        password: ${KAFKA_SSL_TRUSTSTORE_PASSWORD:}
+
+# Vault KV paths (auto-injected via spring-cloud-vault)
+# vault kv put aurix/kafka sasl-username=aurix sasl-password=***
+# Env vars necessárias:
+#   KAFKA_SASL_ENABLED=true
+#   KAFKA_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="aurix" password="***";
+#   KAFKA_SSL_TRUSTSTORE_LOCATION=/etc/aurix/kafka/truststore.jks
+#   KAFKA_SSL_TRUSTSTORE_PASSWORD=***

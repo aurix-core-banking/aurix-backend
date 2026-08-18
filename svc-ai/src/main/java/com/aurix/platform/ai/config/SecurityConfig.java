@@ -14,9 +14,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll()
+                .requestMatchers("/actuator/**", "/health/**", "/swagger-ui/**",
+                        "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                .anyRequest().authenticated()
             )
-            .csrf(csrf -> csrf.disable());
+            .csrf(csrf -> csrf.disable())
+            .oauth2ResourceServer(oauth2 -> oauth2.opaqueToken(opaque -> {}));
         return http.build();
     }
 }

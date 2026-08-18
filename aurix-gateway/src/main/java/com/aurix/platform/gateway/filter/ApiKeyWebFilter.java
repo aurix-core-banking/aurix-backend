@@ -1,6 +1,10 @@
 package com.aurix.platform.gateway.filter;
 
 import com.aurix.platform.gateway.config.ApiKeyProperties;
+import com.aurix.platform.shared.entity.ApiKey;
+import com.aurix.platform.shared.repository.ApiKeyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -12,26 +16,33 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Filtro de validação de API key do Gateway.
  *
- * <p>Quando habilitado, exige o header {@code X-API-Key} (se {@code required=true})
- * e valida a chave contra {@link ApiKeyProperties}. Em caso de sucesso, propaga os
- * headers de tenant e plano para os serviços downstream.</p>
+ * 1. Tenta validação via DB (produção) — hash SHA-256, anti-timing attack
+ * 2. Fallback para YAML (dev)
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 40)
 @ConditionalOnProperty(prefix = "aurix.gateway.api-key", name = "enabled", havingValue = "true", matchIfMissing = false)
 public class ApiKeyWebFilter implements WebFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(ApiKeyWebFilter.class);
+
     private final ApiKeyProperties properties;
+    private final ApiKeyRepository apiKeyRepository;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    public ApiKeyWebFilter(ApiKeyProperties properties) {
+    private volatile boolean dbAvailable = true;
+
+    public ApiKeyWebFilter(ApiKeyProperties properties, ApiKeyRepository apiKeyRepository) {
         this.properties = properties;
+        this.apiKeyRepository = apiKeyRepository;
     }
 
     @Override
@@ -49,25 +60,57 @@ public class ApiKeyWebFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        ApiKeyProperties.ApiKeyEntry entrada = properties.getKeys().get(apiKey);
-        if (entrada == null) {
-            return ErroResposta.escrever(exchange, HttpStatus.UNAUTHORIZED, "API key inválida");
+        // Validação DB-backed com hash SHA-256
+        return Mono.fromCallable(() -> validarApiKey(apiKey))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(resultado -> {
+                    if (resultado == null) {
+                        return ErroResposta.escrever(exchange, HttpStatus.UNAUTHORIZED, "API key inválida");
+                    }
+                    ServerHttpRequest req = exchange.getRequest().mutate()
+                            .headers(headers -> {
+                                headers.set(properties.getTenantHeader(), resultado.tenantId());
+                                headers.set(properties.getPlanHeader(), resultado.plano());
+                            }).build();
+                    return chain.filter(exchange.mutate().request(req).build());
+                });
+    }
+
+    private ApiKeyValidationResult validarApiKey(String key) {
+        // 1. Tentar DB
+        if (dbAvailable) {
+            try {
+                String hash = ApiKey.hashKey(key);
+                Optional<ApiKey> opt = apiKeyRepository.findByKeyHash(hash);
+                if (opt.isPresent()) {
+                    ApiKey apiKey = opt.get();
+                    if (apiKey.isAtivo() && !apiKey.isExpirado()) {
+                        apiKey.registrarUso();
+                        apiKeyRepository.save(apiKey);
+                        return new ApiKeyValidationResult(apiKey.getTenantId(), apiKey.getPlano());
+                    }
+                    log.warn("API key inativa/expirada: prefixo={}", apiKey.getPrefixo());
+                    return null;
+                }
+            } catch (Exception e) {
+                log.warn("Tabela api_keys não disponível, usando modo YAML: {}", e.getMessage());
+                dbAvailable = false;
+            }
         }
 
-        ServerHttpRequest requisicaoMutada = exchange.getRequest().mutate()
-                .headers(headers -> {
-                    headers.set(properties.getTenantHeader(), entrada.getTenantId());
-                    headers.set(properties.getPlanHeader(), entrada.getPlan());
-                })
-                .build();
-        return chain.filter(exchange.mutate().request(requisicaoMutada).build());
+        // 2. Fallback YAML
+        ApiKeyProperties.ApiKeyEntry entrada = properties.getKeys().get(key);
+        if (entrada == null) {
+            return null;
+        }
+        return new ApiKeyValidationResult(entrada.getTenantId(), entrada.getPlan());
     }
 
     private boolean isExempto(String path) {
         List<String> exemptos = properties.getExemptPaths();
-        if (exemptos == null) {
-            return false;
-        }
+        if (exemptos == null) return false;
         return exemptos.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
+
+    private record ApiKeyValidationResult(String tenantId, String plano) {}
 }
