@@ -2,6 +2,10 @@ package com.aurix.platform.compliance.service;
 
 import com.aurix.platform.compliance.entity.ConsentimentoLGPD;
 import com.aurix.platform.compliance.entity.LgpdExclusao;
+import com.aurix.platform.compliance.lgpd.entity.LgpdBaseLegal;
+import com.aurix.platform.compliance.lgpd.entity.LgpdLogAcesso;
+import com.aurix.platform.compliance.lgpd.repository.LgpdBaseLegalRepository;
+import com.aurix.platform.compliance.lgpd.repository.LgpdLogAcessoRepository;
 import com.aurix.platform.compliance.repository.ConsentimentoLGPDRepository;
 import com.aurix.platform.compliance.repository.LgpdExclusaoRepository;
 import com.aurix.platform.shared.cache.SharedCacheService;
@@ -20,7 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -35,15 +41,21 @@ public class LgpdService {
     private final SharedCacheService cacheService;
     private final EventPublisher eventPublisher;
     private final ConsentimentoLGPDRepository consentimentoRepository;
+    private final LgpdBaseLegalRepository baseLegalRepository;
+    private final LgpdLogAcessoRepository logAcessoRepository;
 
     public LgpdService(LgpdExclusaoRepository exclusaoRepository,
                        SharedCacheService cacheService,
                        EventPublisher eventPublisher,
-                       ConsentimentoLGPDRepository consentimentoRepository) {
+                       ConsentimentoLGPDRepository consentimentoRepository,
+                       LgpdBaseLegalRepository baseLegalRepository,
+                       LgpdLogAcessoRepository logAcessoRepository) {
         this.exclusaoRepository = exclusaoRepository;
         this.cacheService = cacheService;
         this.eventPublisher = eventPublisher;
         this.consentimentoRepository = consentimentoRepository;
+        this.baseLegalRepository = baseLegalRepository;
+        this.logAcessoRepository = logAcessoRepository;
     }
 
     @Transactional
@@ -97,6 +109,153 @@ public class LgpdService {
 
     public List<ConsentimentoLGPD> listarConsentimentosAtivos(Long clienteId) {
         return consentimentoRepository.findConsentimentosAtivosPorCliente(clienteId, LocalDateTime.now());
+    }
+
+    @Transactional
+    public LgpdBaseLegal registrarBaseLegal(LgpdBaseLegal baseLegal) {
+        log.info("Registrando base legal LGPD: {}", baseLegal.getNomeBaseLegal());
+        baseLegal.setCodigoBaseLegal("BL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        if (baseLegal.getDataInicioVigencia() == null) {
+            baseLegal.setDataInicioVigencia(LocalDateTime.now());
+        }
+        LgpdBaseLegal salva = baseLegalRepository.save(baseLegal);
+        log.info("Base legal registrada: codigo={}", salva.getCodigoBaseLegal());
+        return salva;
+    }
+
+    @Transactional(readOnly = true)
+    public List<LgpdBaseLegal> listarBasesLegais() {
+        return baseLegalRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<LgpdBaseLegal> listarBasesLegaisPorCliente(Long clienteId) {
+        return baseLegalRepository.findByClienteId(clienteId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LgpdBaseLegal> listarBasesLegaisAtivas() {
+        return baseLegalRepository.findBasesLegaisAtivas(LocalDateTime.now());
+    }
+
+    @Transactional
+    public Map<String, Object> exportarDados(Long clienteId) {
+        log.info("Exportando dados do cliente {} (portabilidade LGPD)", clienteId);
+
+        Cliente cliente = entityManager.find(Cliente.class, clienteId);
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente nao encontrado: " + clienteId);
+        }
+
+        Map<String, Object> dadosExportados = new HashMap<>();
+        dadosExportados.put("cliente", converterClienteParaMap(cliente));
+        dadosExportados.put("consentimentos", consentimentoRepository.findByClienteId(clienteId));
+        dadosExportados.put("basesLegais", baseLegalRepository.findByClienteId(clienteId));
+        dadosExportados.put("dataExportacao", LocalDateTime.now().toString());
+        dadosExportados.put("formato", "JSON");
+
+        registrarLogAcesso(clienteId, LgpdLogAcesso.TipoAcessoLgpd.EXPORTACAO_DADOS,
+            "Exportacao completa dos dados do cliente via portabilidade LGPD",
+            "SISTEMA", LgpdLogAcesso.ResultadoOperacaoLgpd.SUCESSO);
+
+        log.info("Dados exportados com sucesso para cliente {}", clienteId);
+        return dadosExportados;
+    }
+
+    @Transactional
+    public void anonimizarDados(Long clienteId) {
+        log.info("Iniciando anonimizacao dos dados do cliente {}", clienteId);
+
+        Cliente cliente = entityManager.find(Cliente.class, clienteId);
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente nao encontrado: " + clienteId);
+        }
+
+        String cpfAnonimizado = gerarHashAnonimo(cliente.getCpf());
+
+        cliente.setNome("ANONIMO_" + clienteId);
+        cliente.setNomeRazaoSocial(null);
+        cliente.setNomeFantasia(null);
+        cliente.setCpf(cpfAnonimizado);
+        cliente.setCnpj(null);
+        cliente.setEmail("anonimo_" + clienteId + "@lgpd.pseudonimizado");
+        cliente.setTelefone("00000000000");
+        cliente.setDataNascimento(null);
+        cliente.setEndereco("{}");
+        cliente.setCidade("ANONIMIZADO");
+        cliente.setEstado("XX");
+        cliente.setCep("00000000");
+        cliente.setStatus(Cliente.StatusCliente.EXCLUIDO);
+        entityManager.merge(cliente);
+
+        anonimizarTransacoes(clienteId);
+        anonimizarContas(clienteId);
+        excluirUsuario(clienteId);
+
+        cacheService.removerCliente(clienteId.toString());
+
+        registrarLogAcesso(clienteId, LgpdLogAcesso.TipoAcessoLgpd.ANONIMIZACAO,
+            "Anonimizacao/pseudonimizacao dos dados do cliente conforme LGPD Art. 16",
+            "SISTEMA", LgpdLogAcesso.ResultadoOperacaoLgpd.SUCESSO);
+
+        log.info("Anonimizacao concluida para cliente {}", clienteId);
+    }
+
+    @Transactional
+    public void registrarLogAcesso(Long clienteId, LgpdLogAcesso.TipoAcessoLgpd tipo,
+                                    String descricao, String responsavel,
+                                    LgpdLogAcesso.ResultadoOperacaoLgpd resultado) {
+        LgpdLogAcesso logAcesso = new LgpdLogAcesso();
+        logAcesso.setClienteId(clienteId);
+        logAcesso.setTipoAcesso(tipo);
+        logAcesso.setDescricaoOperacao(descricao);
+        logAcesso.setResponsavelOperacao(responsavel);
+        logAcesso.setDataOperacao(LocalDateTime.now());
+        logAcesso.setResultado(resultado);
+        logAcessoRepository.save(logAcesso);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LgpdLogAcesso> listarLogAcessos(Long clienteId) {
+        return logAcessoRepository.findHistoricoPorCliente(clienteId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<LgpdLogAcesso> listarLogAcessosPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+        return logAcessoRepository.findByPeriodo(inicio, fim);
+    }
+
+    @Transactional
+    public void verificarConsentimentosExpirados() {
+        List<ConsentimentoLGPD> expirados = consentimentoRepository.findConsentimentosExpirados(LocalDateTime.now());
+        for (ConsentimentoLGPD c : expirados) {
+            c.setStatus(ConsentimentoLGPD.StatusConsentimento.EXPIRADO);
+            consentimentoRepository.save(c);
+            log.info("Consentimento expirado automaticamente: {}", c.getCodigoConsentimento());
+        }
+    }
+
+    private Map<String, Object> converterClienteParaMap(Cliente cliente) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", cliente.getId());
+        map.put("nome", cliente.getNome());
+        map.put("cpf", cliente.getCpf());
+        map.put("cnpj", cliente.getCnpj());
+        map.put("email", cliente.getEmail());
+        map.put("telefone", cliente.getTelefone());
+        map.put("dataNascimento", cliente.getDataNascimento());
+        map.put("endereco", cliente.getEndereco());
+        map.put("cidade", cliente.getCidade());
+        map.put("estado", cliente.getEstado());
+        map.put("cep", cliente.getCep());
+        return map;
+    }
+
+    private String gerarHashAnonimo(String valor) {
+        if (valor == null) {
+            return "ANONIMO";
+        }
+        return "ANO_" + UUID.nameUUIDFromBytes(valor.getBytes()).toString().substring(0, 8).toUpperCase();
     }
 
     @Transactional

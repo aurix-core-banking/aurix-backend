@@ -29,11 +29,19 @@ import java.util.Map;
 @ComponentScan(basePackages = {"com.aurix.platform.compliance", "com.aurix.platform.shared"})
 @EntityScan(basePackages = {
     "com.aurix.platform.compliance.entity",
+    "com.aurix.platform.compliance.coaf.entity",
+    "com.aurix.platform.compliance.aml.entity",
+    "com.aurix.platform.compliance.pep.entity",
+    "com.aurix.platform.compliance.lgpd.entity",
     "com.aurix.platform.shared.entity",
     "com.aurix.platform.shared.eventhub"
 })
 @EnableJpaRepositories(basePackages = {
     "com.aurix.platform.compliance.repository",
+    "com.aurix.platform.compliance.coaf.repository",
+    "com.aurix.platform.compliance.aml.repository",
+    "com.aurix.platform.compliance.pep.repository",
+    "com.aurix.platform.compliance.lgpd.repository",
     "com.aurix.platform.shared.eventhub",
     "com.aurix.platform.shared.repository"
 })
