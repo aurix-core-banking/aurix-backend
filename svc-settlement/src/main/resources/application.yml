@@ -1,0 +1,39 @@
+server:
+  port: 8214
+
+spring:
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    validate-migration-naming: true
+    locations: classpath:db/migration
+    schemas: aurix
+  application:
+    name: svc-settlement
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    packages-to-scan: com.aurix.platform.settlement,com.aurix.platform.shared
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    db:
+      enabled: false
+    redis:
+      enabled: false
+    kafka:
+      enabled: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

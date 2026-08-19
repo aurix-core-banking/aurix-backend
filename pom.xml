@@ -43,6 +43,15 @@
         <module>svc-cards</module>
         <module>svc-ai</module>
         <module>svc-contracts</module>
+        <module>svc-investimentos</module>
+        <module>svc-seguros</module>
+
+        <!-- Domain-split microservices from svc-banking -->
+        <module>svc-accounts</module>
+        <module>svc-transactions</module>
+        <module>svc-savings</module>
+        <module>svc-salary</module>
+        <module>svc-settlement</module>
     </modules>
     
     <dependencyManagement>
