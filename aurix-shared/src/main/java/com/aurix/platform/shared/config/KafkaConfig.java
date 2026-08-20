@@ -3,7 +3,6 @@ package com.aurix.platform.shared.config;
 import com.aurix.platform.shared.event.BaseEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.security.authenticator.LoginCallbackHandler;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;

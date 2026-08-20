@@ -34,7 +34,7 @@ public class AuditRetentionService {
 
         // Selecionar e remover em lotes de 1000
         int totalRemovido = 0;
-        var antigos = repository.findByDataCriacaoBefore(limite);
+        var antigos = repository.findByDataAcaoBefore(limite);
         var lotes = partitionar(antigos, 1000);
 
         for (var lote : lotes) {

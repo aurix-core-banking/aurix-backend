@@ -27,6 +27,8 @@ public interface LogAuditoriaRepository extends JpaRepository<LogAuditoria, Long
     @Query("SELECT l FROM LogAuditoria l WHERE l.dataAcao BETWEEN :inicio AND :fim")
     List<LogAuditoria> findByPeriodo(@Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim);
 
+    List<LogAuditoria> findByDataAcaoBefore(LocalDateTime data);
+
     @Query("SELECT l FROM LogAuditoria l WHERE l.nivel = 'CRITICO'")
     List<LogAuditoria> findLogsCriticos();
 

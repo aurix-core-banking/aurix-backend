@@ -89,7 +89,7 @@
             </dependency>
             <dependency>
                 <groupId>io.temporal</groupId>
-                <artifactId>temporal-opentelemetry</artifactId>
+                <artifactId>temporal-opentracing</artifactId>
                 <version>1.26.0</version>
             </dependency>
 
