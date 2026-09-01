@@ -65,7 +65,7 @@ public class TokenService {
         entry.setStatus(TokenStatus.ATIVO);
         entry.setDataCriacao(LocalDateTime.now());
         entry.setDataExpiracao(LocalDateTime.now().plusMonths(24));
-        vault.put(entry.getTokenId(), entry);
+        vault.put(String.valueOf(entry.getTokenId()), entry);
 
         log.info("Token criado: token={}, cartaoId={}, merchantId={}", tokenFormatado, cartaoId, merchantId);
 

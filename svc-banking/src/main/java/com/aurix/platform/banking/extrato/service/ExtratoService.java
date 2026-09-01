@@ -196,7 +196,7 @@ public class ExtratoService {
             return false;
         }
         return switch (tipo) {
-            case TRANSFERENCIA_RECEBIDA, DEPOSITO, CREDITO -> true;
+            case TRANSFERENCIA_INTERNA, DEPOSITO -> true;
             default -> false;
         };
     }

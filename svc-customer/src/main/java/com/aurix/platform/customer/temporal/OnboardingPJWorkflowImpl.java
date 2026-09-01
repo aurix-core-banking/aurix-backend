@@ -26,6 +26,7 @@ public class OnboardingPJWorkflowImpl implements OnboardingPJWorkflow {
                     .build());
 
     private String statusAtual = "EM_PREENCHIMENTO";
+    private boolean assinaturaConfirmada;
 
     @Override
     public String executar(OnboardingPJRequest request) {
@@ -73,7 +74,7 @@ public class OnboardingPJWorkflowImpl implements OnboardingPJWorkflow {
                 request.cnpj(), request.razaoSocial(), request.sociosJson());
         if (!assinatura.aprovado()) {
             // Aguarda signal de confirmação de assinatura
-            Workflow.getSignalChannel("assinatura-confirmada").receive();
+            Workflow.await(() -> assinaturaConfirmada);
             statusAtual = "CONTRATO_ASSINADO";
         } else {
             statusAtual = "EM_ASSINATURA";
@@ -97,6 +98,12 @@ public class OnboardingPJWorkflowImpl implements OnboardingPJWorkflow {
     @Override
     public String obterStatus() {
         return statusAtual;
+    }
+
+    @Override
+    public void confirmarAssinatura() {
+        assinaturaConfirmada = true;
+        log.info("Signal recebido: assinatura confirmada para contrato PJ");
     }
 
     private String finalizar(String novoStatus, String motivo) {

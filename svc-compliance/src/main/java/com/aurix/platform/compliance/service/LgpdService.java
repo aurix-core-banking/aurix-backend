@@ -18,7 +18,7 @@ import com.aurix.platform.shared.event.LgpdDadosExcluidosEvent;
 import com.aurix.platform.shared.event.Topics;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

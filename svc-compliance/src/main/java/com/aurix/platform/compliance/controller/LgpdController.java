@@ -125,17 +125,6 @@ public class LgpdController {
         return ResponseEntity.ok(lgpdService.listarConsentimentosPorCliente(clienteId));
     }
 
-    @DeleteMapping("/consentimentos/{id}")
-    @Operation(summary = "Revogar consentimento", description = "Revoga um consentimento existente")
-    public ResponseEntity<Map<String, Object>> revogarConsentimento(@PathVariable String id) {
-        lgpdService.revogarConsentimento(id);
-        return ResponseEntity.ok(Map.of(
-            "status", "sucesso",
-            "mensagem", "Consentimento revogado com sucesso",
-            "codigo", id
-        ));
-    }
-
     @PostMapping("/dados/{clienteId}/exportar")
     @Operation(summary = "Exportar dados do cliente (portabilidade)", description = "Exporta todos os dados do titular conforme LGPD Art. 18-V")
     public ResponseEntity<Map<String, Object>> exportarDados(@PathVariable Long clienteId) {

@@ -130,7 +130,7 @@ public class TransacaoService {
         Transacao t = transacaoRepository.findByTenantIdAndId(tenantId, id)
             .orElseThrow(() -> new RuntimeException("Transacao nao encontrada: " + id));
 
-        if (t.getStatus() == Transacao.StatusTransacao.CONCLUIDA) {
+        if (t.getStatus() == Transacao.StatusTransacao.PROCESSADA) {
             throw new IllegalStateException("Nao e possivel cancelar transacao ja concluida");
         }
 
@@ -150,7 +150,7 @@ public class TransacaoService {
             throw new IllegalStateException("Apenas transacoes pendentes podem ser processadas");
         }
 
-        t.setStatus(Transacao.StatusTransacao.CONCLUIDA);
+        t.setStatus(Transacao.StatusTransacao.PROCESSADA);
         t.setDataProcessamento(LocalDateTime.now());
         t = transacaoRepository.save(t);
         log.info("Transacao {} processada", t.getCodigoTransacao());

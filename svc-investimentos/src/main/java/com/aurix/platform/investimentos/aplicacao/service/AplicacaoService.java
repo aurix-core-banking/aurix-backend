@@ -134,12 +134,12 @@ public class AplicacaoService {
         aplicacao.setDataResgate(dataResgate);
         aplicacao.setStatus(StatusAplicacao.RESGATADA);
 
-        aplicacao = aplicacaoRepository.save(aplicacao);
+        var aplicacaoSalva = aplicacaoRepository.save(aplicacao);
 
         log.info("Resgate realizado: id={}, valorBruto={}, iof={}, ir={}, liquido={}",
-            aplicacao.getId(), aplicacao.getValorBruto(), iof, ir, valorLiquido);
+            aplicacaoSalva.getId(), aplicacaoSalva.getValorBruto(), iof, ir, valorLiquido);
 
-        return toResponse(aplicacao);
+        return toResponse(aplicacaoSalva);
     }
 
     private BigDecimal calcularRendimentoBruto(BigDecimal valor, BigDecimal taxaAnual,
@@ -165,12 +165,16 @@ public class AplicacaoService {
 
     private BigDecimal calcularIR(BigDecimal rendimentoBruto, LocalDate dataInicio, LocalDate dataFim) {
         long dias = ChronoUnit.DAYS.between(dataInicio, dataFim);
-        var aliquota = switch ((int) dias) {
-            case d when d < DIAS_IR_22_5 -> IR_22_5;
-            case d when d < DIAS_IR_20_0 -> IR_20_0;
-            case d when d < DIAS_IR_17_5 -> IR_17_5;
-            default -> IR_15_0;
-        };
+        BigDecimal aliquota;
+        if (dias < DIAS_IR_22_5) {
+            aliquota = IR_22_5;
+        } else if (dias < DIAS_IR_20_0) {
+            aliquota = IR_20_0;
+        } else if (dias < DIAS_IR_17_5) {
+            aliquota = IR_17_5;
+        } else {
+            aliquota = IR_15_0;
+        }
         return rendimentoBruto.multiply(aliquota).setScale(2, RoundingMode.HALF_UP);
     }
 

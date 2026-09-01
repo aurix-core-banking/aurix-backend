@@ -256,10 +256,11 @@ public class AmlService {
             .getResultList();
 
         for (Transacao t : transacoesGrandes) {
+            var cliente = obterClienteOrigem(t);
             alertas.add(criarAlerta(
-                t.getClienteOrigem() != null ? t.getClienteOrigem().getId() : null,
-                t.getClienteOrigem() != null ? t.getClienteOrigem().getCpf() : "N/A",
-                t.getClienteOrigem() != null ? t.getClienteOrigem().getNome() : "N/A",
+                null,
+                cliente != null ? cliente.getCpf() : "N/A",
+                cliente != null ? cliente.getNome() : "N/A",
                 regra.getId(), regra.getNomeRegra(),
                 AmlAlerta.TipoAlertaAml.TRANSACAO_VALOR_ALTO,
                 calcularScore(70, regra.getPesoScore()),
@@ -312,14 +313,15 @@ public class AmlService {
         String[] paraisosFiscais = {"KY", "BM", "VG", "PA", "LU", "CH", "SG", "HK", "AE", "BZ"};
 
         for (Transacao t : transacoesInternacionais) {
-            String paisDestino = t.getPaisDestino();
+            String paisDestino = obterPaisDestino(t);
             if (paisDestino != null) {
                 for (String paraiso : paraisosFiscais) {
                     if (paraiso.equalsIgnoreCase(paisDestino)) {
+                        var cliente = obterClienteOrigem(t);
                         alertas.add(criarAlerta(
-                            t.getClienteOrigem() != null ? t.getClienteOrigem().getId() : null,
-                            t.getClienteOrigem() != null ? t.getClienteOrigem().getCpf() : "N/A",
-                            t.getClienteOrigem() != null ? t.getClienteOrigem().getNome() : "N/A",
+                            null,
+                            cliente != null ? cliente.getCpf() : "N/A",
+                            cliente != null ? cliente.getNome() : "N/A",
                             regra.getId(), regra.getNomeRegra(),
                             AmlAlerta.TipoAlertaAml.PARAISO_FISCAL,
                             calcularScore(80, regra.getPesoScore()),
@@ -420,14 +422,15 @@ public class AmlService {
         String[] paisesRisco = {"IR", "KP", "SY", "CU", "VE", "MM", "BY", "RU", "CN"};
 
         for (Transacao t : transacoes) {
-            String pais = t.getPaisDestino();
+            String pais = obterPaisDestino(t);
             if (pais != null) {
                 for (String risco : paisesRisco) {
                     if (risco.equalsIgnoreCase(pais)) {
+                        var cliente = obterClienteOrigem(t);
                         alertas.add(criarAlerta(
-                            t.getClienteOrigem() != null ? t.getClienteOrigem().getId() : null,
-                            t.getClienteOrigem() != null ? t.getClienteOrigem().getCpf() : "N/A",
-                            t.getClienteOrigem() != null ? t.getClienteOrigem().getNome() : "N/A",
+                            null,
+                            cliente != null ? cliente.getCpf() : "N/A",
+                            cliente != null ? cliente.getNome() : "N/A",
                             regra.getId(), regra.getNomeRegra(),
                             AmlAlerta.TipoAlertaAml.PAIS_ALTO_RISCO,
                             calcularScore(90, regra.getPesoScore()),
@@ -527,6 +530,34 @@ public class AmlService {
             ));
         }
         return alertas;
+    }
+
+    private com.aurix.platform.shared.entity.Cliente obterClienteOrigem(Transacao t) {
+        if (t.getContaOrigem() != null && t.getContaOrigem().getCliente() != null) {
+            return t.getContaOrigem().getCliente();
+        }
+        return null;
+    }
+
+    private String obterPaisDestino(Transacao t) {
+        String dadosTed = t.getDadosTed();
+        if (dadosTed == null || dadosTed.isBlank()) {
+            return null;
+        }
+        int idx = dadosTed.indexOf("\"pais\"");
+        if (idx < 0) {
+            idx = dadosTed.indexOf("paisDestino");
+        }
+        if (idx < 0) {
+            return null;
+        }
+        String resto = dadosTed.substring(idx);
+        int ini = resto.indexOf('"');
+        int fim = -1;
+        if (ini >= 0) {
+            fim = resto.indexOf('"', ini + 1);
+        }
+        return fim > ini ? resto.substring(ini + 1, fim) : null;
     }
 
     private AmlAlerta criarAlerta(Long clienteId, String cpfCnpj, String nomeCliente,

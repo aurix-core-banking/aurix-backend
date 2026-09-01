@@ -143,7 +143,7 @@ public class CnabService {
         CnabRemessaResponse response = new CnabRemessaResponse();
         response.setId(retorno.getId());
         response.setArquivoNome(retorno.getArquivoNome());
-        response.setStatus(retorno.getProcessado() ? StatusRemessa.RETURNADO : StatusRemessa.ERRO);
+        response.setStatus(retorno.getProcessado() ? StatusRemessa.RETORNADO : StatusRemessa.ERRO);
         response.setDataGeracao(retorno.getDataProcessamento());
         return response;
     }

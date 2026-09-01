@@ -1,11 +1,11 @@
 package com.aurix.platform.customer.temporal;
 
-import com.aurix.platform.customer.temporal.activity.OnboardingPFActivities;
 import com.aurix.platform.customer.temporal.activity.OnboardingPFActivitiesImpl;
-import com.aurix.platform.customer.temporal.activity.OnboardingPJActivities;
 import com.aurix.platform.customer.temporal.activity.OnboardingPJActivitiesImpl;
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import jakarta.annotation.PostConstruct;
@@ -41,24 +41,19 @@ public class OnboardingTemporalWorker {
     @PostConstruct
     public void iniciar() {
         try {
-            WorkflowServiceStubs serviceStub = WorkflowServiceStubs.newConnectedServiceStubsBuilder()
+            WorkflowServiceStubsOptions stubsOptions = WorkflowServiceStubsOptions.newBuilder()
                     .setTarget(temporalAddress)
                     .build();
+            WorkflowServiceStubs serviceStubs = WorkflowServiceStubs.newServiceStubs(stubsOptions);
 
-            WorkflowClient client = WorkflowClient.newInstance(serviceStub,
-                    WorkflowClient.Options.newBuilder().setNamespace(namespace).build());
+            WorkflowClient workflowClient = WorkflowClient.newInstance(serviceStubs,
+                    WorkflowClientOptions.newBuilder().setNamespace(namespace).build());
 
-            workerFactory = WorkerFactory.newInstance(client);
+            workerFactory = WorkerFactory.newInstance(workflowClient);
 
-            Worker pfWorker = workerFactory.newWorkerBuilder(TASK_QUEUE)
-                    .setActivityImplementations(pfActivities)
-                    .build();
-            pfWorker.registerWorkflowImplementationTypes(OnboardingPFWorkflowImpl.class);
-
-            Worker pjWorker = workerFactory.newWorkerBuilder(TASK_QUEUE)
-                    .setActivityImplementations(pjActivities)
-                    .build();
-            pjWorker.registerWorkflowImplementationTypes(OnboardingPJWorkflowImpl.class);
+            Worker worker = workerFactory.newWorker(TASK_QUEUE);
+            worker.registerWorkflowImplementationTypes(OnboardingPFWorkflowImpl.class, OnboardingPJWorkflowImpl.class);
+            worker.registerActivitiesImplementations(pfActivities, pjActivities);
 
             workerFactory.start();
             log.info("Temporal workers iniciados na task queue: {}", TASK_QUEUE);

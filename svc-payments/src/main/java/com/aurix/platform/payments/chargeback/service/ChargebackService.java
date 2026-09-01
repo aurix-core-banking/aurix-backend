@@ -37,9 +37,8 @@ public class ChargebackService {
     public ChargebackDTO solicitarChargeback(ChargebackDTO dto) {
         log.info("Solicitando chargeback para conta: {}, tipo origem: {}", dto.getContaId(), dto.getTipoOrigem());
 
-        if (contaRepository.findById(dto.getContaId()).isEmpty()) {
-            throw new IllegalArgumentException("Conta não encontrada: " + dto.getContaId());
-        }
+        Conta conta = contaRepository.findById(dto.getContaId())
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada: " + dto.getContaId()));
 
         LocalDateTime dataTransacao = dto.getDataTransacaoOrigem() != null
                 ? dto.getDataTransacaoOrigem()
@@ -51,7 +50,7 @@ public class ChargebackService {
 
         Chargeback chargeback = new Chargeback();
         chargeback.setCodigoChargeback(gerarCodigoChargeback());
-        chargeback.setContaId(dto.getContaId());
+        chargeback.setConta(conta);
         chargeback.setTransacaoOrigemId(dto.getTransacaoOrigemId());
         chargeback.setTipoOrigem(dto.getTipoOrigem());
         chargeback.setDocumentoOrigem(dto.getDocumentoOrigem());

@@ -3,6 +3,8 @@ package com.aurix.platform.customer.temporal.activity;
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
 
+import java.math.BigDecimal;
+
 @ActivityInterface
 public interface OnboardingPJActivities {
 

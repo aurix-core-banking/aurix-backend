@@ -107,10 +107,10 @@ public class RenegociacaoService {
             StatusRenegociacao.PENDENTE
         );
         renegociacao.setObservacoes(request.getObservacoes());
-        renegociacao = renegociacaoRepository.save(renegociacao);
+        final var renegociacaoSalva = renegociacaoRepository.save(renegociacao);
 
         var parcelas = tabela.stream().map(linha -> new RenegociacaoParcela(
-            renegociacao.getId(),
+            renegociacaoSalva.getId(),
             linha.numero(),
             LocalDate.now().plusMonths(linha.numero()),
             linha.valorParcela(),
@@ -225,11 +225,11 @@ public class RenegociacaoService {
 
         renegociacao.setStatus(StatusRenegociacao.CONTRATADA);
         renegociacao.setDataContratacao(LocalDateTime.now());
-        renegociacao = renegociacaoRepository.save(renegociacao);
+        final var renegociacaoSalva = renegociacaoRepository.save(renegociacao);
 
         var parcelas = renegociacaoParcelaRepository.findByRenegociacaoId(id);
         log.info("Renegociação contratada: id={}, contratoId={}", id, contrato.getId());
-        return toResponse(renegociacao, parcelas);
+        return toResponse(renegociacaoSalva, parcelas);
     }
 
     private RenegociacaoResponse toResponse(Renegociacao r, List<RenegociacaoParcela> parcelas) {

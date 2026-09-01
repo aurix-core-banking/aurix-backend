@@ -2,7 +2,9 @@ package com.aurix.platform.credit.temporal;
 
 import com.aurix.platform.credit.temporal.activity.EmprestimoConsignadoActivitiesImpl;
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import jakarta.annotation.PostConstruct;
@@ -34,19 +36,19 @@ public class EmprestimoTemporalWorker {
     @PostConstruct
     public void iniciar() {
         try {
-            WorkflowServiceStubs serviceStub = WorkflowServiceStubs.newConnectedServiceStubsBuilder()
+            WorkflowServiceStubsOptions stubsOptions = WorkflowServiceStubsOptions.newBuilder()
                     .setTarget(temporalAddress)
                     .build();
+            WorkflowServiceStubs serviceStubs = WorkflowServiceStubs.newServiceStubs(stubsOptions);
 
-            WorkflowClient client = WorkflowClient.newInstance(serviceStub,
-                    WorkflowClient.Options.newBuilder().setNamespace(namespace).build());
+            WorkflowClient workflowClient = WorkflowClient.newInstance(serviceStubs,
+                    WorkflowClientOptions.newBuilder().setNamespace(namespace).build());
 
-            workerFactory = WorkerFactory.newInstance(client);
+            workerFactory = WorkerFactory.newInstance(workflowClient);
 
-            Worker worker = workerFactory.newWorkerBuilder(TASK_QUEUE)
-                    .setActivityImplementations(activities)
-                    .build();
+            Worker worker = workerFactory.newWorker(TASK_QUEUE);
             worker.registerWorkflowImplementationTypes(EmprestimoConsignadoWorkflowImpl.class);
+            worker.registerActivitiesImplementations(activities);
 
             workerFactory.start();
             log.info("Temporal worker de crédito iniciado na task queue: {}", TASK_QUEUE);

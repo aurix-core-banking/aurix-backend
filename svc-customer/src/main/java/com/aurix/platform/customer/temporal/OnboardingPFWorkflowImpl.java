@@ -2,7 +2,7 @@ package com.aurix.platform.customer.temporal;
 
 import com.aurix.platform.customer.temporal.activity.OnboardingPFActivities;
 import com.aurix.platform.customer.temporal.activity.OnboardingPFActivities.ResultadoConsulta;
-import io.temporal/activity.ActivityOptions;
+import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.workflow.*;
 import org.slf4j.Logger;
@@ -26,6 +26,7 @@ public class OnboardingPFWorkflowImpl implements OnboardingPFWorkflow {
                     .build());
 
     private String statusAtual = "RECEBIDA";
+    private String[] documentosKycRecebidos;
 
     @Override
     public String executar(OnboardingPFRequest request) {
@@ -68,8 +69,9 @@ public class OnboardingPFWorkflowImpl implements OnboardingPFWorkflow {
             statusAtual = "KYC_APROVADO";
         } else {
             // Aguarda upload de documentos via signal
-            String[] docs = Workflow.getSignalChannel("documentos-kyc").receive();
-            ResultadoConsulta kyc = activities.validarKyc(request.cpf(), docs[0], docs[1], docs[2]);
+            Workflow.await(() -> documentosKycRecebidos != null);
+            ResultadoConsulta kyc = activities.validarKyc(request.cpf(),
+                    documentosKycRecebidos[0], documentosKycRecebidos[1], documentosKycRecebidos[2]);
             if (!kyc.aprovado()) {
                 return finalizar("KYC_REJEITADO", kyc.motivo());
             }
@@ -94,6 +96,12 @@ public class OnboardingPFWorkflowImpl implements OnboardingPFWorkflow {
     @Override
     public String obterStatus() {
         return statusAtual;
+    }
+
+    @Override
+    public void receberDocumentosKyc(String documentoFrente, String documentoVerso, String selfie) {
+        documentosKycRecebidos = new String[]{documentoFrente, documentoVerso, selfie};
+        log.info("Signal recebido: documentos KYC para CPF");
     }
 
     private String finalizar(String novoStatus, String motivo) {
