@@ -1,0 +1,75 @@
+name: Container Security
+
+# 1.4.1: paths corrigidos de ./backend/aurix-* para os módulos reais do
+#       monorepo (svc-* + aurix-gateway), build via Dockerfile.svc.
+# 1.4.2: Trivy scan em TODAS as imagens (antes apenas aurix-core).
+# Os findings são publicados no GitHub code scanning via SARIF; o job não
+# falha de propósito (exit-code 0) para permitir rollout incremental.
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: container-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: Scan ${{ matrix.svc }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        svc:
+          - aurix-gateway
+          - svc-accounts
+          - svc-ai
+          - svc-banking
+          - svc-cambio
+          - svc-cards
+          - svc-compliance
+          - svc-contracts
+          - svc-credit
+          - svc-customer
+          - svc-finance-mgmt
+          - svc-fraud
+          - svc-intelligence
+          - svc-investimentos
+          - svc-payments
+          - svc-platform
+          - svc-products
+          - svc-salary
+          - svc-savings
+          - svc-seguros
+          - svc-settlement
+          - svc-transactions
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build imagem Docker (${{ matrix.svc }})
+        run: |
+          docker build \
+            -f Dockerfile.svc \
+            --build-arg SVC_NAME=${{ matrix.svc }} \
+            --build-arg PORT=8080 \
+            -t ${{ matrix.svc }}:latest .
+
+      - name: Trivy — scan da imagem ${{ matrix.svc }}
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ matrix.svc }}:latest'
+          format: 'sarif'
+          output: 'trivy-${{ matrix.svc }}.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+      - name: Upload SARIF para o code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-${{ matrix.svc }}.sarif'
+          category: trivy-${{ matrix.svc }}

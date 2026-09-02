@@ -1,0 +1,77 @@
+name: CI Backend
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAVEN_OPTS: "-Xmx3g"
+
+jobs:
+  build-test:
+    name: Build + Test (24 módulos)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK 25 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Garantir permissão do wrapper
+        run: chmod +x mvnw
+
+      - name: Build + testes do reator
+        run: ./mvnw -B -ntp verify
+
+      - name: Fazer upload dos relatórios (sempre)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-teste
+          path: |
+            **/target/surefire-reports/*
+            **/target/failsafe-reports/*
+          if-no-files-found: ignore
+
+  lint:
+    name: Lint (checkstyle + PMD + SpotBugs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK 25 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Garantir permissão do wrapper
+        run: chmod +x mvnw
+
+      - name: Checkstyle + PMD + SpotBugs
+        run: ./mvnw -B -ntp -DskipTests checkstyle:check pmd:check spotbugs:spotbugs spotbugs:check
+
+      - name: Upload de relatórios do lint (sempre)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-lint
+          path: |
+            **/target/checkstyle-*.xml
+            **/target/pmd.xml
+            **/target/spotbugsXml.xml
+          if-no-files-found: ignore

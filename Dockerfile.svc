@@ -19,6 +19,7 @@ COPY aurix-shared/pom.xml aurix-shared/
 COPY aurix-shared/src aurix-shared/src
 
 # Copy all svc-* and gateway pom.xml so parent's <modules> resolve
+COPY svc-accounts/pom.xml svc-accounts/
 COPY svc-ai/pom.xml svc-ai/
 COPY svc-banking/pom.xml svc-banking/
 COPY svc-cambio/pom.xml svc-cambio/
@@ -30,9 +31,15 @@ COPY svc-customer/pom.xml svc-customer/
 COPY svc-finance-mgmt/pom.xml svc-finance-mgmt/
 COPY svc-fraud/pom.xml svc-fraud/
 COPY svc-intelligence/pom.xml svc-intelligence/
+COPY svc-investimentos/pom.xml svc-investimentos/
 COPY svc-payments/pom.xml svc-payments/
 COPY svc-platform/pom.xml svc-platform/
 COPY svc-products/pom.xml svc-products/
+COPY svc-salary/pom.xml svc-salary/
+COPY svc-savings/pom.xml svc-savings/
+COPY svc-seguros/pom.xml svc-seguros/
+COPY svc-settlement/pom.xml svc-settlement/
+COPY svc-transactions/pom.xml svc-transactions/
 COPY aurix-gateway/pom.xml aurix-gateway/
 
 # Cache dependencies for the target module only
