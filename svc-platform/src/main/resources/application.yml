@@ -37,3 +37,11 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+aurix:
+  provisioning:
+    # stub (default) ou real. Em "real", cria o banco por tenant no MULTI_TENANT.
+    provider: stub
+    admin-jdbc-url: ${AURIX_PROVISIONING_ADMIN_JDBC_URL:jdbc:postgresql://localhost:5432/postgres}
+    admin-username: ${AURIX_PROVISIONING_ADMIN_USERNAME:postgres}
+    admin-password: ${AURIX_PROVISIONING_ADMIN_PASSWORD:}

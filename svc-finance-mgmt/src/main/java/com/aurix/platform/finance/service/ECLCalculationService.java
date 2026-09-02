@@ -266,7 +266,13 @@ public class ECLCalculationService {
     }
 
     /**
-     * Extrai score de crédito do metadata
+     * Extrai score de crédito real do JSON metadata.
+     *
+     * Suporta os formatos comuns dos bureaus (Serasa/Quod/SCR) tanto na raiz
+     * quanto em objetos aninhados (ex.: {"serasa": {"score": 750}}):
+     *   creditScore, credit_score, score_credito, score, score_serasa,
+     *   scoreSerasa, serasaScore, bureauScore, score_quod, scoreQuod
+     * e a aninhados em "serasa"/"quod"/"relatorio"/"bureau".
      */
     private Integer extrairScoreCredito(String metadata) {
         if (metadata == null || metadata.isEmpty()) {
@@ -275,17 +281,44 @@ public class ECLCalculationService {
         try {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(metadata);
-            if (node.has("creditScore")) {
-                return node.get("creditScore").asInt();
+            Integer score = buscarScoreNoNode(node);
+            if (score != null) {
+                return score;
             }
-            if (node.has("score")) {
-                return node.get("score").asInt();
-            }
-            if (node.has("score_credito")) {
-                return node.get("score_credito").asInt();
+            for (String secao : new String[] {"serasa", "quod", "relatorio", "bureau", "scr"}) {
+                com.fasterxml.jackson.databind.JsonNode secaoNode = node.get(secao);
+                if (secaoNode != null && secaoNode.isObject()) {
+                    score = buscarScoreNoNode(secaoNode);
+                    if (score != null) {
+                        return score;
+                    }
+                }
             }
         } catch (Exception e) {
             log.warn("Falha ao extrair score de credito do metadata: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    private Integer buscarScoreNoNode(com.fasterxml.jackson.databind.JsonNode node) {
+        for (String chave : new String[] {
+                "creditScore", "credit_score", "score_credito", "score",
+                "score_serasa", "scoreSerasa", "serasaScore", "bureauScore",
+                "score_quod", "scoreQuod", "pontuacao"}) {
+            if (!node.has(chave)) {
+                continue;
+            }
+            com.fasterxml.jackson.databind.JsonNode valor = node.get(chave);
+            if (valor.isNumber()) {
+                return valor.asInt();
+            }
+            if (valor.isTextual()) {
+                try {
+                    return Integer.parseInt(valor.asText().replaceAll("[^0-9]", ""));
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            }
         }
         return null;
     }

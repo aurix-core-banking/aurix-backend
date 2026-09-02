@@ -40,6 +40,12 @@ aurix:
   credit:
     scoring:
       model-path: classpath:models/scoring/
+    bureau:
+      serasa:
+        url: ${AURIX_BUREAU_SERASA_URL:}
+        cnpj-url: ${AURIX_BUREAU_SERASA_CNPJ_URL:}
+        api-key: ${AURIX_BUREAU_SERASA_API_KEY:}
+        timeout: 5000
   shared:
     kafka:
       bootstrap-servers: localhost:9092

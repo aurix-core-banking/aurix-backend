@@ -55,6 +55,9 @@ public class OpenFinanceDataService {
         if (!contaIds.contains(contaIdLong)) return Collections.emptyList();
         String tenantId = defaultTenantId;
         List<Map<String, Object>> transacoes = coreApiClient.buscarTransacoesPorConta(contaIdLong, tenantId);
+        if (transacoes == null) {
+            return Collections.emptyList();
+        }
         return transacoes.stream().map(this::toTransactionFormat).collect(Collectors.toList());
     }
 
@@ -71,7 +74,8 @@ public class OpenFinanceDataService {
         List<Long> contasAutorizadasLong = consent.getContasAutorizadas();
         if (contasAutorizadasLong == null || contasAutorizadasLong.isEmpty()) return List.of();
         List<String> contasAutorizadas = contasAutorizadasLong.stream().map(String::valueOf).toList();
-        return coreApiClient.getCreditCards(contasAutorizadas);
+        List<Map<String, Object>> cartoes = coreApiClient.getCreditCards(contasAutorizadas);
+        return cartoes != null ? cartoes : List.of();
     }
 
     public List<Map<String, Object>> listarIdentificacoesPessoaisPorToken(TokenOpenFinance token) {

@@ -27,11 +27,11 @@ public class BacenIntegrationService {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BacenIntegrationService.class);
     private final TaxaSelicRepository taxaSelicRepository;
     private final WebClient.Builder webClientBuilder;
-    @Value("${aurix.bacen.api.url-base}")
+    @Value("${aurix.bacen.api.url-base:https://api.bcb.gov.br/dados/serie/bcdata.sgs}")
     private String urlBaseBacen;
-    @Value("${aurix.bacen.selic.codigo-serie}")
+    @Value("${aurix.bacen.selic.codigo-serie:11}")
     private String codigoSerieSelic;
-    @Value("${aurix.bacen.api.timeout}")
+    @Value("${aurix.bacen.api.timeout:30000}")
     private long timeoutMs;
 
     /**
@@ -63,8 +63,7 @@ public class BacenIntegrationService {
     public TaxaSelic atualizarTaxaSelicDoBacen() {
         log.info("Atualizando taxa SELIC do BACEN");
         try {
-            // Simular chamada para API do BACEN
-            // Em produção, seria uma chamada real para https://api.bcb.gov.br/dados/serie/bcdata.sgs
+            // Chamada real à API de Séries Temporais do BACEN (SGS)
             BigDecimal taxaBacen = buscarTaxaSelicDaApiBacen();
             if (taxaBacen != null) {
                 TaxaSelic taxaSelic = TaxaSelic.builder().dataReferencia(LocalDate.now()).valorTaxa(taxaBacen).valorTaxaAnualizada(taxaBacen.multiply(BigDecimal.valueOf(12))).codigoSerieBacen(codigoSerieSelic).tipoTaxa(TaxaSelic.TipoTaxa.SELIC_OVER).fonteDados("API BACEN").dataAtualizacaoBacen(LocalDateTime.now()).build();
@@ -75,7 +74,11 @@ public class BacenIntegrationService {
         } catch (Exception e) {
             log.error("Erro ao atualizar taxa SELIC do BACEN: {}", e.getMessage());
         }
-        return null;
+        // Fallback: última taxa persistida, mantendo o serviço operante sem dados
+        // da API (sem retornar null como "sem resposta").
+        return taxaSelicRepository.findTendenciaTaxa().stream()
+                .findFirst()
+                .orElse(null);
     }
 
     /**

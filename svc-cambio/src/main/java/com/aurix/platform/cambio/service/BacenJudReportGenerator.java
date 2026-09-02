@@ -1,5 +1,6 @@
 package com.aurix.platform.cambio.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,16 @@ public class BacenJudReportGenerator {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("ddMMyyyy");
     private static final String SEP = ";";
 
+    private static final int CAMPOS_BLOQUEIO = 4;
+
+    /**
+     * Bloqueios judiciais padrão carregados da configuração
+     * {@code aurix.bacen.jud.bloqueios}. Formato de cada item:
+     * {@code numeroProcesso;cpfCnpjAfetado;valor;ddMMyyyy}, itens separados por vírgula.
+     */
+    @Value("${aurix.bacen.jud.bloqueios:}")
+    private String bloqueiosConfig;
+
     public String gerar(LocalDate dataReferencia, String cnpj, List<BloqueioJudicial> bloqueios) {
         StringBuilder sb = new StringBuilder();
         sb.append("00").append(SEP).append("BACENJUD").append(SEP).append("1.0").append(SEP).append(cnpj).append(SEP).append(dataReferencia.format(DATE_FORMAT)).append("\n");
@@ -24,7 +35,27 @@ public class BacenJudReportGenerator {
     }
 
     public List<BloqueioJudicial> obterBloqueiosPadrao() {
-        return new ArrayList<>();
+        List<BloqueioJudicial> bloqueios = new ArrayList<>();
+        if (bloqueiosConfig == null || bloqueiosConfig.isBlank()) {
+            log.warn("Nenhum bloqueio judicial configurado em aurix.bacen.jud.bloqueios; relatorio BACENJUD gerado sem ordens de bloqueio");
+            return bloqueios;
+        }
+        for (String item : bloqueiosConfig.split(",")) {
+            String[] campos = item.trim().replaceAll("\\s+", " ").split(SEP);
+            if (campos.length < CAMPOS_BLOQUEIO || campos[0].isEmpty() || campos[1].isEmpty()) {
+                log.warn("Item de bloqueio judicial invalido ignorado: {}", item);
+                continue;
+            }
+            String dataBloqueio = campos[3].trim();
+            try {
+                LocalDate.parse(dataBloqueio, DATE_FORMAT);
+            } catch (Exception e) {
+                log.warn("Data de bloqueio judicial invalida ({}) em item ignorado: {}", dataBloqueio, item);
+                continue;
+            }
+            bloqueios.add(new BloqueioJudicial(campos[0].trim(), campos[1].trim(), campos[2].trim(), dataBloqueio));
+        }
+        return bloqueios;
     }
 
 

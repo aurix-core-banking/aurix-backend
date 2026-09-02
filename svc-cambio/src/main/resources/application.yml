@@ -30,3 +30,14 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+aurix:
+  bacen:
+    api:
+      url-base: ${AURIX_BACEN_URL:https://api.bcb.gov.br/dados/serie/bcdata.sgs}
+      timeout: 30000
+    selic:
+      codigo-serie: 11
+    jud:
+      # Bloqueios judiciais padrão (formato: numeroProcesso;cpfCnpjAfetado;valor;ddMMyyyy)
+      bloqueios: ""
