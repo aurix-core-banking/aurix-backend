@@ -46,3 +46,20 @@ aurix:
       url: ${BOLETO_URL:https://api.bb.com.br/boleto/v1/boletos}
       api-key: ${BOLETO_API_KEY:}
       timeout: ${BOLETO_TIMEOUT:5000}
+  integration:
+    receita:
+      url: ${RECEITA_URL:https://www.receitaws.com.br/v1}
+    esocial:
+      url: ${ESOCIAL_URL:https://esocial.gov.br}
+      certificate-path: ${ESOCIAL_CERT_PATH:}
+      password: ${ESOCIAL_CERT_PASSWORD:}
+    bi:
+      url: ${BI_URL:http://localhost:8101}
+      api-key: ${BI_API_KEY:}
+    linkedin:
+      client-id: ${LINKEDIN_CLIENT_ID:}
+      client-secret: ${LINKEDIN_CLIENT_SECRET:}
+      access-token: ${LINKEDIN_ACCESS_TOKEN:}
+    rh:
+      url: ${RH_URL:http://localhost:8087}
+      api-key: ${RH_API_KEY:}
