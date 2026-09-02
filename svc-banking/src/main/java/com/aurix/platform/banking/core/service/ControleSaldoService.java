@@ -233,143 +233,64 @@ public class ControleSaldoService {
     }
 
     /**
-     * Lógica interna para processamento do movimento.
+     * Lógica interna para processamento do movimento: classifica o tipo e
+     * registra os metadados operacionais (regras aplicadas e observações).
+     * O cálculo efetivo dos saldos é realizado por
+     * {@link #calcularSaldosMovimento} e a persistência por
+     * {@link #atualizarControleSaldo}.
      *
      * @param movimento Entidade do movimento.
      */
     private void processarMovimentoInterno(final MovimentoConta movimento) {
-        // Implementar lógica específica baseada no tipo de movimento
-        switch (movimento.getTipoMovimento()) {
-            case DEBITO:
-                processarDebito();
-                break;
-            case CREDITO:
-                processarCredito();
-                break;
-            case BLOQUEIO:
-                processarBloqueio();
-                break;
-            case DESBLOQUEIO:
-                processarDesbloqueio();
-                break;
-            case RESERVA:
-                processarReserva();
-                break;
-            case LIBERACAO_RESERVA:
-                processarLiberacaoReserva();
-                break;
-            case AJUSTE_CREDITO:
-                processarAjusteCredito();
-                break;
-            case AJUSTE_DEBITO:
-                processarAjusteDebito();
-                break;
-            case TARIFA:
-                processarTarifa();
-                break;
-            case JUROS:
-                processarJuros();
-                break;
-            case RENDIMENTO:
-                processarRendimento();
-                break;
-            case CORRECAO_MONETARIA:
-                processarCorrecaoMonetaria();
-                break;
-            case IOF:
-                processarIOF();
-                break;
-            case IR:
-                processarIR();
-                break;
-            default:
-                throw new RuntimeException("Tipo de movimento não suportado");
+        MovimentoConta.TipoMovimento tipo = movimento.getTipoMovimento();
+        String regras = classificarRegras(tipo);
+        if (regras != null && !regras.isEmpty()) {
+            movimento.setRegrasAplicadas(regras);
+        }
+        if (movimento.getObservacoes() == null || movimento.getObservacoes().isEmpty()) {
+            movimento.setObservacoes("Movimento " + tipo + " processado automaticamente");
         }
     }
 
-    private void processarDebito() {
-        // Lógica específica para débito
-        // Verificar saldo disponível
-        // Atualizar saldos
-        // Registrar movimento
-    }
-
-    private void processarCredito() {
-        // Lógica específica para crédito
-        // Atualizar saldos
-        // Registrar movimento
-    }
-
-    private void processarBloqueio() {
-        // Lógica específica para bloqueio
-        // Mover valor de disponível para bloqueado
-        // Registrar movimento
-    }
-
-    private void processarDesbloqueio() {
-        // Lógica específica para desbloqueio
-        // Mover valor de bloqueado para disponível
-        // Registrar movimento
-    }
-
-    private void processarReserva() {
-        // Lógica específica para reserva
-        // Mover valor de disponível para pendente
-        // Registrar movimento
-    }
-
-    private void processarLiberacaoReserva() {
-        // Lógica específica para liberação de reserva
-        // Mover valor de pendente para disponível
-        // Registrar movimento
-    }
-
-    private void processarAjusteCredito() {
-        // Lógica específica para ajuste de crédito
-        // Aplicar ajuste
-        // Registrar movimento
-    }
-
-    private void processarAjusteDebito() {
-        // Lógica específica para ajuste de débito
-        // Aplicar ajuste
-        // Registrar movimento
-    }
-
-    private void processarTarifa() {
-        // Lógica específica para tarifa
-        // Aplicar tarifa
-        // Registrar movimento
-    }
-
-    private void processarJuros() {
-        // Lógica específica para juros
-        // Aplicar juros
-        // Registrar movimento
-    }
-
-    private void processarRendimento() {
-        // Lógica específica para rendimento
-        // Aplicar rendimento
-        // Registrar movimento
-    }
-
-    private void processarCorrecaoMonetaria() {
-        // Lógica específica para correção monetária
-        // Aplicar correção
-        // Registrar movimento
-    }
-
-    private void processarIOF() {
-        // Lógica específica para IOF
-        // Aplicar IOF
-        // Registrar movimento
-    }
-
-    private void processarIR() {
-        // Lógica específica para IR
-        // Aplicar IR
-        // Registrar movimento
+    /**
+     * Classifica o movimento quanto ao efeito sobre a disponibilidade de
+     * saldo e marca a regra operacional aplicada.
+     *
+     * @param tipo Tipo do movimento.
+     * @return Descrição da regra aplicada.
+     */
+    private String classificarRegras(final MovimentoConta.TipoMovimento tipo) {
+        switch (tipo) {
+            case DEBITO:
+                return "DEBITO: reduz saldo disponível e consome limite de crédito";
+            case CREDITO:
+                return "CREDITO: incrementa saldo disponível";
+            case BLOQUEIO:
+                return "BLOQUEIO: transfere valor do disponível para bloqueado";
+            case DESBLOQUEIO:
+                return "DESBLOQUEIO: retorna valor do bloqueado para disponível";
+            case RESERVA:
+                return "RESERVA: retém valor em pendente";
+            case LIBERACAO_RESERVA:
+                return "LIBERACAO_RESERVA: devolve valor do pendente ao disponível";
+            case AJUSTE_CREDITO:
+            case AJUSTE_DEBITO:
+                return "AJUSTE: correção manual do saldo disponível";
+            case TARIFA:
+                return "TARIFA: cobrança de tarifa sobre o saldo disponível";
+            case JUROS:
+                return "JUROS: incidência de juros sobre o saldo disponível";
+            case RENDIMENTO:
+                return "RENDIMENTO: remuneração creditada no saldo disponível";
+            case CORRECAO_MONETARIA:
+                return "CORRECAO_MONETARIA: atualização do saldo por índice";
+            case IOF:
+                return "IOF: imposto retido sobre o saldo disponível";
+            case IR:
+                return "IR: retenção de imposto de renda sobre o saldo disponível";
+            default:
+                return "MOVIMENTO_GERAL: registro sem regra específica";
+        }
     }
 
     /**

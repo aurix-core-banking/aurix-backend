@@ -118,7 +118,11 @@ public class MotorTarifasService {
 
             // 2. Verificar se há tarifa específica para a conta
             Optional<ContaTarifa> contaTarifaOpt = contaTarifaRepository
-                    .findByContaIdAndTarifaIdAndAtivaTrue(conta.getId(), null);
+                    .findByContaIdAndAtivaTrue(conta.getId()).stream()
+                    .filter(ct -> ct.getTarifa() != null
+                            && ct.getTarifa().getTipoTarifa().name()
+                                    .equals(calculoRequest.getTipoTarifa()))
+                    .findFirst();
 
             if (contaTarifaOpt.isPresent()) {
                 return calcularTarifaEspecificaConta(calculoRequest,

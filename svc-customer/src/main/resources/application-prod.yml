@@ -27,6 +27,10 @@ aurix:
       cleansale:
         url: https://api.clearsale.com.br/v1/orders
         api-key: ${CLEARSALE_API_KEY}
+    receita:
+      url: https://api.receita.serpro.gov.br/cnpj/v2/%s
+      api-key: ${RECEITA_API_KEY}
+      timeout: 5000
 
 logging:
   level:
