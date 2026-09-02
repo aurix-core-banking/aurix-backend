@@ -39,3 +39,10 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+aurix:
+  banking:
+    boleto:
+      url: ${BOLETO_URL:https://api.bb.com.br/boleto/v1/boletos}
+      api-key: ${BOLETO_API_KEY:}
+      timeout: ${BOLETO_TIMEOUT:5000}
