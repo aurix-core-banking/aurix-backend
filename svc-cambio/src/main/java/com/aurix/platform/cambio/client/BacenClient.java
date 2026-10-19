@@ -12,6 +12,9 @@ import org.springframework.web.service.annotation.PostExchange;
 public interface BacenClient {
 
     record RegistrarContratoBacenRequest(Long contratoId, BigDecimal valor, String moeda, String clienteDoc, String tipo) {}
+    record RegistrarRdeRofRequest(Long contratoId, BigDecimal valor, String moeda, String clienteDoc, String tipo, String finalidade) {}
+    record RegistrarRdeRofResponse(String protocolo, String status) {}
+    record ConsultarRdeRofResponse(Long contratoId, String protocolo, String status) {}
     record TaxaBacenResponse(String moeda, BigDecimal taxaCompra, BigDecimal taxaVenda, LocalDateTime dataReferencia) {}
 
     @GetExchange("/cambio/taxas/{moeda}")
@@ -19,4 +22,10 @@ public interface BacenClient {
 
     @PostExchange("/cambio/contratos")
     void registrarContrato(@RequestBody RegistrarContratoBacenRequest request);
+
+    @PostExchange("/rde-rof/contratos")
+    RegistrarRdeRofResponse registrarRdeRof(@RequestBody RegistrarRdeRofRequest request);
+
+    @GetExchange("/rde-rof/contratos/{protocolo}")
+    ConsultarRdeRofResponse consultarRdeRof(@PathVariable String protocolo);
 }

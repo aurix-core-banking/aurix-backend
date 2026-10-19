@@ -5,6 +5,8 @@ import com.aurix.platform.investimentos.aplicacao.dto.AplicacaoResponse;
 import com.aurix.platform.investimentos.aplicacao.entity.Aplicacao;
 import com.aurix.platform.investimentos.aplicacao.entity.StatusAplicacao;
 import com.aurix.platform.investimentos.aplicacao.repository.AplicacaoRepository;
+import com.aurix.platform.investimentos.indice.entity.TipoIndice;
+import com.aurix.platform.investimentos.indice.service.IndiceMercadoService;
 import com.aurix.platform.investimentos.produto.entity.ProdutoInvestimento;
 import com.aurix.platform.investimentos.produto.entity.TipoRenda;
 import com.aurix.platform.investimentos.produto.repository.ProdutoInvestimentoRepository;
@@ -35,11 +37,14 @@ public class AplicacaoService {
 
     private final AplicacaoRepository aplicacaoRepository;
     private final ProdutoInvestimentoRepository produtoRepository;
+    private final IndiceMercadoService indiceMercadoService;
 
     public AplicacaoService(AplicacaoRepository aplicacaoRepository,
-                            ProdutoInvestimentoRepository produtoRepository) {
+                            ProdutoInvestimentoRepository produtoRepository,
+                            IndiceMercadoService indiceMercadoService) {
         this.aplicacaoRepository = aplicacaoRepository;
         this.produtoRepository = produtoRepository;
+        this.indiceMercadoService = indiceMercadoService;
     }
 
     @Transactional
@@ -56,6 +61,8 @@ public class AplicacaoService {
                 "Valor mínimo para aplicação: " + produto.getValorMinimo());
         }
 
+        var taxaParaRendimento = resolverTaxaRendimento(produto);
+
         var dataAplicacao = LocalDate.now();
         var dataVencimento = produto.getDataVencimento() != null
             ? produto.getDataVencimento()
@@ -63,11 +70,11 @@ public class AplicacaoService {
 
         var aplicacao = new Aplicacao(
             request.tenantId(), request.clienteId(), request.produtoId(),
-            produto.getTipo().name(), request.valor(), produto.getTaxaRendimento(),
+            produto.getTipo().name(), request.valor(), taxaParaRendimento,
             dataAplicacao, dataVencimento, request.contaCorrenteId()
         );
 
-        var rendimentoBruto = calcularRendimentoBruto(request.valor(), produto.getTaxaRendimento(),
+        var rendimentoBruto = calcularRendimentoBruto(request.valor(), taxaParaRendimento,
             dataAplicacao, dataVencimento);
         aplicacao.setValorBruto(request.valor().add(rendimentoBruto));
 
@@ -186,5 +193,27 @@ public class AplicacaoService {
             a.getDataAplicacao(), a.getDataVencimento(), a.getDataResgate(),
             a.getStatus().name(), a.getDataCriacao()
         );
+    }
+
+    /**
+     * Resolve a taxa anual (fração decimal, ex.: 0.1265) usada no cálculo de
+     * rendimento. Quando o produto é atrelado a um indexador (SELIC/CDI/IMAB),
+     * usa a taxa anual projetada do índice obtida da API do BACEN, aplicando o
+     * percentual do indexador. Caso contrário, usa a taxa fixa cadastrada.
+     */
+    private BigDecimal resolverTaxaRendimento(ProdutoInvestimento produto) {
+        TipoIndice indexador = produto.getIndexador();
+        if (indexador != null) {
+            BigDecimal taxaProjetada = indiceMercadoService.buscarTaxaProjetadaAnual(
+                indexador, produto.getPercentualIndexador());
+            if (taxaProjetada != null) {
+                log.info("Produto {} indexado a {}: taxa anual projetada {}",
+                    produto.getId(), indexador, taxaProjetada);
+                return taxaProjetada;
+            }
+            log.warn("Índice {} indisponível para o produto {}, usando taxa fixa {}",
+                indexador, produto.getId(), produto.getTaxaRendimento());
+        }
+        return produto.getTaxaRendimento();
     }
 }

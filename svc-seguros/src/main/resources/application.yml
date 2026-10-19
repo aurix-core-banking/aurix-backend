@@ -37,3 +37,12 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+aurix:
+  seguros:
+    seguradora:
+      url: ${AURIX_SEGUROS_SEGURADORA_URL:http://localhost:8098}
+      timeout: ${AURIX_SEGUROS_SEGURADORA_TIMEOUT:5000}
+    susep:
+      url: ${AURIX_SEGUROS_SUSEP_URL:http://localhost:8098}
+      timeout: ${AURIX_SEGUROS_SUSEP_TIMEOUT:5000}

@@ -2,6 +2,7 @@ package com.aurix.platform.cambio.service;
 
 import com.aurix.platform.cambio.entity.RelatorioBacen;
 import com.aurix.platform.cambio.repository.RelatorioBacenRepository;
+import com.aurix.platform.cambio.repository.ContratoCambioRepository;
 import com.aurix.platform.shared.event.Topics;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class RelatoriosBacenService {
     @java.lang.SuppressWarnings("all")
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RelatoriosBacenService.class);
     private final RelatorioBacenRepository relatorioBacenRepository;
+    private final ContratoCambioRepository contratoCambioRepository;
     private final CosifReportGenerator cosifReportGenerator;
     private final EFinanceiraReportGenerator eFinanceiraReportGenerator;
     private final ScrCcsReportGenerator scrCcsReportGenerator;
@@ -35,6 +37,7 @@ public class RelatoriosBacenService {
     public static final String SPED_ECF_PREFIX = "SPED_ECF";
     public static final String SPED_REINF_PREFIX = "SPED_REINF";
     public static final String BACEN_JUD_PREFIX = "BACEN_JUD";
+    public static final String RDE_ROF_PREFIX = "RDE_ROF";
 
     public RelatorioBacen agendarRelatorio(String codigoRelatorio, String nomeRelatorio, RelatorioBacen.CategoriaRelatorio categoria, LocalDate dataReferencia, String periodicidade) {
         RelatorioBacen rel = RelatorioBacen.builder().codigoRelatorio(codigoRelatorio).nomeRelatorio(nomeRelatorio).categoria(categoria).tipoRelatorio(RelatorioBacen.TipoRelatorio.OBRIGATORIO).status(RelatorioBacen.StatusRelatorio.PENDENTE).dataReferencia(dataReferencia).dataVencimento(calcularVencimentoPadrao(dataReferencia, periodicidade)).periodicidade(periodicidade).build();
@@ -178,6 +181,32 @@ public class RelatoriosBacenService {
         });
     }
 
+    public RelatorioBacen gerarRelatorioRdeRof(LocalDate dataReferencia) {
+        return gerarRelatorioGenerico(RDE_ROF_PREFIX, "RDE-ROF - Registro Declaratorio Eletronico de Operacoes Financeiras", RelatorioBacen.CategoriaRelatorio.CAMBIO, dataReferencia, "MENSAL", "RDE_ROF-2024", () -> {
+            String cnpj = "12345678000190";
+            String conteudo = gerarConteudoRdeRof(dataReferencia, cnpj);
+            return new ConteudoRelatorio("rde_rof_" + dataReferencia + ".txt", conteudo);
+        });
+    }
+
+    private String gerarConteudoRdeRof(LocalDate dataReferencia, String cnpj) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RDE-ROF;").append(dataReferencia).append(";").append(cnpj).append(";SISBACEN\n");
+        sb.append("1;CONTRATO;VALOR;MOEDA;FINALIDADE;PROTOCOLO\n");
+        List<com.aurix.platform.cambio.entity.ContratoCambio> contratos =
+            contratoCambioRepository.findByDataContratacao(dataReferencia);
+        int linha = 1;
+        for (var c : contratos) {
+            sb.append(linha++).append(";")
+                .append(c.getId()).append(";")
+                .append(c.getValorOrigem()).append(";")
+                .append(c.getMoedaOrigem()).append(";")
+                .append(c.getFinalidade()).append(";")
+                .append(c.getRegistroBACEN() != null ? c.getRegistroBACEN() : "").append("\n");
+        }
+        return sb.toString();
+    }
+
     private RelatorioBacen gerarRelatorioGenerico(String prefix, String nome, RelatorioBacen.CategoriaRelatorio categoria, LocalDate dataReferencia, String periodicidade, String versaoFormato, java.util.function.Supplier<ConteudoRelatorio> gerador) {
         String codigo = prefix + "-" + dataReferencia;
         Optional<RelatorioBacen> existente = relatorioBacenRepository.findByCodigoRelatorioAndDataReferencia(codigo, dataReferencia);
@@ -258,8 +287,9 @@ public class RelatoriosBacenService {
     }
 
     @java.lang.SuppressWarnings("all")
-    public RelatoriosBacenService(final RelatorioBacenRepository relatorioBacenRepository, final CosifReportGenerator cosifReportGenerator, final EFinanceiraReportGenerator eFinanceiraReportGenerator, final ScrCcsReportGenerator scrCcsReportGenerator, final SpedReportGenerator spedReportGenerator, final BacenJudReportGenerator bacenJudReportGenerator, final KafkaTemplate<String, Object> kafkaTemplate) {
+    public RelatoriosBacenService(final RelatorioBacenRepository relatorioBacenRepository, final ContratoCambioRepository contratoCambioRepository, final CosifReportGenerator cosifReportGenerator, final EFinanceiraReportGenerator eFinanceiraReportGenerator, final ScrCcsReportGenerator scrCcsReportGenerator, final SpedReportGenerator spedReportGenerator, final BacenJudReportGenerator bacenJudReportGenerator, final KafkaTemplate<String, Object> kafkaTemplate) {
         this.relatorioBacenRepository = relatorioBacenRepository;
+        this.contratoCambioRepository = contratoCambioRepository;
         this.cosifReportGenerator = cosifReportGenerator;
         this.eFinanceiraReportGenerator = eFinanceiraReportGenerator;
         this.scrCcsReportGenerator = scrCcsReportGenerator;

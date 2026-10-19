@@ -6,6 +6,7 @@ import com.aurix.platform.credit.consignado.dto.RenegociarRequest;
 import com.aurix.platform.credit.consignado.entity.ContratoConsignado;
 import com.aurix.platform.credit.consignado.event.ContratoAssinadoEvent;
 import com.aurix.platform.credit.consignado.event.ContratoLiquidadoEvent;
+import com.aurix.platform.credit.consignado.provider.AverbacaoProvider;
 import com.aurix.platform.credit.consignado.repository.ContratoConsignadoRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,17 +29,20 @@ public class ContratoConsignadoService {
     private final ContratoConsignadoRepository repository;
     private final MargemService margemService;
     private final ParcelaService parcelaService;
+    private final AverbacaoProvider averbacaoProvider;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ContratoConsignadoService self;
 
     public ContratoConsignadoService(ContratoConsignadoRepository repository,
                                      MargemService margemService,
                                      ParcelaService parcelaService,
+                                     AverbacaoProvider averbacaoProvider,
                                      KafkaTemplate<String, Object> kafkaTemplate,
                                      @Lazy ContratoConsignadoService self) {
         this.repository = repository;
         this.margemService = margemService;
         this.parcelaService = parcelaService;
+        this.averbacaoProvider = averbacaoProvider;
         this.kafkaTemplate = kafkaTemplate;
         this.self = self;
     }
@@ -64,6 +68,13 @@ public class ContratoConsignadoService {
             "DEFAULT"
         );
         entity = repository.save(entity);
+
+        AverbacaoProvider.AverbacaoResultado averbacao = averbacaoProvider.averbar(entity);
+        if (averbacao == null || averbacao.protocolo() == null || averbacao.protocolo().isBlank()) {
+            throw new IllegalStateException(
+                "Averbação não confirmada pelo órgão pagador para o contrato " + entity.getId());
+        }
+        entity.setProtocoloAverbacao(averbacao.protocolo());
 
         parcelaService.gerarParcelas(entity);
 
@@ -103,6 +114,7 @@ public class ContratoConsignadoService {
     public ContratoConsignadoResponse liquidar(Long id) {
         var entity = repository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado: " + id));
+        averbacaoProvider.baixar(entity);
         entity.setStatus("LIQUIDADO");
         entity = repository.save(entity);
 
@@ -142,7 +154,7 @@ public class ContratoConsignadoService {
             e.getId(), e.getClienteId(), e.getContaSalarioId(),
             e.getValorTotal(), e.getTaxaJuros(), e.getPrazoMeses(),
             e.getValorParcela(), e.getMargemUtilizada(), e.getFonteMargem(),
-            e.getStatus(), e.getDataContratacao(), e.getTenantId(),
+            e.getStatus(), e.getDataContratacao(), e.getProtocoloAverbacao(), e.getTenantId(),
             e.getDataCriacao(), e.getDataAtualizacao());
     }
 }

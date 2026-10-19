@@ -1,5 +1,6 @@
 package com.aurix.platform.investimentos.produto.dto;
 
+import com.aurix.platform.investimentos.indice.entity.TipoIndice;
 import com.aurix.platform.investimentos.produto.entity.TipoProdutoInvestimento;
 import com.aurix.platform.investimentos.produto.entity.TipoRenda;
 import jakarta.validation.constraints.DecimalMin;
@@ -20,5 +21,7 @@ public record ProdutoInvestimentoRequest(
     @NotNull @DecimalMin("0.01") BigDecimal valorMinimo,
     @NotNull @Min(1) Integer prazoMinimoDias,
     LocalDate dataVencimento,
-    Integer carenciaDias
+    Integer carenciaDias,
+    TipoIndice indexador,
+    @DecimalMin("0.0") BigDecimal percentualIndexador
 ) {}

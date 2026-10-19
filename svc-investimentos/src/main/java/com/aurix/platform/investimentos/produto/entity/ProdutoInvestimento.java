@@ -1,5 +1,6 @@
 package com.aurix.platform.investimentos.produto.entity;
 
+import com.aurix.platform.investimentos.indice.entity.TipoIndice;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,6 +46,13 @@ public class ProdutoInvestimento {
     @Column(precision = 7, scale = 5)
     private BigDecimal taxaAdm;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private TipoIndice indexador;
+
+    @Column(precision = 7, scale = 5)
+    private BigDecimal percentualIndexador;
+
     @Column(nullable = false, precision = 18, scale = 2)
     private BigDecimal valorMinimo;
 
@@ -67,7 +75,7 @@ public class ProdutoInvestimento {
     public ProdutoInvestimento(String tenantId, String nome, String descricao, TipoProdutoInvestimento tipo,
                                TipoRenda tipoRenda, BigDecimal taxaRendimento, BigDecimal taxaAdm,
                                BigDecimal valorMinimo, Integer prazoMinimoDias, LocalDate dataVencimento,
-                               Integer carenciaDias) {
+                               Integer carenciaDias, TipoIndice indexador, BigDecimal percentualIndexador) {
         this.tenantId = tenantId;
         this.nome = nome;
         this.descricao = descricao;
@@ -75,6 +83,8 @@ public class ProdutoInvestimento {
         this.tipoRenda = tipoRenda;
         this.taxaRendimento = taxaRendimento;
         this.taxaAdm = taxaAdm;
+        this.indexador = indexador;
+        this.percentualIndexador = percentualIndexador;
         this.valorMinimo = valorMinimo;
         this.prazoMinimoDias = prazoMinimoDias;
         this.dataVencimento = dataVencimento;
@@ -108,6 +118,10 @@ public class ProdutoInvestimento {
     public void setTaxaRendimento(BigDecimal taxaRendimento) { this.taxaRendimento = taxaRendimento; }
     public BigDecimal getTaxaAdm() { return taxaAdm; }
     public void setTaxaAdm(BigDecimal taxaAdm) { this.taxaAdm = taxaAdm; }
+    public TipoIndice getIndexador() { return indexador; }
+    public void setIndexador(TipoIndice indexador) { this.indexador = indexador; }
+    public BigDecimal getPercentualIndexador() { return percentualIndexador; }
+    public void setPercentualIndexador(BigDecimal percentualIndexador) { this.percentualIndexador = percentualIndexador; }
     public BigDecimal getValorMinimo() { return valorMinimo; }
     public void setValorMinimo(BigDecimal valorMinimo) { this.valorMinimo = valorMinimo; }
     public Integer getPrazoMinimoDias() { return prazoMinimoDias; }

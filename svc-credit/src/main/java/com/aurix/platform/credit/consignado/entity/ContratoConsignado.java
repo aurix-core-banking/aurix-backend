@@ -53,6 +53,9 @@ public class ContratoConsignado {
     @Column(nullable = false, length = 50)
     private String tenantId;
 
+    @Column(name = "protocolo_averbacao", length = 100)
+    private String protocoloAverbacao;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
@@ -110,6 +113,8 @@ public class ContratoConsignado {
     public void setDataContratacao(LocalDate dataContratacao) { this.dataContratacao = dataContratacao; }
     public String getTenantId() { return tenantId; }
     public void setTenantId(String tenantId) { this.tenantId = tenantId; }
+    public String getProtocoloAverbacao() { return protocoloAverbacao; }
+    public void setProtocoloAverbacao(String protocoloAverbacao) { this.protocoloAverbacao = protocoloAverbacao; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
 }

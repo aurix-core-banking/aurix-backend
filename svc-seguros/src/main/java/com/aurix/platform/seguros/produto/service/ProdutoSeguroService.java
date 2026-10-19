@@ -1,5 +1,6 @@
 package com.aurix.platform.seguros.produto.service;
 
+import com.aurix.platform.seguros.integracao.SeguradoraService;
 import com.aurix.platform.seguros.produto.dto.ProdutoSeguroRequest;
 import com.aurix.platform.seguros.produto.dto.ProdutoSeguroResponse;
 import com.aurix.platform.seguros.produto.entity.ProdutoSeguro;
@@ -8,11 +9,15 @@ import com.aurix.platform.seguros.produto.repository.ProdutoSeguroRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProdutoSeguroService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProdutoSeguroService.class);
 
     private static final BigDecimal FATOR_IDADE_BASE = BigDecimal.valueOf(0.001);
     private static final BigDecimal FATOR_UF = BigDecimal.valueOf(0.05);
@@ -20,9 +25,12 @@ public class ProdutoSeguroService {
     private static final BigDecimal FATOR_PROFISSAO_ALTO_RISCO = BigDecimal.valueOf(0.15);
 
     private final ProdutoSeguroRepository repository;
+    private final SeguradoraService seguradoraService;
 
-    public ProdutoSeguroService(ProdutoSeguroRepository repository) {
+    public ProdutoSeguroService(ProdutoSeguroRepository repository,
+                                SeguradoraService seguradoraService) {
         this.repository = repository;
+        this.seguradoraService = seguradoraService;
     }
 
     @Transactional
@@ -60,6 +68,37 @@ public class ProdutoSeguroService {
 
     public BigDecimal calcularPremio(BigDecimal valorSegurado, BigDecimal taxaBase,
                                      Integer idade, String uf, String sexo, String profissao) {
+        return calcularPremio(null, valorSegurado, taxaBase, idade, uf, sexo, profissao);
+    }
+
+    /**
+     * Calcula o prêmio consultando a seguradora (cotação real no perfil de
+     * produção; simulada nos demais). Quando a seguradora recusa ou o valor
+     * supera o teto, cai para a heurística local. Retorna {@code null} quando a
+     * cotação real é recusada (apólice não aceita).
+     */
+    public BigDecimal calcularPremio(String produtoNome, BigDecimal valorSegurado, BigDecimal taxaBase,
+                                     Integer idade, String uf, String sexo, String profissao) {
+        try {
+            SeguradoraService.Cotacao cotacao = seguradoraService.cotar(
+                    new SeguradoraService.CotacaoRequestDto(
+                            produtoNome, null, valorSegurado, idade, uf, sexo, profissao));
+            if (cotacao != null && !Boolean.FALSE.equals(cotacao.aceita()) && cotacao.premio() != null) {
+                log.info("Prêmio cotado pela seguradora: {}", cotacao.premio());
+                return cotacao.premio().setScale(2, RoundingMode.HALF_UP);
+            }
+            if (cotacao != null && Boolean.FALSE.equals(cotacao.aceita())) {
+                log.warn("Seguradora não aceitou a cotação");
+                return null;
+            }
+        } catch (Exception e) {
+            log.warn("Falha ao cotar na seguradora, usando heurística local: {}", e.getMessage());
+        }
+        return calcularPremioHeuristico(valorSegurado, taxaBase, idade, uf, sexo, profissao);
+    }
+
+    private BigDecimal calcularPremioHeuristico(BigDecimal valorSegurado, BigDecimal taxaBase,
+                                                Integer idade, String uf, String sexo, String profissao) {
         var fatorIdade = FATOR_IDADE_BASE.multiply(BigDecimal.valueOf(idade));
         var fatorUf = "SP".equals(uf) || "RJ".equals(uf) ? FATOR_UF : BigDecimal.ZERO;
         var fatorSexo = "M".equals(sexo) ? FATOR_SEXO_M : BigDecimal.ZERO;

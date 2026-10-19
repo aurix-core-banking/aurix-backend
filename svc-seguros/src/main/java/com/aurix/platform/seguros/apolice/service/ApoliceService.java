@@ -26,13 +26,19 @@ public class ApoliceService {
     private final ApoliceRepository apoliceRepository;
     private final ProdutoSeguroRepository produtoRepository;
     private final com.aurix.platform.seguros.produto.service.ProdutoSeguroService produtoSeguroService;
+    private final com.aurix.platform.seguros.integracao.SeguradoraService seguradoraService;
+    private final com.aurix.platform.seguros.integracao.SusepService susepService;
 
     public ApoliceService(ApoliceRepository apoliceRepository,
                           ProdutoSeguroRepository produtoRepository,
-                          com.aurix.platform.seguros.produto.service.ProdutoSeguroService produtoSeguroService) {
+                          com.aurix.platform.seguros.produto.service.ProdutoSeguroService produtoSeguroService,
+                          com.aurix.platform.seguros.integracao.SeguradoraService seguradoraService,
+                          com.aurix.platform.seguros.integracao.SusepService susepService) {
         this.apoliceRepository = apoliceRepository;
         this.produtoRepository = produtoRepository;
         this.produtoSeguroService = produtoSeguroService;
+        this.seguradoraService = seguradoraService;
+        this.susepService = susepService;
     }
 
     @Transactional
@@ -45,9 +51,14 @@ public class ApoliceService {
         }
 
         var premio = produtoSeguroService.calcularPremio(
-            request.valorSegurado(), produto.getTaxaBase(),
+            produto.getNome(), request.valorSegurado(), produto.getTaxaBase(),
             request.idadeSegurado(), request.uf(), request.sexo(), request.profissao()
         );
+
+        if (premio == null) {
+            throw new IllegalStateException("Seguradora não aceitou a cotação para o produto "
+                + produto.getNome() + " — apólice não emitida");
+        }
 
         if (premio.compareTo(produto.getPremioMinimo()) < 0) {
             premio = produto.getPremioMinimo();
@@ -71,10 +82,37 @@ public class ApoliceService {
 
         apolice = apoliceRepository.save(apolice);
 
+        registrarNaSeguradoraESusep(apolice, request.cobertura().name());
+
         log.info("Apólice contratada: id={}, cliente={}, numero={}, premio={}",
             apolice.getId(), request.clienteId(), numeroApolice, premio);
 
         return toResponse(apolice);
+    }
+
+    private void registrarNaSeguradoraESusep(Apolice apolice, String cobertura) {
+        try {
+            var regSeg = seguradoraService.registrarApolice(
+                new com.aurix.platform.seguros.integracao.SeguradoraService.RegistroApoliceDto(
+                    apolice.getNumeroApolice(), apolice.getProdutoId(), apolice.getClienteId(),
+                    cobertura, apolice.getValorSegurado(), apolice.getPremio()));
+            if (regSeg != null) {
+                apolice.setSeguradora("CONTRATADA");
+                apolice.setProtocoloSeguradora(regSeg.protocolo());
+            }
+            var regSusep = susepService.registarApolice(
+                new com.aurix.platform.seguros.integracao.SusepService.RegistroApoliceDto(
+                    apolice.getNumeroApolice(), apolice.getProdutoId(), apolice.getClienteId(),
+                    cobertura, apolice.getValorSegurado(), apolice.getPremio()));
+            if (regSusep != null) {
+                apolice.setNumeroRegistroSusep(regSusep.numeroRegistroSusep());
+            }
+            apoliceRepository.save(apolice);
+            log.info("Apólice {} registrada na seguradora e SUSEP", apolice.getNumeroApolice());
+        } catch (Exception e) {
+            log.error("Falha no registro regulatório da apólice {}: {}",
+                apolice.getNumeroApolice(), e.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)
@@ -162,7 +200,8 @@ public class ApoliceService {
             a.getDataCancelamento(), a.getValorRestituido(),
             a.getStatus().name(), a.getRenovacaoAutomatica(),
             a.getIdadeSegurado(), a.getUf(), a.getSexo(), a.getProfissao(),
-            a.getNumeroApolice(), a.getDataCriacao()
+            a.getNumeroApolice(), a.getSeguradora(), a.getProtocoloSeguradora(),
+            a.getNumeroRegistroSusep(), a.getDataCriacao()
         );
     }
 }

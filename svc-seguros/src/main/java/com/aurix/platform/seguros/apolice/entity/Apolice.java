@@ -79,6 +79,12 @@ public class Apolice {
     @Column(length = 50)
     private String numeroApolice;
 
+    private String seguradora;
+
+    private String protocoloSeguradora;
+
+    private Long numeroRegistroSusep;
+
     private LocalDateTime dataCriacao;
 
     private LocalDateTime dataAtualizacao;
@@ -159,6 +165,12 @@ public class Apolice {
     public void setProfissao(String profissao) { this.profissao = profissao; }
     public String getNumeroApolice() { return numeroApolice; }
     public void setNumeroApolice(String numeroApolice) { this.numeroApolice = numeroApolice; }
+    public String getSeguradora() { return seguradora; }
+    public void setSeguradora(String seguradora) { this.seguradora = seguradora; }
+    public String getProtocoloSeguradora() { return protocoloSeguradora; }
+    public void setProtocoloSeguradora(String protocoloSeguradora) { this.protocoloSeguradora = protocoloSeguradora; }
+    public Long getNumeroRegistroSusep() { return numeroRegistroSusep; }
+    public void setNumeroRegistroSusep(Long numeroRegistroSusep) { this.numeroRegistroSusep = numeroRegistroSusep; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
 }

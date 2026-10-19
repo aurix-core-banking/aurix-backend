@@ -37,3 +37,12 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+aurix:
+  investimentos:
+    bacen:
+      api:
+        url-base: ${AURIX_INVESTIMENTOS_BACEN_URL:https://api.bcb.gov.br/dados/serie/bcdata.sgs}
+        timeout: ${AURIX_INVESTIMENTOS_BACEN_TIMEOUT:30000}
+      selic:
+        intervalo-atualizacao: ${AURIX_INVESTIMENTOS_BACEN_SELIC_CRON:0 0 8 * * *}

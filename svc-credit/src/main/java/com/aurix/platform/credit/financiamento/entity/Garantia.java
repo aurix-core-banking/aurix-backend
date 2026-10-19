@@ -54,6 +54,9 @@ public class Garantia {
     @Column(nullable = false, length = 50)
     private String orgaoRegistro;
 
+    @Column(length = 100)
+    private String protocoloRegistro;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
@@ -93,5 +96,7 @@ public class Garantia {
     public void setStatus(StatusGarantia status) { this.status = status; }
     public String getOrgaoRegistro() { return orgaoRegistro; }
     public void setOrgaoRegistro(String orgaoRegistro) { this.orgaoRegistro = orgaoRegistro; }
+    public String getProtocoloRegistro() { return protocoloRegistro; }
+    public void setProtocoloRegistro(String protocoloRegistro) { this.protocoloRegistro = protocoloRegistro; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }
 }

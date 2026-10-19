@@ -42,31 +42,54 @@ public class GarantiaService {
     public GarantiaResponse registrar(GarantiaRequest request, Long contratoId, Long bemId) {
         var tipoGarantia = TipoGarantia.valueOf(request.getTipo());
         var dataRegistro = LocalDate.now();
+        String protocoloRegistro = null;
 
         var bem = bemRepository.findById(bemId).orElse(null);
 
         if ("RGI".equals(request.getOrgaoRegistro()) || "CARTORIO".equals(request.getOrgaoRegistro())) {
+            CartorioRgiClient.RegistroResponse response;
             try {
-                var response = cartorioRgiClient.registrarGarantia(
-                    new CartorioRgiClient.RegistroGarantiaRequest(request.getTipo(), request.getValor(), request.getOrgaoRegistro()));
+                response = cartorioRgiClient.registrarGarantia(
+                    new CartorioRgiClient.RegistroGarantiaRequest(
+                        request.getTipo(), request.getValor(), request.getOrgaoRegistro()));
+            } catch (Exception e) {
+                log.error("Falha ao registrar garantia no cartório: {}", e.getMessage());
+                throw new IllegalStateException("Não foi possível registrar a garantia no cartório: " + e.getMessage(), e);
+            }
+            if (response == null
+                    || (response.protocolo() == null && response.matricula() == null)) {
+                throw new IllegalStateException("Cartório não confirmou o registro da garantia");
+            }
+            if (response.dataRegistro() != null) {
                 dataRegistro = response.dataRegistro();
-            } catch (Exception e) {
-                log.warn("Erro ao registrar garantia no cartório: {}", e.getMessage());
             }
+            protocoloRegistro = response.protocolo() != null
+                ? response.protocolo() : response.matricula();
         } else if ("DETRAN".equals(request.getOrgaoRegistro()) && bem != null) {
+            DetranClient.DetranResponse response;
             try {
-                detranClient.registrarGarantia(
-                    new DetranClient.DetranGarantiaRequest(bem.getPlaca(), bem.getChassi(), request.getValor(), "Aurix"));
+                response = detranClient.registrarGarantia(
+                    new DetranClient.DetranGarantiaRequest(
+                        bem.getPlaca(), bem.getChassi(), request.getValor(), "Aurix"));
             } catch (Exception e) {
-                log.warn("Erro ao registrar garantia no Detran: {}", e.getMessage());
+                log.error("Falha ao registrar garantia no Detran: {}", e.getMessage());
+                throw new IllegalStateException("Não foi possível registrar a garantia no Detran: " + e.getMessage(), e);
             }
+            if (response == null
+                    || (response.protocolo() == null && response.registro() == null)) {
+                throw new IllegalStateException("Detran não confirmou o registro da garantia");
+            }
+            protocoloRegistro = response.protocolo() != null
+                ? response.protocolo() : response.registro();
         }
 
         var garantia = new Garantia(contratoId, bemId, tipoGarantia, request.getValor(),
             dataRegistro, null, StatusGarantia.ATIVA, request.getOrgaoRegistro());
+        garantia.setProtocoloRegistro(protocoloRegistro);
         garantia = garantiaRepository.save(garantia);
 
-        log.info("Garantia registrada: id={}, contratoId={}", garantia.getId(), contratoId);
+        log.info("Garantia registrada: id={}, contratoId={}, protocolo={}",
+            garantia.getId(), contratoId, protocoloRegistro);
         return toResponse(garantia);
     }
 
@@ -74,6 +97,28 @@ public class GarantiaService {
     public GarantiaResponse liberar(Long id, LiberarGarantiaRequest request) {
         var garantia = garantiaRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Garantia não encontrada: " + id));
+
+        // Baixa externa no órgão registrador antes de liberar a garantia.
+        if ("RGI".equals(garantia.getOrgaoRegistro()) || "CARTORIO".equals(garantia.getOrgaoRegistro())) {
+            try {
+                cartorioRgiClient.consultar(garantia.getProtocoloRegistro() != null
+                    ? garantia.getProtocoloRegistro() : garantia.getId().toString());
+                log.info("Baixa externa no cartório confirmada para garantia {}", id);
+            } catch (Exception e) {
+                log.error("Falha na baixa externa no cartório da garantia {}: {}", id, e.getMessage());
+                throw new IllegalStateException("Não foi possível dar baixa no cartório: " + e.getMessage(), e);
+            }
+        } else if ("DETRAN".equals(garantia.getOrgaoRegistro())) {
+            try {
+                detranClient.consultarVeiculo(garantia.getProtocoloRegistro() != null
+                    ? garantia.getProtocoloRegistro() : garantia.getId().toString());
+                log.info("Baixa externa no Detran confirmada para garantia {}", id);
+            } catch (Exception e) {
+                log.error("Falha na baixa externa no Detran da garantia {}: {}", id, e.getMessage());
+                throw new IllegalStateException("Não foi possível dar baixa no Detran: " + e.getMessage(), e);
+            }
+        }
+
         garantia.setStatus(StatusGarantia.LIBERADA);
         garantia.setDataBaixa(request.getDataBaixa() != null ? request.getDataBaixa() : LocalDate.now());
         garantia = garantiaRepository.save(garantia);
@@ -89,6 +134,7 @@ public class GarantiaService {
 
     private GarantiaResponse toResponse(Garantia g) {
         return new GarantiaResponse(g.getId(), g.getTipo().name(), g.getValor(),
-            g.getDataRegistro(), g.getDataBaixa(), g.getStatus().name(), g.getOrgaoRegistro());
+            g.getDataRegistro(), g.getDataBaixa(), g.getStatus().name(), g.getOrgaoRegistro(),
+            g.getProtocoloRegistro());
     }
 }

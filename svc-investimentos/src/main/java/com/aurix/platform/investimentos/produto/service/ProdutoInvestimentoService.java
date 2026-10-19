@@ -24,7 +24,8 @@ public class ProdutoInvestimentoService {
             request.tenantId(), request.nome(), request.descricao(),
             request.tipo(), request.tipoRenda(), request.taxaRendimento(),
             request.taxaAdm(), request.valorMinimo(), request.prazoMinimoDias(),
-            request.dataVencimento(), request.carenciaDias()
+            request.dataVencimento(), request.carenciaDias(),
+            request.indexador(), request.percentualIndexador()
         );
         entity = repository.save(entity);
         return toResponse(entity);
@@ -56,6 +57,7 @@ public class ProdutoInvestimentoService {
             e.getId(), e.getTenantId(), e.getNome(), e.getDescricao(),
             e.getTipo().name(), e.getTipoRenda().name(),
             e.getTaxaRendimento(), e.getTaxaAdm(),
+            e.getIndexador(), e.getPercentualIndexador(),
             e.getValorMinimo(), e.getPrazoMinimoDias(),
             e.getDataVencimento(), e.getCarenciaDias(),
             e.getAtivo(), e.getDataCriacao()
