@@ -60,7 +60,7 @@ jobs:
             -t ${{ matrix.svc }}:latest .
 
       - name: Trivy — scan da imagem ${{ matrix.svc }}
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: '${{ matrix.svc }}:latest'
           format: 'sarif'

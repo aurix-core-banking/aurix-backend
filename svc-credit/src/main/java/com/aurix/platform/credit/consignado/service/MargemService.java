@@ -2,6 +2,7 @@ package com.aurix.platform.credit.consignado.service;
 
 import com.aurix.platform.credit.consignado.dto.MargemResponse;
 import com.aurix.platform.credit.consignado.entity.MargemConsignavel;
+import com.aurix.platform.credit.consignado.provider.MargemProvider;
 import com.aurix.platform.credit.consignado.repository.MargemConsignavelRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,17 +17,23 @@ public class MargemService {
 
     private static final Logger log = LoggerFactory.getLogger(MargemService.class);
 
-    private final MargemConsignavelRepository repository;
+    private static final List<String> FONTES_PADRAO =
+        List.of(MargemProvider.FONTE_INSS, MargemProvider.FONTE_SIAFI, MargemProvider.FONTE_EMPRESA);
 
-    public MargemService(MargemConsignavelRepository repository) {
+    private final MargemConsignavelRepository repository;
+    private final MargemProvider margemProvider;
+
+    public MargemService(MargemConsignavelRepository repository,
+                         MargemProvider margemProvider) {
         this.repository = repository;
+        this.margemProvider = margemProvider;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public MargemResponse consultarMargem(Long clienteId) {
         List<MargemConsignavel> margens = repository.findByClienteId(clienteId);
         if (margens.isEmpty()) {
-            throw new IllegalArgumentException("Margem não encontrada para cliente: " + clienteId);
+            margens = consultarMargemExterna(clienteId);
         }
         BigDecimal margemTotal = margens.stream()
             .map(MargemConsignavel::getMargemTotal)
@@ -44,6 +51,23 @@ public class MargemService {
         return new MargemResponse(clienteId, null, margemTotal, margemDisponivel, margemUtilizada, dataAtualizacao);
     }
 
+    private List<MargemConsignavel> consultarMargemExterna(Long clienteId) {
+        for (String fonte : FONTES_PADRAO) {
+            try {
+                MargemConsignavel margem = margemProvider.consultarMargem(clienteId, null, fonte);
+                if (margem != null) {
+                    repository.save(margem);
+                    log.info("Margem externa obtida: clienteId={}, fonte={}", clienteId, fonte);
+                    return List.of(margem);
+                }
+            } catch (Exception e) {
+                log.warn("Falha ao consultar margem externa: fonte={}, clienteId={}: {}",
+                    fonte, clienteId, e.getMessage());
+            }
+        }
+        throw new IllegalArgumentException("Margem não encontrada para cliente: " + clienteId);
+    }
+
     @Transactional
     public void atualizarMargem(Long clienteId, String fonte, BigDecimal valorUtilizado) {
         var margem = repository.findByClienteIdAndFonteMargem(clienteId, fonte)
@@ -59,9 +83,12 @@ public class MargemService {
             clienteId, fonte, novaUtilizada, novaDisponivel);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void validarMargemDisponivel(Long clienteId, BigDecimal valorPretendido) {
         var margens = repository.findByClienteId(clienteId);
+        if (margens.isEmpty()) {
+            margens = consultarMargemExterna(clienteId);
+        }
         BigDecimal disponivel = margens.stream()
             .map(MargemConsignavel::getMargemDisponivel)
             .reduce(BigDecimal.ZERO, BigDecimal::add);

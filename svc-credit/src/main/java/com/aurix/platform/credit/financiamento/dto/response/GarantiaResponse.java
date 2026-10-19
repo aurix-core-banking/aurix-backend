@@ -12,10 +12,11 @@ public class GarantiaResponse {
     private LocalDate dataBaixa;
     private String status;
     private String orgaoRegistro;
+    private String protocoloRegistro;
 
     public GarantiaResponse() {}
 
-    public GarantiaResponse(Long id, String tipo, BigDecimal valor, LocalDate dataRegistro, LocalDate dataBaixa, String status, String orgaoRegistro) {
+    public GarantiaResponse(Long id, String tipo, BigDecimal valor, LocalDate dataRegistro, LocalDate dataBaixa, String status, String orgaoRegistro, String protocoloRegistro) {
         this.id = id;
         this.tipo = tipo;
         this.valor = valor;
@@ -23,6 +24,7 @@ public class GarantiaResponse {
         this.dataBaixa = dataBaixa;
         this.status = status;
         this.orgaoRegistro = orgaoRegistro;
+        this.protocoloRegistro = protocoloRegistro;
     }
 
     public Long getId() { return id; }
@@ -39,4 +41,6 @@ public class GarantiaResponse {
     public void setStatus(String status) { this.status = status; }
     public String getOrgaoRegistro() { return orgaoRegistro; }
     public void setOrgaoRegistro(String orgaoRegistro) { this.orgaoRegistro = orgaoRegistro; }
+    public String getProtocoloRegistro() { return protocoloRegistro; }
+    public void setProtocoloRegistro(String protocoloRegistro) { this.protocoloRegistro = protocoloRegistro; }
 }

@@ -25,5 +25,8 @@ public record ApoliceResponse(
     String sexo,
     String profissao,
     String numeroApolice,
+    String seguradora,
+    String protocoloSeguradora,
+    Long numeroRegistroSusep,
     LocalDateTime dataCriacao
 ) {}

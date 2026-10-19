@@ -24,6 +24,9 @@ spring:
   data:
     redis:
       enabled: false
+  cloud:
+    vault:
+      enabled: false
 
 aurix:
   credit:

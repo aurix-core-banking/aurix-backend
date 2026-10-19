@@ -1,10 +1,10 @@
 package com.aurix.platform.cambio.service;
 
-import com.aurix.platform.cambio.client.BacenClient;
 import com.aurix.platform.cambio.client.ComplianceClient;
 import com.aurix.platform.cambio.entity.ClienteCambio;
 import com.aurix.platform.cambio.entity.ContratoCambio;
 import com.aurix.platform.cambio.entity.Remessa;
+import com.aurix.platform.cambio.provider.BacenCambialProvider;
 import com.aurix.platform.cambio.repository.ClienteCambioRepository;
 import com.aurix.platform.cambio.repository.RemessaRepository;
 import java.math.BigDecimal;
@@ -28,16 +28,16 @@ public class ComplianceCambialService {
     private final ClienteCambioRepository clienteCambioRepository;
     private final RemessaRepository remessaRepository;
     private final ComplianceClient complianceClient;
-    private final BacenClient bacenClient;
+    private final BacenCambialProvider bacenCambialProvider;
 
     public ComplianceCambialService(ClienteCambioRepository clienteCambioRepository,
                                     RemessaRepository remessaRepository,
                                     ComplianceClient complianceClient,
-                                    BacenClient bacenClient) {
+                                    BacenCambialProvider bacenCambialProvider) {
         this.clienteCambioRepository = clienteCambioRepository;
         this.remessaRepository = remessaRepository;
         this.complianceClient = complianceClient;
-        this.bacenClient = bacenClient;
+        this.bacenCambialProvider = bacenCambialProvider;
     }
 
     public void validarLimitesCliente(Long clienteId, BigDecimal valor, String moeda) {
@@ -84,11 +84,15 @@ public class ComplianceCambialService {
                 contrato.getId(), contrato.getClienteId(), contrato.getTipo(),
                 contrato.getValorOrigem(), contrato.getMoedaOrigem()
             ));
-            bacenClient.registrarContrato(new BacenClient.RegistrarContratoBacenRequest(
-                contrato.getId(), contrato.getValorOrigem(), contrato.getMoedaOrigem(),
-                null, contrato.getTipo()
-            ));
-            log.info("Operacao registrada no BACEN para contrato: {}", contrato.getId());
+            BacenCambialProvider.RegistroBacenResultado resultado =
+                bacenCambialProvider.registrarRdeRof(contrato, null);
+            if (resultado == null || resultado.protocolo() == null || resultado.protocolo().isBlank()) {
+                throw new IllegalStateException(
+                    "BACEN não confirmou registro RDE-ROF/SISBACEN para o contrato " + contrato.getId());
+            }
+            contrato.setRegistroBACEN(resultado.protocolo());
+            log.info("Operacao registrada no BACEN (RDE-ROF/SISBACEN) para contrato: {}, protocolo: {}",
+                contrato.getId(), resultado.protocolo());
         } catch (Exception e) {
             log.error("Erro ao registrar operacao no BACEN para contrato: {}", contrato.getId(), e);
             throw new RuntimeException("Falha ao registrar operacao no BACEN", e);

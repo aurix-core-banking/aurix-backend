@@ -285,4 +285,37 @@ class ConsignadoFlowIntegrationTest {
         assertThat(response.getBody().getValorTotal()).isEqualByComparingTo("2400.00");
         assertThat(response.getBody().getPrazoMeses()).isEqualTo(24);
     }
+
+    @Test
+    void testConsultarMargemViaProviderPadrao() {
+        ResponseEntity<MargemResponse> response = rest.getForEntity(
+            url("/margem/99"), MargemResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getClienteId()).isEqualTo(99L);
+        assertThat(response.getBody().getMargemTotal()).isEqualByComparingTo("5000.00");
+        assertThat(response.getBody().getMargemDisponivel()).isEqualByComparingTo("3500.00");
+        assertThat(response.getBody().getMargemUtilizada()).isEqualByComparingTo("1500.00");
+    }
+
+    @Test
+    void testContratarConsignadoComAverbacao() {
+        margemRepository.save(new MargemConsignavel(
+            1L, "INSS", new BigDecimal("5000.00"),
+            new BigDecimal("5000.00"), BigDecimal.ZERO,
+            LocalDateTime.now(), "DEFAULT"));
+
+        var request = new CriarContratoRequest(
+            1L, 100L, new BigDecimal("1200.00"),
+            new BigDecimal("0.0199"), 12, "INSS");
+
+        ResponseEntity<ContratoConsignadoResponse> response = rest.postForEntity(
+            url("/consignados/contratos"), request, ContratoConsignadoResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getStatus()).isEqualTo("ATIVO");
+        assertThat(response.getBody().getProtocoloAverbacao()).isEqualTo("AVB-" + response.getBody().getId());
+    }
 }

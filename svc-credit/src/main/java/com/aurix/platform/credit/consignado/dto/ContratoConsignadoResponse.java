@@ -17,13 +17,14 @@ public class ContratoConsignadoResponse {
     private String fonteMargem;
     private String status;
     private LocalDate dataContratacao;
+    private String protocoloAverbacao;
     private String tenantId;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
 
     public ContratoConsignadoResponse() {}
 
-    public ContratoConsignadoResponse(Long id, Long clienteId, Long contaSalarioId, BigDecimal valorTotal, BigDecimal taxaJuros, int prazoMeses, BigDecimal valorParcela, BigDecimal margemUtilizada, String fonteMargem, String status, LocalDate dataContratacao, String tenantId, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao) {
+    public ContratoConsignadoResponse(Long id, Long clienteId, Long contaSalarioId, BigDecimal valorTotal, BigDecimal taxaJuros, int prazoMeses, BigDecimal valorParcela, BigDecimal margemUtilizada, String fonteMargem, String status, LocalDate dataContratacao, String protocoloAverbacao, String tenantId, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao) {
         this.id = id;
         this.clienteId = clienteId;
         this.contaSalarioId = contaSalarioId;
@@ -35,6 +36,7 @@ public class ContratoConsignadoResponse {
         this.fonteMargem = fonteMargem;
         this.status = status;
         this.dataContratacao = dataContratacao;
+        this.protocoloAverbacao = protocoloAverbacao;
         this.tenantId = tenantId;
         this.dataCriacao = dataCriacao;
         this.dataAtualizacao = dataAtualizacao;
@@ -62,6 +64,8 @@ public class ContratoConsignadoResponse {
     public void setStatus(String status) { this.status = status; }
     public LocalDate getDataContratacao() { return dataContratacao; }
     public void setDataContratacao(LocalDate dataContratacao) { this.dataContratacao = dataContratacao; }
+    public String getProtocoloAverbacao() { return protocoloAverbacao; }
+    public void setProtocoloAverbacao(String protocoloAverbacao) { this.protocoloAverbacao = protocoloAverbacao; }
     public String getTenantId() { return tenantId; }
     public void setTenantId(String tenantId) { this.tenantId = tenantId; }
     public LocalDateTime getDataCriacao() { return dataCriacao; }

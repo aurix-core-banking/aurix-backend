@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -18,6 +20,8 @@ import java.time.Clock;
 @ComponentScan(basePackages = {"com.aurix.platform.investimentos", "com.aurix.platform.shared"})
 @EntityScan(basePackages = {"com.aurix.platform.investimentos", "com.aurix.platform.shared"})
 @EnableJpaRepositories(basePackages = {"com.aurix.platform.investimentos", "com.aurix.platform.shared"})
+@EnableScheduling
+@EnableAsync
 public class InvestimentosApplication {
     public static void main(String[] args) {
         SpringApplication.run(InvestimentosApplication.class, args);
